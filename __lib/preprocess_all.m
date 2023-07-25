@@ -18,10 +18,10 @@ catch
 end
 
 % Launch the parallel pool for parallel computing (if available)
-try
-    parpool;
-catch
-end
+% try
+%     parpool;
+% catch
+% end
 
 %% Set Inputs
 
@@ -33,7 +33,7 @@ dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPU
 dataset_info = readtable([root_datasets_path dataset_info_filename]);
 
 % Set the name of the current dataset
-dataset_name = [];                                                %INPUT
+dataset_name = [];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
@@ -65,17 +65,15 @@ end
 diagnostic_folder_name = '_test';                                          %INPUT
 
 if isempty(dataset_name)
-    for i=1:height(dataset_info)
+    for i=1:height(dataset_info) %parfor HERE
         dataset_name = dataset_info.dataset_name{i};
-        L = [];
-        disp(['-----PREPROCESSING DATASET: ' dataset_name ' --------------------------------'])
-        [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path,dataset_info,dataset_name,save_info,params_info, ...
+        fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
+        [~, ~] = preprocess_dataset(root_datasets_path, dataset_info, dataset_name,save_info,params_info, ...
                                                 change_architecture_need,mat_preprocessed_folder,csv_preprocessed_folder, ...
-                                                diagnostic_folder_name, L);
+                                                diagnostic_folder_name);
     end  
 else
-        L = [];
-        [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path,dataset_info,dataset_name,save_info,params_info, ...
+        [~, ~] = preprocess_dataset(root_datasets_path,dataset_info,dataset_name,save_info,params_info, ...
                                                 change_architecture_need,mat_preprocessed_folder,csv_preprocessed_folder, ...
-                                                diagnostic_folder_name, L);
+                                                diagnostic_folder_name);
 end

@@ -3,7 +3,8 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
 
     channel_system = convertCharsToStrings(data_info.channel_system);
     
-    S = readlocs(data_info.standard_chanloc);
+    [~,~,ext] = fileparts(data_info.standard_chanloc);
+    S = readlocs(data_info.standard_chanloc,'filetype',ext(2:end));
     NchanS = length(S);
     listS = strings(NchanS,1);
     for t = 1:length(S)

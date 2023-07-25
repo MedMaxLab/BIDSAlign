@@ -1,7 +1,7 @@
 
 function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_info, dataset_name, save_info, params_info, ...
                                                  change_architecture_need, mat_preprocessed_folder, csv_preprocessed_folder, ...
-                                                 diagnostic_folder_name, L)
+                                                 diagnostic_folder_name)
 
     % Check if the dataset name is correct
     c=0;
@@ -220,24 +220,27 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     end
     
     %% Process all subjects in the dataset ----------------------------------
-    [N_subj, N_char] = size(subj_list);
-
-    for j=1:1%N_subj
+    N_subj = length(subj_list);
+    L = [];
     
-        subject_name   = subj_list(j,:);
-        subject_name   = subject_name{1};
+    for j=1:N_subj
+
+        fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- SUBJECT PROCESSED: ' num2str(j) '/' num2str(N_subj) ' ---\n']);
+
+        subject_name   = subj_list{j};
+        %subject_name   = subject_name{1};
         subject_folder = [data_dataset_path subject_name];
-        disp(data_dataset_path)
+
         cd(subject_folder);
     
         check_ch1_root = dir('*_channels.tsv');
         check_el1_root = dir('*_electrodes.tsv');
     
         if length(check_ch1_root)>1
-        error(['MULTIPLE CHANNEL FILES PRESENT IN ' subject_session_folder]);
+            error(['MULTIPLE CHANNEL FILES PRESENT IN ' subject_folder]);
         end
         if length(check_el1_root)>1
-            error(['MULTIPLE ELECTRODES FILES PRESENT IN ' subject_session_folder]);
+            error(['MULTIPLE ELECTRODES FILES PRESENT IN ' subject_folder]);
         end
     
         d         = dir(pwd);
@@ -261,8 +264,10 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         end
     
         %% Preprocess all sessions for a subject
-        for k=1:1%N_sess
-    
+        for k=1:N_sess
+
+            fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- SESSION PROCESSED: ' num2str(k) '/' num2str(N_sess) ' ---\n']);
+
             session_name           = sess_list(k).name;
             subject_session_folder = [subject_folder '\' session_name '\eeg\'];
             cd(subject_session_folder);
@@ -275,7 +280,10 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
             N_obj         = length(filelist);
             
             %% Preprocess all .set files of a subject -----------------------
-            for i=1:1%N_obj
+            for i=1:N_obj
+
+                fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- OBJECT PROCESSED: ' num2str(i) '/' num2str(N_obj) ' ---\n']);
+
                 raw_filename              = filelist(i).name;
                 preprocessed_filename     = [int2str(data_info.dataset_number_reference) '_' int2str(j) '_' int2str(k) '_' int2str(i)];
                 set_preprocessed_filename = [preprocessed_filename data_info.eeg_file_extension];
@@ -290,7 +298,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
                 
                 %% Save data to template (and interpolation) ----------------
                 if save_info.save_data
-                    [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, ...
+                    [EEG,DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, ...
                                                               EEG, template_info, save_info, data_info, params_info, subj_info);
                     if ~isempty(EEG.event)
                         eeg_eventtable(EEG,'exportFile',[csv_preprocessed_folder preprocessed_filename '.csv'],'dispTable',false);

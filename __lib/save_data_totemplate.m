@@ -43,6 +43,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, m
     %% Interpolation Step -----------------------------------------------
     if number_miss_ch ~= 0 %if there are missing channels respect the template => interpolate
         L1 = create_chan_loc(EEG, data_info, template_info.template_matrix, template_info);
+        %disp('--INTERPOL DATA--')
         EEG1 = pop_interp(EEG, L1, params_info.interpol_method); %with POP_interp channel_location, coordinates are mixed. But chanlocs not used anymore.
         %Here if Cz is not present, is also interpolated, so then Cz should
         %be put as a vector of zeros.
