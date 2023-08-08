@@ -12,11 +12,11 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, m
     B = EEG.chanlocs;
     NchanB = length(B);
     listB = strings(1,NchanB);
-    if  strcmp(channel_system,channel_systems{1}) || strcmp(channel_system,channel_systems{2}) || strcmp(channel_system,channel_systems{3})
+    if  channel_system == channel_systems{1} || channel_system == channel_systems{2} || channel_system == channel_systems{3}
         for t=1:NchanB
             listB(t) = B(t).labels;
         end
-    elseif strcmp(channel_system, channel_systems{4}) || strcmp(channel_system, channel_systems{5})
+    elseif channel_system == channel_systems{4} || channel_system == channel_systems{5}
         for t=1:NchanB
             mask = template_info.conversion(:,2) == B(t).labels;
             if any(mask) %in this way we neglect channels that are not present in the conversion file
@@ -40,7 +40,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, m
 
     %% Interpolation Step -----------------------------------------------
     if number_miss_ch ~= 0 %if there are missing channels respect the template => interpolate
-        L1 = create_chan_loc(EEG, data_info, template_info.template_matrix, template_info, channel_systems);
+        L1 = create_chan_loc(EEG, data_info, template_info.template_matrix, template_info);
         %disp('--INTERPOL DATA--')
         EEG1 = pop_interp(EEG, L1, params_info.interpol_method); %with POP_interp channel_location, coordinates are mixed. But chanlocs not used anymore.
         %Here if Cz is not present, is also interpolated, so then Cz should
@@ -53,20 +53,20 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, m
     B = EEG1.chanlocs;
     NchanB = length(B);
     listB = strings(1,NchanB);
-    if  strcmp(channel_system, channel_systems{1}) || strcmp(channel_system, channel_systems{2}) || strcmp(channel_system,channel_systems{3})
+    if  channel_system == channel_systems{1} || channel_system == channel_systems{2} || channel_system == channel_systems{3}
         for t=1:NchanB
             listB(t) = B(t).labels;
         end
-    elseif strcmp(channel_system, channel_systems{4}) || strcmp(channel_system, channel_systems{5})
+    elseif channel_system == channel_systems{4} || channel_system == channel_systems{5}
         for t=1:NchanB
-%             if ~strcmp(B(t).labels, standard_ref_ch)
-            mask = template_info.conversion(:,2) == B(t).labels;
-            if any(mask) %in this way we neglect channels that are not present in the conversion file
-                listB(t) = template_info.conversion(mask,1);
+            if ~strcmp(B(t).labels, standard_ref_ch)
+                mask = template_info.conversion(:,2) == B(t).labels;
+                if any(mask) %in this way we neglect channels that are not present in the conversion file
+                    listB(t) = template_info.conversion(mask,1);
+                end
+            else
+                listB(t) = B(t).labels;
             end
-%             else
-%                 listB(t) = B(t).labels;
-%             end
         end
     end
  

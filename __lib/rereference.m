@@ -32,12 +32,12 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
         end
 
         %% Reref the data to a specific channel------------------------------
-        if isempty(C) && ~strcmp(channel_reference,standard_ref_ch)            %RED if current ref is not Cz and Cz is not a present channel => error!
+        if isempty(C) && ~strcmp(channel_reference,standard_ref_ch)        %RED if current ref is not Cz and Cz is not a present channel => error!
             error("ERROR: NEW REFERENCE CHANNEL NOT REGISTERED");
     
-        elseif strcmp(channel_reference,standard_ref_ch)                       %ORANGE if current ref == Cz independently if the channel is present or not => nothing to do
+        elseif strcmp(channel_reference,standard_ref_ch)                   %ORANGE if current ref == Cz independently if the channel is present or not => nothing to do
 
-        else                                                                   %GREEN if current ref is not Cz, but Cz is a present channel, independently if it has or not the channel ref => reref
+        else                                                               %GREEN if current ref is not Cz, but Cz is a present channel, independently if it has or not the channel ref => reref
             EEG = pop_reref( EEG, C,'keepref','on');
         end
 

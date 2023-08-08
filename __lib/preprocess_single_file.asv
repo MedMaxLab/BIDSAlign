@@ -1,15 +1,10 @@
 
 function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channels_filename, set_preprocessed_filename, ...
-                                          channel_systems, data_info, channel_to_remove, params_info, template_info, L)
+                                          data_info, channel_to_remove, params_info, template_info, L)
 
     %% Load raw file ----------------------------------------------------
     %disp('--IMPORT DATA--')
     [EEG] = import_data(raw_filename, raw_filepath, data_info);
-
-    %(1) CHANLOCS MANAGMENT
-    if  isempty(EEG.chanlocs) && isempty(data_info.channel_folder) && isempty(raw_channels_filename)
-        error("IMPOSSIBLE TO LOAD CHANNEL LOCATION");
-    end
 
     %% Rename the labels of the channels accorgind to the channels filename
     if isfile(raw_channels_filename) && ~strcmp(data_info.channel_location_filename, 'loaded')
@@ -18,6 +13,9 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
             EEG.chanlocs(i).labels = char(T{i,1});
         end
     end
+    if isempty(raw_channels_filename) && (~strcmp(data_info.channel_location_filename, 'loaded') || isempty(data_info.channel_folder))
+    
+    end
 
     %% Remove Channels --------------------------------------------------
     %disp('--REMOVE CHANNELS--')
@@ -25,7 +23,7 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
 
     %% Import channel location and rerefence the data -------------------
     %disp('--IMPORT CHANLOC--')
-    [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info, channel_to_remove, channel_systems);
+    [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info, channel_to_remove);
 
     %% Rereference the data
     %disp('--REREF DATA--')
@@ -33,9 +31,9 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
 
     %% Uniform the Nomenclature -----------------------------------------
     %disp('--RENAME CHANNELS--')
-%     if ~isempty(data_info.channel_folder)
-%         [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems);
-%     end
+    if ~isempty(data_info.channel_folder)
+        [EEG] = rename_channels(EEG, data_info);
+    end
 
     %% Resampling -------------------------------------------------------
     %disp('--RESAMPLE DATA--')

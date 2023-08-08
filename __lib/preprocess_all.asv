@@ -31,13 +31,12 @@ dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPU
 dataset_info = readtable([root_datasets_path dataset_info_filename]);
 
 % Set the name of the current dataset
-dataset_name = ['HBN_EO_EC'];                                              %INPUT
+dataset_name = [];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
                    'save_data_as','matrix', ...
-                   'save_struct',true, ...
-                   'save_marker',false);
+                   'save_struct',true);
 
 % Set the parameters for preprocessing
 params_info = struct('low_freq',0,...                                      %INPUT
@@ -56,7 +55,7 @@ mat_preprocessed_folder   = [root_datasets_path '_mat_preprocessed\'];     %INPU
 if ~exist(mat_preprocessed_folder, 'dir')
    mkdir(mat_preprocessed_folder)
 end
-% Check if exist otherwise create csv_marker_files folder
+% Check if exist otherwise create csv_marker_files folders
 csv_preprocessed_folder   = [root_datasets_path '_csv_marker_files\'];     %INPUT
 if ~exist(csv_preprocessed_folder, 'dir')
     mkdir(csv_preprocessed_folder)
@@ -71,14 +70,12 @@ if isempty(dataset_name)
     for i=1:height(dataset_info) %<< parfor HERE
         dataset_name = dataset_info.dataset_name{i};
         fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
-
-        % Preprocess the dataset
+        % Preprocess the data
         [~, ~] = preprocess_dataset(root_datasets_path, dataset_info, dataset_name,save_info,params_info, ...
                                                 change_architecture_need,mat_preprocessed_folder,csv_preprocessed_folder, ...
                                                 diagnostic_folder_name);
     end  
 else
-        % Preprocess the dataset
         [~, ~] = preprocess_dataset(root_datasets_path,dataset_info,dataset_name,save_info,params_info, ...
                                                 change_architecture_need,mat_preprocessed_folder,csv_preprocessed_folder, ...
                                                 diagnostic_folder_name);

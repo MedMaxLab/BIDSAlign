@@ -14,13 +14,8 @@ function [raw_channels_filename, data_info] = extract_filenames(check_ch0_root, 
     elseif isempty(check_ch1_root) && length(check_ch2_root)==1
         raw_channels_filename = [check_ch2_root.folder '\' check_ch2_root.name];
 
-    elseif length(check_ch2_root)>1
-        %this case is when length(check_ch2_root)>1, so for every file
-        %there is the corresponding _channels.tsv
+    else
         raw_channels_filename = [raw_filepath '\' raw_filename(1:length(raw_filename)-length(data_info.eeg_file_extension)-4) '_channels.tsv'];
-    
-    elseif isempty(check_ch1_root)
-        raw_channels_filename = [];
     end
 
     %% Check _electrodes.tsv file ----------------------------------

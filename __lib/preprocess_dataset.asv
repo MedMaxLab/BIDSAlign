@@ -74,7 +74,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     %% Create template struct
 
     %channel system supported
-    channel_systems = {'10_20', '10_10', '10_5', 'GSN129', 'GSN256'};
+    channel_systems = ['10_20', '10_10'];
 
     % Create the template struct to store channel template information
     template_folder           = [root_datasets_path '__lib\template\template_channel_selection\'];
@@ -97,7 +97,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     % Load standard channel location file from templates
     channel_location_folder = [root_datasets_path '__lib\template\template_channel_location\'];
     
-    if strcmp(data_info.channel_system,channel_systems{4})
+    if strcmp(data_info.channel_system,'GSN129')
         conversion = load([conversion_folder  conv_GSN129_1010_filename]);
         conversion = upper(conversion.conv);
         if length(conversion(:,1)) ~= length(template_matrix)
@@ -105,7 +105,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         end
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
-    elseif strcmp(data_info.channel_system,channel_systems{5})
+    elseif strcmp(data_info.channel_system,'GSN257')
         conversion = load([conversion_folder  conv_GSN257_1010_filename]);
         conversion = upper(conversion.conv);
         if length(conversion(:,1)) ~= length(template_matrix)
@@ -113,11 +113,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         end
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
-    elseif  strcmp(data_info.channel_system,channel_systems{1}) || strcmp(data_info.channel_system, channel_systems{2})
+    elseif  strcmp(data_info.channel_system,'10_20') || strcmp(data_info.channel_system,'10_10')
         conversion = "nan";
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.locs'];
     
-    elseif strcmp(data_info.channel_system,channel_systems{3})
+    elseif strcmp(data_info.channel_system,'10_5')
         conversion = "nan";
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
@@ -299,11 +299,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
                                                                        raw_filepath, raw_filename, data_info);
 
                 [EEG, L] = preprocess_single_file(raw_filepath, raw_filename, raw_channels_filename, set_preprocessed_filename, ...
-                                                  channel_systems, data_info, channel_to_remove, params_info, template_info, L);
+                                                  data_info, channel_to_remove, params_info, template_info, L);
                 
                 %% Save data to template (and interpolation) ----------------
                 if save_info.save_data
-                    [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, channel_systems,...
+                    [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, ...
                                                               EEG, template_info, save_info, data_info, params_info, subj_info);
 
                     if ~isempty(EEG.event) && save_info.save_marker
