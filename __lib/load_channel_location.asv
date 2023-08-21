@@ -21,7 +21,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             % Keep in consideration if some channels have strange name
 %           processedLabels = arrayfun(@(x) upper(erase(x.labels, ["." ".."])), B, 'UniformOutput', false);
 %           [B.labels] = processedLabels{:};
-            [B] = rename_channels(B, data_info, channel_systems, false, []);            
+            [B] = rename_channels(B, data_info, channel_systems, false);            
             NchanB = length(B);
             listB = strings(NchanB,1);
             for t = 1:NchanB
@@ -30,7 +30,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             
 %           processedLabels = arrayfun(@(x) upper(erase(x.labels, ["." ".."])), EEG.chanlocs, 'UniformOutput', false);
 %           [EEG.chanlocs.labels] = processedLabels{:};
-            [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true, EEG);
+            [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true);
             NchanE = length(EEG.chanlocs);
             listE = strings(NchanE,1);
             for t = 1:NchanE
@@ -44,28 +44,24 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
                 [~, ind_remove] = ismember(channel_to_remove, listB);
                 
                 B(ind_remove(ind_remove ~= 0)) = [];
-                NchanB = length(B);
-                listB = strings(NchanB,1);
-                for t = 1:NchanB
-                    listB(t) = B(t).labels;
-                end
+                listB = {B.labels};
             end
 
             matching_labels = ismember(listE, listB);
             
             % Filter EEG.chanlocs using the logical index array
-            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' channel_location_filepath];
+            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM:' channel_location_filepath];
             EEG.chanlocs = B(matching_labels);
             
         else
             %%(3) CHANLOCS MANAGMENT
             if isempty(L)
                 
-                [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true, EEG);
+                [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true);
                 L = create_chan_loc(EEG, data_info, [], template_info, channel_systems);
             end
             B = L;
-            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' data_info.standard_chanloc];
+            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM:' data_info.standard_chanloc];
             EEG.chanlocs = B;
             I = find(data_info.standard_chanloc=='.');
             channel_location_file_extension = data_info.standard_chanloc(I+1:end);

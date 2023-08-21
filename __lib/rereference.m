@@ -14,6 +14,7 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
                                                                            %GRAY Nothing to do
         else
             EEG = pop_reref( EEG, [],'keepref','on');                      %BLUE Avg REF.
+            EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' convertStringsToChars(standard_ref_ch) ];
         end
 
     else
@@ -39,6 +40,7 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
 
         else                                                               %GREEN if current ref is not Cz, but Cz is a present channel, independently if it has or not the channel ref => reref
             EEG = pop_reref( EEG, C,'keepref','on');
+            EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' convertStringsToChars(standard_ref_ch) '(keepref: on)'];
         end
 
     end

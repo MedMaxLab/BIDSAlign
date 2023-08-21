@@ -13,8 +13,13 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info, channel_
 %         listS(t) = S(t).labels;
 %     end
 
-    [S] = rename_channels(S, data_info, channel_systems);
-    listS = {S.labels};
+    [S] = rename_channels(S, data_info, channel_systems, false, []);
+    NchanS = length(S);
+    listS = strings(NchanS,1);
+    for t = 1:NchanS
+        listS(t) = S(t).labels;
+    end
+
 
 
     %convert channel name CZ to E129 or E257 because in conversion file, CZ
@@ -26,7 +31,11 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info, channel_
     % Create list of channels from EEG.chanlocs
     if isempty(list_ref) 
         Z = EEG.chanlocs;
-        listZ = {Z.labels};
+        NchanZ = length(Z);
+        listZ = strings(NchanZ,1);
+        for t = 1:NchanZ
+            listZ(t) = Z(t).labels;
+        end
         NchanZ = length(Z);
         
         % Here there is no need for check the channel system, because

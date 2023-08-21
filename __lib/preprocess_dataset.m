@@ -39,7 +39,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
                        'samp_rate', dataset_info.samp_rate(dataset_index),...
                        'select_subjects', dataset_info.select_subjects{dataset_index},...
                        'label_value', dataset_info.label_value{dataset_index},...
-                       'label_name', dataset_info.label_name{dataset_index});
+                       'label_name', dataset_info.label_name{dataset_index},...
+                       'dataset_name', dataset_name);
                        %'voltage_unit', dataset_info.units{dataset_index},...
                        %'nchan', dataset_info.nchan(dataset_index),...
     
@@ -115,7 +116,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     
     elseif  strcmp(data_info.channel_system,channel_systems{1}) || strcmp(data_info.channel_system, channel_systems{2})
         conversion = "nan";
-        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.locs'];
+        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' '10_10' '.locs'];
     
     elseif strcmp(data_info.channel_system,channel_systems{3})
         conversion = "nan";
@@ -225,7 +226,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     N_subj = length(subj_list);
     L = [];
     
-    for j=1:N_subj
+    for j=1:1%N_subj
 
         fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- SUBJECT PROCESSED: ' num2str(j) '/' num2str(N_subj) ' ---\n']);
 
@@ -269,7 +270,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         end
     
         %% Preprocess all sessions for a subject
-        for k=1:N_sess
+        for k=1:1%N_sess
 
             fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- SESSION PROCESSED: ' num2str(k) '/' num2str(N_sess) ' ---\n']);
 
@@ -285,7 +286,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
             N_obj         = length(filelist);
             
             %% Preprocess all .set files of a subject -----------------------
-            for i=1:N_obj
+            for i=1:1%N_obj
 
                 fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- OBJECT PROCESSED: ' num2str(i) '/' num2str(N_obj) ' ---\n']);
 
