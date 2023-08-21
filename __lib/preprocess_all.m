@@ -31,7 +31,7 @@ dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPU
 dataset_info = readtable([root_datasets_path dataset_info_filename]);
 
 % Set the name of the current dataset
-dataset_name = [];                                                %INPUT
+dataset_name = ['EEG_3Stim'];                                                %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...

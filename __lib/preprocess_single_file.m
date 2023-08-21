@@ -24,7 +24,8 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
 
     %% Remove Channels --------------------------------------------------
     %disp('--REMOVE CHANNELS--')
-    EEG.history = [EEG.history newline 'REMOVE CHANNELS: ' channel_to_remove{1}];
+    EEG.history = [EEG.history newline 'REMOVE CHANNELS: '  data_info.channel_to_remove];
+    disp(EEG.history)
     [EEG] = pop_select(EEG, 'rmchannel', channel_to_remove);
 
     %% Import channel location and rerefence the data -------------------
