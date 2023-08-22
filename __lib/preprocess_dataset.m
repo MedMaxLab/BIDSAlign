@@ -115,14 +115,14 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         end
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
-    elseif  strcmp(data_info.channel_system,channel_systems{1}) || strcmp(data_info.channel_system, channel_systems{2})
+    elseif  strcmp(data_info.channel_system,channel_systems{1}) || strcmp(data_info.channel_system, channel_systems{2}) || strcmp(data_info.channel_system,channel_systems{3})
         conversion = "nan";
-        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' '10_10' '.locs'];
+        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' '10_5' '.sfp'];
     
-    elseif strcmp(data_info.channel_system,channel_systems{3})
-        conversion = "nan";
-        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
-    
+%     elseif strcmp(data_info.channel_system,channel_systems{3})
+%         conversion = "nan";
+%         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
+%     
     else
         error("ERROR: UNSUPPORTED CHANNEL SYSTEM");
     end

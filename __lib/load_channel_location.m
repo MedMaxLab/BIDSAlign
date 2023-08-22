@@ -54,8 +54,9 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             matching_labels = ismember(listE, listB);
             
             % Filter EEG.chanlocs using the logical index array
-            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' channel_location_filepath];
             EEG.chanlocs = B(matching_labels);
+            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' channel_location_filepath];
+            
             
         else
             %%(3) CHANLOCS MANAGMENT
@@ -65,8 +66,10 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
                 L = create_chan_loc(EEG, data_info, [], template_info, channel_systems);
             end
             B = L;
-            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' data_info.standard_chanloc];
+            
             EEG.chanlocs = B;
+            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' data_info.standard_chanloc];
+            
             I = find(data_info.standard_chanloc=='.');
             channel_location_file_extension = data_info.standard_chanloc(I+1:end);
         end
