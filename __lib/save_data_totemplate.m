@@ -96,7 +96,6 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, m
 %         warning("UNUSUAL SCALE UNIT");
 %     end
 
-    %USER GUIDE: the data should be save in uV
     DATA_MATRIX = EEG1.data(mask_ch,:)/1000; %convert from uV to mV
 
     %% Save and Create Tensor or Save Matrix standard template ----------

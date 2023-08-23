@@ -1,7 +1,7 @@
 
 function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_info, dataset_name, save_info, params_info, ...
                                                  change_architecture_need, mat_preprocessed_folder, csv_preprocessed_folder, ...
-                                                 diagnostic_folder_name)
+                                                 diagnostic_folder_name, numbers_files)
 
     % Check if the dataset name imported is correct or if multiple dataset
     % have the same name
@@ -101,17 +101,17 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     
     if strcmp(data_info.channel_system,channel_systems{4})
         conversion = load([conversion_folder  conv_GSN129_1010_filename]);
-        conversion = upper(conversion.conv);
-        if length(conversion(:,1)) ~= length(template_matrix)
-            error("ERROR: MISMATCH BETWEEN CONVERSION AND TEMPLATE FILES")
+        conversion = upper(conversion.convGSN129);
+        if length(conversion(:,1)) < length(template_matrix)
+            error("ERROR: CONVERSION FILE SHORTER THAN TEMPLATE FILE")
         end
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
     elseif strcmp(data_info.channel_system,channel_systems{5})
         conversion = load([conversion_folder  conv_GSN257_1010_filename]);
-        conversion = upper(conversion.conv);
-        if length(conversion(:,1)) ~= length(template_matrix)
-            error("ERROR: MISMATCH BETWEEN CONVERSION AND TEMPLATE FILES")
+        conversion = upper(conversion.convGSN257);
+        if length(conversion(:,1)) < length(template_matrix)
+            error("ERROR: CONVERSION FILE SHORTER THAN TEMPLATE FILE")
         end
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
@@ -137,11 +137,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     participant_filepath1 = [data_dataset_path 'participants.csv'];
     
     % Read the participant file
-    %USER GUIDE: participant file deve avere nome participant. 
     if isfile(participant_filepath) 
         T = readtable(participant_filepath,"FileType","delimitedtext");
+
     elseif isfile(participant_filepath1)
         T = readtable(participant_filepath1,"FileType","delimitedtext");
+
     elseif ~isempty(dir([data_dataset_path 'participants.*']))
         T = [];
         warning('PARTICIPANT FILE FOUND BUT UNABLE TO IMPORT THE ASSOCIATED FILE FORMAT'); 
@@ -151,23 +152,27 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     end
     
     %% Import diagnostic test -----------------------------------------------
-    %USER GUIDE: la prima colonna di ogni .csv deve essere il subject ID.
     
     diagnostic_folder_path = [data_dataset_path diagnostic_folder_name];
     S = dir(fullfile(diagnostic_folder_path,'*'));
     N = setdiff({S([S.isdir]).name},{'.','..'}); % list of subfolders of D.
+
     for ii = 1:numel(N)
         K = dir(fullfile(diagnostic_folder_path,N{ii},'*.csv'));
         C = {K(~[K.isdir]).name}; % files in subfolder.
+
         for jj = 1:numel(C)
             F = fullfile(diagnostic_folder_path,N{ii},C{jj});
+
             if ~isempty(T)
                 T_new = readtable(F,"FileType","delimitedtext");
                 T_feats = T_new.Properties.VariableNames(2:end);
                 Nfeat = length(T_feats);
                 c = [false true(1,Nfeat)];
+
                 for i=1:Nfeat
                     T_type = class(T_new.(i+1));
+
                     if ~strcmp(T_type,'cell')
                         T = [T table(NaN([height(T) 1]),'VariableNames',T_feats(i))];
                     else
@@ -177,6 +182,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     
                 for i=1:height(T_new)
                     O = find(strcmp(T_new{i,1},T{:,1}));
+
                     if ~isempty(O)
                         T(O,end-sum(c)+1:end) = T_new(i,c);
                     end
@@ -190,7 +196,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     %% Extract selected patients
     % Check if subject selection is required
     if strcmp(data_info.select_subjects,'yes') && isempty(T)
-        error('UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE');
+        error("UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE");
     
     elseif strcmp(data_info.select_subjects,'yes') && ~isempty(T)
         % Select control subjects based on group information
@@ -225,9 +231,13 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     
     %% Process all subjects in the dataset ----------------------------------
     N_subj = length(subj_list);
+    if ~strcmp(numbers_files.N_subj,'all')
+        N_subj = min(N_subj,numbers_files.N_subj);
+    end
+
     L = [];
     
-    for j=1:1%N_subj
+    for j=1:N_subj
 
         fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- SUBJECT PROCESSED: ' num2str(j) '/' num2str(N_subj) ' ---\n']);
 
@@ -251,9 +261,9 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         dfolders  = d([d(:).isdir]);
         sess_list = dfolders(~ismember({dfolders(:).name},{'.','..'}));
         N_sess    = length(sess_list);
-    
-        %USER GUIDE: folder names are equal to subject id in participant
-        %file
+        if ~strcmp(numbers_files.N_sess,'all')
+            N_sess = min(N_sess,numbers_files.N_sess);
+        end
 
         % Load subject information, and check if the folder name is found
         % inside the participant.tsv file
@@ -271,7 +281,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         end
     
         %% Preprocess all sessions for a subject
-        for k=1:1%N_sess
+        for k=1:N_sess
 
             fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- SESSION PROCESSED: ' num2str(k) '/' num2str(N_sess) ' ---\n']);
 
@@ -285,9 +295,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
             raw_filepath  = pwd;
             filelist      = dir(['*' data_info.eeg_file_extension]);
             N_obj         = length(filelist);
-            
+            if ~strcmp(numbers_files.N_obj,'all')
+                N_obj = min(N_obj,numbers_files.N_obj);
+            end
             %% Preprocess all .set files of a subject -----------------------
-            for i=1:1%N_obj
+            for i=1:N_obj
 
                 fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- OBJECT PROCESSED: ' num2str(i) '/' num2str(N_obj) ' ---\n']);
 

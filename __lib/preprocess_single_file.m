@@ -5,11 +5,12 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
     %% Load raw file ----------------------------------------------------
     %disp('--IMPORT DATA--')
     [EEG] = import_data(raw_filename, raw_filepath, data_info);
-    EEG.history = ['DATASET:' data_info.dataset_name];
+    EEG.history = ['DATASET: ' data_info.dataset_name];
     EEG.history = [EEG.history newline 'IMPORT DATA: ' raw_filepath raw_filename];
 
     %(1) CHANLOCS MANAGMENT
     if  isempty(EEG.chanlocs) && isempty(data_info.channel_folder) && isempty(raw_channels_filename)
+        %Fig 4. 2)
         error("IMPOSSIBLE TO LOAD CHANNEL LOCATION");
     end
 
@@ -55,10 +56,13 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
      %EEG = pop_runica(EEG, 'icatype', 'fastica', 'g', params_info.non_linearity_ica, 'lastEig', params_info.n_ica, 'verbose','off');
     
     %% ASR --------------------------------------------------------------
-    
+    [EEG] = clean_rawdata(EEG, params_info.flatlineC, 'off', params_info.channelC, params_info.lineC, 'off','off');
+    EEG.history = [EEG.history newline 'ASR: FlatLineCriterion ' num2str(params_info.flatlineC) ...
+                   ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
+
     %% Save the .set file -----------------------------------------------
     %disp('--SAVE .SET--')
     [EEG] = pop_saveset( EEG, 'filename',set_preprocessed_filename,'filepath',data_info.set_folder);
     EEG.history = [EEG.history newline 'SAVE .SET FILE: ' data_info.set_folder set_preprocessed_filename];
-
+    disp(EEG.history)
 end

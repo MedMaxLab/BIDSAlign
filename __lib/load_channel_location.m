@@ -4,7 +4,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     if ~strcmp(data_info.channel_location_filename, "loaded")
         if ~isempty(data_info.channel_folder)
     
-            %(4) CHANLOCS MANAGMENT
+            %Fig 4. 4)
             channel_location_filepath = data_info.channel_folder;
     
             %% Import Channels Location -----------------------------------------
@@ -19,8 +19,6 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             end
 
             % Keep in consideration if some channels have strange name
-%           processedLabels = arrayfun(@(x) upper(erase(x.labels, ["." ".."])), B, 'UniformOutput', false);
-%           [B.labels] = processedLabels{:};
             [B] = rename_channels(B, data_info, channel_systems, false, []);            
             NchanB = length(B);
             listB = strings(NchanB,1);
@@ -28,8 +26,6 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
                 listB(t) = B(t).labels;
             end
             
-%           processedLabels = arrayfun(@(x) upper(erase(x.labels, ["." ".."])), EEG.chanlocs, 'UniformOutput', false);
-%           [EEG.chanlocs.labels] = processedLabels{:};
             [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true, EEG);
             NchanE = length(EEG.chanlocs);
             listE = strings(NchanE,1);
@@ -59,7 +55,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             
             
         else
-            %%(3) CHANLOCS MANAGMENT
+            %Fig 4. 3)
             if isempty(L)
                 
                 [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true, EEG);
@@ -69,12 +65,11 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             
             EEG.chanlocs = B;
             EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' data_info.standard_chanloc];
-            
-            I = find(data_info.standard_chanloc=='.');
-            channel_location_file_extension = data_info.standard_chanloc(I+1:end);
+            [~,~,ext] = fileparts(data_info.standard_chanloc);
+            channel_location_file_extension = ext(2:end);
         end
     else
-        %(1) CHANLOCS MANAGMENT
+        %Fig 4. 1)
         B = EEG.chanlocs;
         channel_location_file_extension = "nan";
         L = [];

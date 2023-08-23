@@ -1,0 +1,35 @@
+HOW TO USE:
+
+- Set all the necessary folderpath and folder names.
+- Compile the DATASET_INFO.xlsx according the template,
+with your own datasets.
+
+- Choose a dataset name and set the variable dataset_name,
+if you want to preprocess only that dataset.
+Set an empty dataset_name in order to preprocess every dataset.
+
+- Choose the number of files to preprocess: set 'all',
+or the desidered number of subjects, sessions and objects.
+
+Compile the fields of subj_info:
+- save_data: {true,false}
+- save_data_as: {'matrix','tensor'}
+- save_struct: {true,false}
+- save_maker: {true,false}
+
+- Set change_architecture_need as {true,false} 
+on the basis if the dataset need to be changed.
+
+- the participant file has to be named participants.*, and
+can be saved both in .tsv or .csv.
+
+- the 1° column of the participant file or any other 
+files reporting diagnostical test, has to be the subject_ID
+
+- any other file, with diagnostical test, except participant file,
+ has to be saved in .csv
+
+- the folder names in the dataset, have to be named
+with the same subj_ID reported in the participant file
+
+- EEG data should be saved in uV
