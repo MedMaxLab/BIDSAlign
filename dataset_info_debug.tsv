@@ -1,0 +1,3 @@
+dataset_number_reference	dataset_name	channel_location_filename	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate	select_subjects	label_name	label_value	change_arch
+5	EEG_3Stim		10_10	CPZ	VEOG,X,Y,Z	.set	500	yes	Group	CTL	no
+12	EEG_Med		10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	no			no
