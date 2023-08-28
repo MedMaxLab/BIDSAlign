@@ -24,10 +24,10 @@ end
 
 %% Set Inputs
 % Set the root path of the EEG datasets
-root_datasets_path = 'E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\';  %INPUT
-lib_path           = 'E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\';  %INPUT
+root_datasets_path = '/home/zanola/eeg_datasets/datasets/';  %INPUT
+lib_path           = '/home/zanola/eeg_datasets/EEG_ML_dataset/__lib';  %INPUT
 % Set the name of the current dataset
-dataset_name = [];                                                         %INPUT
+dataset_name = ['EEG_3Stim'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...

@@ -75,7 +75,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
        mkdir(data_info.set_folder)
     end
     
-    data_dataset_path         = [dataset_path 'dataset\'];
+    %data_dataset_path         = [dataset_path 'dataset\'];
+    data_dataset_path = dataset_path;
     data_info.data_dataset_path = data_dataset_path;
     
     %% Create template struct
