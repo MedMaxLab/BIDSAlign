@@ -1,7 +1,7 @@
 
-function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_info, dataset_name, save_info, params_info, ...
+function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                                  change_architecture_need, mat_preprocessed_folder, csv_preprocessed_folder, ...
-                                                 diagnostic_folder_name)
+                                                 diagnostic_folder_name, numbers_files)
 
     % Check if the dataset name imported is correct or if multiple dataset
     % have the same name
@@ -15,11 +15,6 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
        error("ERROR: CHECK THE DATASET NAME");
     elseif c>1
        error("ERROR: MULTIPLE DATASET HAVE THE SAME NAME IN THE EXCEL FILE");
-    end
-    
-    %% Create/Check Dataset Structure
-    if change_architecture_need
-        create_dataset_architecture();
     end
     
     %% Handle Compatibility
@@ -39,10 +34,13 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
                        'samp_rate', dataset_info.samp_rate(dataset_index),...
                        'select_subjects', dataset_info.select_subjects{dataset_index},...
                        'label_value', dataset_info.label_value{dataset_index},...
-                       'label_name', dataset_info.label_name{dataset_index});
+                       'label_name', dataset_info.label_name{dataset_index},...
+                       'dataset_name', dataset_name,...
+                       'channel_to_remove',dataset_info.channel_to_remove{dataset_index});
                        %'voltage_unit', dataset_info.units{dataset_index},...
                        %'nchan', dataset_info.nchan(dataset_index),...
-    
+   
+      
     %% Check if the imported data has correct values
     %samp rate
     if data_info.samp_rate < 0 || mod(data_info.samp_rate, 1) ~= 0
@@ -74,10 +72,10 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     %% Create template struct
 
     %channel system supported
-    channel_systems = ['10_20', '10_10'];
+    channel_systems = {'10_20', '10_10', '10_5', 'GSN129', 'GSN256'};
 
     % Create the template struct to store channel template information
-    template_folder           = [root_datasets_path '__lib\template\template_channel_selection\'];
+    template_folder           = [lib_path '__lib\template\template_channel_selection\'];
     tensor_template_filename  = 'tensor_channel_template.mat';
     matrix_template_filename  = 'matrix_channel_template.mat';
     
@@ -97,30 +95,30 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     % Load standard channel location file from templates
     channel_location_folder = [root_datasets_path '__lib\template\template_channel_location\'];
     
-    if strcmp(data_info.channel_system,'GSN129')
+    if strcmp(data_info.channel_system,channel_systems{4})
         conversion = load([conversion_folder  conv_GSN129_1010_filename]);
-        conversion = upper(conversion.conv);
-        if length(conversion(:,1)) ~= length(template_matrix)
-            error("ERROR: MISMATCH BETWEEN CONVERSION AND TEMPLATE FILES")
+        conversion = upper(conversion.convGSN129);
+        if length(conversion(:,1)) < length(template_matrix)
+            error("ERROR: CONVERSION FILE SHORTER THAN TEMPLATE FILE")
         end
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
-    elseif strcmp(data_info.channel_system,'GSN257')
+    elseif strcmp(data_info.channel_system,channel_systems{5})
         conversion = load([conversion_folder  conv_GSN257_1010_filename]);
-        conversion = upper(conversion.conv);
-        if length(conversion(:,1)) ~= length(template_matrix)
-            error("ERROR: MISMATCH BETWEEN CONVERSION AND TEMPLATE FILES")
+        conversion = upper(conversion.convGSN257);
+        if length(conversion(:,1)) < length(template_matrix)
+            error("ERROR: CONVERSION FILE SHORTER THAN TEMPLATE FILE")
         end
         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
-    elseif  strcmp(data_info.channel_system,'10_20') || strcmp(data_info.channel_system,'10_10')
+    elseif  strcmp(data_info.channel_system,channel_systems{1}) || strcmp(data_info.channel_system, channel_systems{2}) || strcmp(data_info.channel_system,channel_systems{3})
         conversion = "nan";
-        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.locs'];
+        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' '10_5' '.sfp'];
     
-    elseif strcmp(data_info.channel_system,'10_5')
-        conversion = "nan";
-        data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
-    
+%     elseif strcmp(data_info.channel_system,channel_systems{3})
+%         conversion = "nan";
+%         data_info.standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
+%     
     else
         error("ERROR: UNSUPPORTED CHANNEL SYSTEM");
     end
@@ -135,11 +133,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     participant_filepath1 = [data_dataset_path 'participants.csv'];
     
     % Read the participant file
-    %USER GUIDE: participant file deve avere nome participant. 
     if isfile(participant_filepath) 
         T = readtable(participant_filepath,"FileType","delimitedtext");
+
     elseif isfile(participant_filepath1)
         T = readtable(participant_filepath1,"FileType","delimitedtext");
+
     elseif ~isempty(dir([data_dataset_path 'participants.*']))
         T = [];
         warning('PARTICIPANT FILE FOUND BUT UNABLE TO IMPORT THE ASSOCIATED FILE FORMAT'); 
@@ -149,23 +148,27 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     end
     
     %% Import diagnostic test -----------------------------------------------
-    %USER GUIDE: la prima colonna di ogni .csv deve essere il subject ID.
     
     diagnostic_folder_path = [data_dataset_path diagnostic_folder_name];
     S = dir(fullfile(diagnostic_folder_path,'*'));
     N = setdiff({S([S.isdir]).name},{'.','..'}); % list of subfolders of D.
+
     for ii = 1:numel(N)
         K = dir(fullfile(diagnostic_folder_path,N{ii},'*.csv'));
         C = {K(~[K.isdir]).name}; % files in subfolder.
+
         for jj = 1:numel(C)
             F = fullfile(diagnostic_folder_path,N{ii},C{jj});
+
             if ~isempty(T)
                 T_new = readtable(F,"FileType","delimitedtext");
                 T_feats = T_new.Properties.VariableNames(2:end);
                 Nfeat = length(T_feats);
                 c = [false true(1,Nfeat)];
+
                 for i=1:Nfeat
                     T_type = class(T_new.(i+1));
+
                     if ~strcmp(T_type,'cell')
                         T = [T table(NaN([height(T) 1]),'VariableNames',T_feats(i))];
                     else
@@ -175,6 +178,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     
                 for i=1:height(T_new)
                     O = find(strcmp(T_new{i,1},T{:,1}));
+
                     if ~isempty(O)
                         T(O,end-sum(c)+1:end) = T_new(i,c);
                     end
@@ -188,7 +192,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     %% Extract selected patients
     % Check if subject selection is required
     if strcmp(data_info.select_subjects,'yes') && isempty(T)
-        error('UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE');
+        error("UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE");
     
     elseif strcmp(data_info.select_subjects,'yes') && ~isempty(T)
         % Select control subjects based on group information
@@ -223,6 +227,10 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     
     %% Process all subjects in the dataset ----------------------------------
     N_subj = length(subj_list);
+    if ~strcmp(numbers_files.N_subj,'all')
+        N_subj = min(N_subj,numbers_files.N_subj);
+    end
+
     L = [];
     
     for j=1:N_subj
@@ -249,9 +257,9 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
         dfolders  = d([d(:).isdir]);
         sess_list = dfolders(~ismember({dfolders(:).name},{'.','..'}));
         N_sess    = length(sess_list);
-    
-        %USER GUIDE: folder names are equal to subject id in participant
-        %file
+        if ~strcmp(numbers_files.N_sess,'all')
+            N_sess = min(N_sess,numbers_files.N_sess);
+        end
 
         % Load subject information, and check if the folder name is found
         % inside the participant.tsv file
@@ -283,7 +291,9 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
             raw_filepath  = pwd;
             filelist      = dir(['*' data_info.eeg_file_extension]);
             N_obj         = length(filelist);
-            
+            if ~strcmp(numbers_files.N_obj,'all')
+                N_obj = min(N_obj,numbers_files.N_obj);
+            end
             %% Preprocess all .set files of a subject -----------------------
             for i=1:N_obj
 
@@ -299,11 +309,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
                                                                        raw_filepath, raw_filename, data_info);
 
                 [EEG, L] = preprocess_single_file(raw_filepath, raw_filename, raw_channels_filename, set_preprocessed_filename, ...
-                                                  data_info, channel_to_remove, params_info, template_info, L);
+                                                  channel_systems, data_info, channel_to_remove, params_info, template_info, L);
                 
                 %% Save data to template (and interpolation) ----------------
                 if save_info.save_data
-                    [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, ...
+                    [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, channel_systems,...
                                                               EEG, template_info, save_info, data_info, params_info, subj_info);
 
                     if ~isempty(EEG.event) && save_info.save_marker

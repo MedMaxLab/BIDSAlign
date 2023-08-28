@@ -1,6 +1,6 @@
 
-function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_info, dataset_name, save_info, params_info, ...
-                                                 change_architecture_need, mat_preprocessed_folder, csv_preprocessed_folder, ...
+function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
+                                                 mat_preprocessed_folder, csv_preprocessed_folder, ...
                                                  diagnostic_folder_name, numbers_files)
 
     % Check if the dataset name imported is correct or if multiple dataset
@@ -15,11 +15,6 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
        error("ERROR: CHECK THE DATASET NAME");
     elseif c>1
        error("ERROR: MULTIPLE DATASET HAVE THE SAME NAME IN THE EXCEL FILE");
-    end
-    
-    %% Create/Check Dataset Structure
-    if change_architecture_need
-        create_dataset_architecture();
     end
     
     %% Handle Compatibility
@@ -41,10 +36,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
                        'label_value', dataset_info.label_value{dataset_index},...
                        'label_name', dataset_info.label_name{dataset_index},...
                        'dataset_name', dataset_name,...
-                       'channel_to_remove',dataset_info.channel_to_remove{dataset_index});
+                       'channel_to_remove',dataset_info.channel_to_remove{dataset_index}, ...
+                       'change_arch',dataset_info.change_arch{dataset_index});
                        %'voltage_unit', dataset_info.units{dataset_index},...
                        %'nchan', dataset_info.nchan(dataset_index),...
-    
+   
+      
     %% Check if the imported data has correct values
     %samp rate
     if data_info.samp_rate < 0 || mod(data_info.samp_rate, 1) ~= 0
@@ -54,10 +51,18 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     if params_info.low_freq>params_info.high_freq || params_info.low_freq<0 || params_info.high_freq<0
         error("ERROR: CHECK THE FREQUENCIES FOR THE FILTER");
     end
+
     %n° of IC components
-    if params_info.n_ica<=0
-        error("ERROR: CHECK THE NUMBER OF IC REQUESTED");
+%     if params_info.n_ica<=0
+%         error("ERROR: CHECK THE NUMBER OF IC REQUESTED");
+%     end
+
+
+    %% Create/Check Dataset Structure
+    if strcmp(data_info.change_arch,'yes')
+        create_dataset_architecture();
     end
+
     
     %% Set Folder/Files Path
     % Set the necessary folder and file paths
@@ -79,7 +84,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, dataset_inf
     channel_systems = {'10_20', '10_10', '10_5', 'GSN129', 'GSN256'};
 
     % Create the template struct to store channel template information
-    template_folder           = [root_datasets_path '__lib\template\template_channel_selection\'];
+    template_folder           = [lib_path '__lib\template\template_channel_selection\'];
     tensor_template_filename  = 'tensor_channel_template.mat';
     matrix_template_filename  = 'matrix_channel_template.mat';
     

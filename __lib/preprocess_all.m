@@ -25,13 +25,9 @@ end
 %% Set Inputs
 % Set the root path of the EEG datasets
 root_datasets_path = 'E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\';  %INPUT
-
-% Read the dataset information from an Excel file
-dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPUT
-dataset_info = readtable([root_datasets_path dataset_info_filename]);
-
+lib_path           = 'E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\';  %INPUT
 % Set the name of the current dataset
-dataset_name = ['HBN_EO_EC'];                                                %INPUT
+dataset_name = [];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
@@ -51,10 +47,13 @@ params_info = struct('low_freq',0.1,...                                    %INPU
                      'channelC',0.7,...
                      'lineC',4);
 
+%Set how many files to preprocess
 numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);                   %INPUT           
 
-% Check if a change in architecture is needed
-change_architecture_need  = false;                                         %INPUT
+
+% Read the dataset information from an Excel file
+dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPUT
+dataset_info = readtable([lib_path dataset_info_filename]);
 
 % Check if exist otherwise create mat_preprocessed_folder
 mat_preprocessed_folder   = [root_datasets_path '_mat_preprocessed\'];     %INPUT
@@ -78,13 +77,11 @@ if isempty(dataset_name)
         fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
 
         % Preprocess the dataset
-        [~, ~] = preprocess_dataset(root_datasets_path, dataset_info, dataset_name,save_info,params_info, ...
-                                                change_architecture_need,mat_preprocessed_folder,csv_preprocessed_folder, ...
-                                                diagnostic_folder_name,numbers_files);
+        [~, ~] = preprocess_dataset(root_datasets_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
+                                    mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, numbers_files);
     end  
 else
         % Preprocess a specific dataset
-        [~, DATA_STRUCT] = preprocess_dataset(root_datasets_path,dataset_info,dataset_name,save_info,params_info, ...
-                                                change_architecture_need,mat_preprocessed_folder,csv_preprocessed_folder, ...
-                                                diagnostic_folder_name,numbers_files);
+        [~, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
+                                              mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, numbers_files);
 end
