@@ -66,16 +66,16 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
     
     %% Set Folder/Files Path
     % Set the necessary folder and file paths
-    dataset_path = [root_datasets_path dataset_name '\' ];
+    dataset_path = [root_datasets_path dataset_name '/' ];
     cd(dataset_path);
 
     % Check if exist otherwise create set_preprocessed folders
-    data_info.set_folder = [dataset_path 'set_preprocessed\'];
+    data_info.set_folder = [dataset_path 'set_preprocessed/'];
     if ~exist(data_info.set_folder, 'dir')
        mkdir(data_info.set_folder)
     end
     
-    %data_dataset_path         = [dataset_path 'dataset\'];
+    %data_dataset_path         = [dataset_path 'dataset/'];
     data_dataset_path = dataset_path;
     data_info.data_dataset_path = data_dataset_path;
     
@@ -85,7 +85,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
     channel_systems = {'10_20', '10_10', '10_5', 'GSN129', 'GSN256'};
 
     % Create the template struct to store channel template information
-    template_folder           = [lib_path '__lib\template\template_channel_selection\'];
+    template_folder           = [lib_path '/template/template_channel_selection/'];
     tensor_template_filename  = 'tensor_channel_template.mat';
     matrix_template_filename  = 'matrix_channel_template.mat';
     
@@ -98,12 +98,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
     template_tensor = upper(template_tensor.tensor_channel_template);
     
     % Load the conversion files based on the channel system
-    conversion_folder         = [root_datasets_path '__lib\template\template_channel_conversion\'];
+    conversion_folder         = [lib_path '/template/template_channel_conversion/'];
     conv_GSN129_1010_filename = 'conv_GSN129_1010.mat';
     conv_GSN257_1010_filename = 'conv_GSN257_1010.mat';
     
     % Load standard channel location file from templates
-    channel_location_folder = [root_datasets_path '__lib\template\template_channel_location\'];
+    channel_location_folder = [lib_path '/template/template_channel_location/'];
     
     if strcmp(data_info.channel_system,channel_systems{4})
         conversion = load([conversion_folder  conv_GSN129_1010_filename]);
@@ -144,10 +144,10 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
     
     % Read the participant file
     if isfile(participant_filepath) 
-        T = readtable(participant_filepath,"FileType","delimitedtext");
+        T = readtable(participant_filepath,"FileType","text");
 
     elseif isfile(participant_filepath1)
-        T = readtable(participant_filepath1,"FileType","delimitedtext");
+        T = readtable(participant_filepath1,"FileType","text");
 
     elseif ~isempty(dir([data_dataset_path 'participants.*']))
         T = [];
@@ -171,7 +171,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
             F = fullfile(diagnostic_folder_path,N{ii},C{jj});
 
             if ~isempty(T)
-                T_new = readtable(F,"FileType","delimitedtext");
+                T_new = readtable(F,"FileType","text");
                 T_feats = T_new.Properties.VariableNames(2:end);
                 Nfeat = length(T_feats);
                 c = [false true(1,Nfeat)];
@@ -292,7 +292,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
             fprintf([' \t\t\t\t\t\t\t\t ---' dataset_name '- SESSION PROCESSED: ' num2str(k) '/' num2str(N_sess) ' ---\n']);
 
             session_name           = sess_list(k).name;
-            subject_session_folder = [subject_folder '\' session_name '\eeg\'];
+            subject_session_folder = [subject_folder '/' session_name '/eeg/'];
             cd(subject_session_folder);
     
             check_ch2_root = dir('*_channels.tsv');

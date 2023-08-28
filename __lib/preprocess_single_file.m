@@ -25,7 +25,7 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
 
     %% Rename the labels of the channels accorgind to the channels filename
     if ~isempty(raw_channels_filename) && ~strcmp(data_info.channel_location_filename, 'loaded')
-        T = readtable(raw_channels_filename,'FileType','delimitedtext');
+        T = readtable(raw_channels_filename,'FileType','text');
         for i=1:EEG.nbchan
             EEG.chanlocs(i).labels = char(T{i,1});
         end

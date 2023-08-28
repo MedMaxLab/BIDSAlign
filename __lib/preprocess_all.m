@@ -9,6 +9,9 @@ clc
 
 %% Initialize
 % Launch EEGLAB and add necessary plugins
+eeglab_path = '/home/zanola/eeglab2023.0/';
+addpath(eeglab_path);
+
 try
     eeglab;
     close;
@@ -25,9 +28,11 @@ end
 %% Set Inputs
 % Set the root path of the EEG datasets
 root_datasets_path = '/home/zanola/eeg_datasets/datasets/';  %INPUT
-lib_path           = '/home/zanola/eeg_datasets/EEG_ML_dataset/__lib';  %INPUT
+git_path           = '/home/zanola/eeg_datasets/EEG_ML_dataset/';  %INPUT
+lib_path           = '/home/zanola/eeg_datasets/EEG_ML_dataset/__lib/';  %INPUT
+addpath(lib_path);
 % Set the name of the current dataset
-dataset_name = ['EEG_3Stim'];                                                         %INPUT
+dataset_name = [];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
@@ -52,11 +57,12 @@ numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);                   %INPU
 
 
 % Read the dataset information from an Excel file
-dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPUT
-dataset_info = readtable([lib_path dataset_info_filename]);
+%dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPUT
+dataset_info_filename = 'dataset_info_debug.xlsx';
+dataset_info = readtable([git_path dataset_info_filename]);
 
 % Check if exist otherwise create mat_preprocessed_folder
-mat_preprocessed_folder   = [root_datasets_path '_mat_preprocessed\'];     %INPUT
+mat_preprocessed_folder   = [root_datasets_path '_mat_preprocessed/'];     %INPUT
 if ~exist(mat_preprocessed_folder, 'dir')
    mkdir(mat_preprocessed_folder)
 end
@@ -72,7 +78,7 @@ diagnostic_folder_name = '_test';                                          %INPU
 %Create two use modes: if dataset name is specified, preprocess only that
 %dataset otherwise, preprocess all the dataset.
 if isempty(dataset_name)
-    for i=1:height(dataset_info) %<< parfor HERE
+    parfor i=1:height(dataset_info) %<< parfor HERE
         dataset_name = dataset_info.dataset_name{i};
         fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
 
