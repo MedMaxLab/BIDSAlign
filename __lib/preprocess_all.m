@@ -56,10 +56,10 @@ params_info = struct('low_freq',0.1,...                                    %INPU
 numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);                   %INPUT           
 
 
-% Read the dataset information from an Excel file
+% Read the dataset information from a tsv file
 %dataset_info_filename = 'DATASET_INFO.xlsx';                               %INPUT
-dataset_info_filename = 'dataset_info_debug.xlsx';
-dataset_info = readtable([git_path dataset_info_filename]);
+dataset_info_filename = 'dataset_info_debug.tsv';
+dataset_info = readtable([git_path dataset_info_filename],'format','%f%s%s%s%s%s%s%f%s%s%s%s','filetype','text');
 
 % Check if exist otherwise create mat_preprocessed_folder
 mat_preprocessed_folder   = [root_datasets_path '_mat_preprocessed/'];     %INPUT
