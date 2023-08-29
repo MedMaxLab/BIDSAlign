@@ -219,8 +219,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
         % Process all subjects in the dataset
         cd(data_dataset_path);
         d = dir(pwd);
-        dfolders = d([d(:).isdir]);
-        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name}));
+        dfolders = d([d(:).isdir]); %select all folders
+        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name,set_preprocessed}));  %exclude som folders
         subj_list = {dfolders.name};
      end
     
