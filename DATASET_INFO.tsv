@@ -1,15 +1,15 @@
-dataset_number_reference	dataset_name	channel_location_filename	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate	select_subjects	label_name	label_value	change_arch
-1	HBN_EO_EC	loaded	GSN129	CZ		.set	500	no			no
-2	Test_Retest_Rest		10_10	FCZ		.vhdr	500	no			no
-3	SRM_Rest		10_10	COMMON		.edf	1024	no			no
-4	MPI_LEMON		10_10	FCZ	VEOG	.vhdr	2500	no			no
-5	EEG_3Stim		10_10	CPZ	VEOG,X,Y,Z	.set	500	yes	Group	CTL	no
-6	BMI_HDEEG_4	GSN129.sfp	GSN129	CZ		.edf	1000	no			no
-7	EEG_MMI		10_10	COMMON		.edf	160	no			no
-8	Nencki_Symfonia	loc_file.bvef	10_5	FCZ		.vhdr	1000	no			no
-9	TDBRAIN		10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500	no			no
-10	FEP_CTL2		10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000	yes	type	Control	no
-11	UC_SD	loc_file.locs	10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	yes	disease_duration	n/a	no
-12	EEG_Med		10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	no			no
-13	EEG_Alz	loaded	10_20	A1-2		.set	500	no			no
-14	EEG_Music		10_20	FCZ		.edf	1000	no			no
+dataset_number_reference	dataset_name	dataset_code	channel_location_filename	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate	select_subjects	label_name	label_value	change_arch
+1	HBN_EO_EC	ds004186	loaded	GSN129	CZ		.set	500	no			no
+2	Test_Retest_Rest	ds004148		10_10	FCZ		.vhdr	500	no			no
+3	SRM_Rest	ds003775		10_10	COMMON		.edf	1024	no			no
+4	MPI_LEMON	MPI_LEMON		10_10	FCZ	VEOG	.vhdr	2500	no			no
+5	EEG_3Stim	ds003490		10_10	CPZ	VEOG,X,Y,Z	.set	500	yes	Group	CTL	no
+6	BMI_HDEEG_4	ds004448	GSN129.sfp	GSN129	CZ		.edf	1000	no			no
+7	EEG_MMI	EEG_MMI		10_10	COMMON		.edf	160	no			no
+8	Nencki_Symfonia	Nencki_Symfonia	loc_file.bvef	10_5	FCZ		.vhdr	1000	no			no
+9	TDBRAIN	TDBRAIN		10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500	no			no
+10	FEP_CTL2	ds003947		10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000	yes	type	Control	no
+11	UC_SD	UC_SD	loc_file.locs	10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	yes	disease_duration	n/a	no
+12	EEG_Med	ds001787		10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	no			no
+13	EEG_Alz	ds004504	loaded	10_20	A1-2		.set	500	no			no
+14	EEG_Music	ds002721		10_20	FCZ		.edf	1000	no			no
