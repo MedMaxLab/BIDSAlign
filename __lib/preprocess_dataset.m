@@ -27,6 +27,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
     %% Create data_info struct
     % Create the data_info struct to store dataset-specific information
     data_info = struct('dataset_number_reference', dataset_index, ...
+                       'dataset_code', dataset_info.dataset_code{dataset_index}, ...
                        'channel_location_filename', dataset_info.channel_location_filename{dataset_index},...
                        'channel_system', dataset_info.channel_system{dataset_index},...
                        'channel_reference', dataset_info.channel_reference{dataset_index},...
@@ -66,7 +67,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
     
     %% Set Folder/Files Path
     % Set the necessary folder and file paths
-    dataset_path = [root_datasets_path dataset_name '/' ];
+    dataset_path = [root_datasets_path dataset_code '/' ];
     cd(dataset_path);
 
     % Check if exist otherwise create set_preprocessed folders
@@ -219,13 +220,20 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
         % Process all subjects in the dataset
         cd(data_dataset_path);
         d = dir(pwd);
+<<<<<<< HEAD
         dfolders = d([d(:).isdir]); %select all folders
         dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name,set_preprocessed}));  %exclude som folders
+=======
+        dfolders = d([d(:).isdir]);
+        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name,'set_preprocessed'}));
+>>>>>>> 43c704624ec331b77a7b727ee59423220b107e94
         subj_list = {dfolders.name};
+
      end
     
     %% Check Channel/Electrodes file name -----------------------------------
     check_ch0_root = dir([data_dataset_path '*_channels.tsv']);
+    disp(check_ch0_root);
     check_el0_root = dir([data_dataset_path '*_electrodes.tsv']);
     
     if length(check_ch0_root)>1
@@ -278,7 +286,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
             if ~isempty(O)
                 subj_info = table2struct(T(O,:));
             else
-                warning('WARNING: SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE; SUBJECT INFO NOT LOADED.');
+                %warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE; SUBJECT INFO NOT LOADED.');
                 subj_info = [];
             end
 
@@ -313,7 +321,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
                 preprocessed_filename     = [int2str(data_info.dataset_number_reference) '_' int2str(j) '_' int2str(k) '_' int2str(i)];
                 set_preprocessed_filename = [preprocessed_filename data_info.eeg_file_extension];
                 mat_preprocessed_filepath = [mat_preprocessed_folder preprocessed_filename '.mat'];
-    
+    	
                 [raw_channels_filename, data_info] = extract_filenames(check_ch0_root, check_ch1_root, check_ch2_root, ...
                                                                        check_el0_root, check_el1_root, check_el2_root, ...
                                                                        raw_filepath, raw_filename, data_info);

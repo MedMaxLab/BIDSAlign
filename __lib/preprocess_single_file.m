@@ -63,7 +63,10 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
      %EEG = pop_runica(EEG, 'icatype', 'fastica', 'g', params_info.non_linearity_ica, 'lastEig', params_info.n_ica, 'verbose','off');
     
     %% ASR --------------------------------------------------------------
-    [EEG] = clean_rawdata(EEG, params_info.flatlineC, 'off', params_info.channelC, params_info.lineC, 'off','off');
+    [EEG,~,~] = clean_artifacts(EEG, 'ChannelCriterion', params_info.channelC,'LineNoiseCriterion', params_info.lineC, ...
+                                     'BurstCriterion','off','WindowCriterion','off','Highpass','off', ...
+                                     'FlatlineCriterion', params_info.flatlineC);
+
     EEG.history = [EEG.history newline 'ASR: FlatLineCriterion ' num2str(params_info.flatlineC) ...
                    ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
 
