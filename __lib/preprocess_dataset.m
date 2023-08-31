@@ -41,7 +41,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
                        'change_arch',dataset_info.change_arch{dataset_index});
                        %'voltage_unit', dataset_info.units{dataset_index},...
                        %'nchan', dataset_info.nchan(dataset_index),...
-   
+ 
       
     %% Check if the imported data has correct values
     %samp rate
@@ -67,11 +67,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
     
     %% Set Folder/Files Path
     % Set the necessary folder and file paths
-    dataset_path = [root_datasets_path dataset_code '/' ];
+    dataset_path = [root_datasets_path data_info.dataset_code '/' ];
     cd(dataset_path);
 
+
     % Check if exist otherwise create set_preprocessed folders
-    data_info.set_folder = [dataset_path 'set_preprocessed/'];
+    data_info.set_folder = [root_datasets_path1 'set_preprocessed_' data_info.dataset_code '/'];
     if ~exist(data_info.set_folder, 'dir')
        mkdir(data_info.set_folder)
     end

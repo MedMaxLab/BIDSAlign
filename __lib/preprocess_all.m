@@ -79,7 +79,7 @@ diagnostic_folder_name = '_test';                                          %INPU
 %Create two use modes: if dataset name is specified, preprocess only that
 %dataset otherwise, preprocess all the dataset.
 if isempty(dataset_name)
-   parfor i=1:height(dataset_info) %<< parfor HERE
+   for i=1:height(dataset_info) %<< parfor HERE
         dataset_name = dataset_info.dataset_name{i};
         fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
 
