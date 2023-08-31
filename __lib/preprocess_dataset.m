@@ -221,9 +221,9 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
         % Process all subjects in the dataset
         cd(data_dataset_path);
         d = dir(pwd);
-
+        
         dfolders = d([d(:).isdir]); %select all folders
-        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name}));  %exclude some folders
+        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name,'.datalad'}));  %exclude some folders
         subj_list = {dfolders.name};
 
      end
@@ -256,7 +256,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
         subject_folder = [data_dataset_path subject_name];
 
         cd(subject_folder);
-    
+    	disp(pwd);
         check_ch1_root = dir('*_channels.tsv');
         check_el1_root = dir('*_electrodes.tsv');
     
