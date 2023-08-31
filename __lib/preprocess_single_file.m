@@ -1,6 +1,6 @@
 
 function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channels_filename, set_preprocessed_filename, ...
-                                          channel_systems, data_info, channel_to_remove, params_info, template_info, L)
+                                          channel_systems, data_info, channel_to_remove, params_info, template_info, L, save_info)
 
     %% Load raw file ----------------------------------------------------
     [EEG] = import_data(raw_filename, raw_filepath, data_info);
@@ -71,7 +71,8 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
                    ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
 
     %% Save the .set file -----------------------------------------------
-    [EEG] = pop_saveset( EEG, 'filename',set_preprocessed_filename,'filepath',data_info.set_folder);
-    EEG.history = [EEG.history newline 'SAVE .SET FILE: ' data_info.set_folder set_preprocessed_filename];
-
+    if save_info.save_set
+        [EEG] = pop_saveset( EEG, 'filename',set_preprocessed_filename,'filepath',data_info.set_folder);
+        EEG.history = [EEG.history newline 'SAVE .SET FILE: ' data_info.set_folder set_preprocessed_filename];
+    end
 end

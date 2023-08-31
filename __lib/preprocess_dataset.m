@@ -1,5 +1,5 @@
 
-function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
+function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                                  mat_preprocessed_folder, csv_preprocessed_folder, ...
                                                  diagnostic_folder_name, numbers_files)
 
@@ -72,8 +72,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
 
 
     % Check if exist otherwise create set_preprocessed folders
-    data_info.set_folder = [root_datasets_path1 'set_preprocessed_' data_info.dataset_code '/'];
-    if ~exist(data_info.set_folder, 'dir')
+    data_info.set_folder = [root_folder_path 'set_preprocessed_' data_info.dataset_code '/'];
+    if ~exist(data_info.set_folder, 'dir') && save_info.save_set
        mkdir(data_info.set_folder)
     end
     
@@ -221,20 +221,15 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
         % Process all subjects in the dataset
         cd(data_dataset_path);
         d = dir(pwd);
-<<<<<<< HEAD
+
         dfolders = d([d(:).isdir]); %select all folders
-        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name,set_preprocessed}));  %exclude som folders
-=======
-        dfolders = d([d(:).isdir]);
-        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name,'set_preprocessed'}));
->>>>>>> 43c704624ec331b77a7b727ee59423220b107e94
+        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',diagnostic_folder_name}));  %exclude some folders
         subj_list = {dfolders.name};
 
      end
     
     %% Check Channel/Electrodes file name -----------------------------------
     check_ch0_root = dir([data_dataset_path '*_channels.tsv']);
-    disp(check_ch0_root);
     check_el0_root = dir([data_dataset_path '*_electrodes.tsv']);
     
     if length(check_ch0_root)>1
@@ -328,7 +323,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, d
                                                                        raw_filepath, raw_filename, data_info);
 
                 [EEG, L] = preprocess_single_file(raw_filepath, raw_filename, raw_channels_filename, set_preprocessed_filename, ...
-                                                  channel_systems, data_info, channel_to_remove, params_info, template_info, L);
+                                                  channel_systems, data_info, channel_to_remove, params_info, template_info, L, save_info);
                 
                 %% Save data to template (and interpolation) ----------------
                 if save_info.save_data

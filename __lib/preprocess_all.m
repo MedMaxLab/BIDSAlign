@@ -26,24 +26,32 @@ end
 % end
 
 %% Set Inputs
-% Set the root path of the EEG datasets
-root_datasets_path1 = '/home/zanola/eeg_datasets/'; %INPUT
-root_datasets_path = '/home/zanola/eeg_datasets/datasets/';  %INPUT
-git_path           = '/home/zanola/eeg_datasets/EEG_ML_dataset/';  %INPUT
-lib_path           = '/home/zanola/eeg_datasets/EEG_ML_dataset/__lib/';  %INPUT
+% Set the root path of the EEG datasets (server)
+% root_datasets_path1 = '/home/zanola/eeg_datasets/'; %INPUT
+% root_datasets_path  = '/home/zanola/eeg_datasets/datasets/';  %INPUT  /readonly/openeuro
+% git_path            = '/home/zanola/eeg_datasets/EEG_ML_dataset/';  %INPUT
+
+% Set the root path of the EEG datasets (local)
+root_folder_path    = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/'; %INPUT
+root_datasets_path  = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/Datasets/';  %INPUT
+git_path            = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/EEG_ML_dataset/';  %INPUT
+
+lib_path            = [git_path '__lib']; 
 addpath(lib_path);
+
 % Set the name of the current dataset
 dataset_name = [];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
                    'save_data_as','matrix', ...
+                   'save_set', false,...
                    'save_struct',true, ...
                    'save_marker',false);
 
 % Set the parameters for preprocessing
 params_info = struct('low_freq',0.1,...                                    %INPUT
-                     'high_freq',40, ...
+                     'high_freq',49, ...
                      'sampling_rate',250, ...
                      'n_ica',15, ...
                      'non_linearity_ica','tanh', ...
@@ -63,13 +71,13 @@ dataset_info_filename = 'dataset_info_debug.tsv';
 dataset_info = readtable([git_path dataset_info_filename],'format','%f%s%s%s%s%s%s%s%f%s%s%s%s','filetype','text');
 
 % Check if exist otherwise create mat_preprocessed_folder
-mat_preprocessed_folder   = [root_datasets_path1 '_mat_preprocessed/'];     %INPUT
+mat_preprocessed_folder   = [root_folder_path '_mat_preprocessed/'];     %INPUT
 if ~exist(mat_preprocessed_folder, 'dir')
    mkdir(mat_preprocessed_folder)
 end
 % Check if exist otherwise create csv_marker_files folder
-csv_preprocessed_folder   = [root_datasets_path1 '_csv_marker_files/'];     %INPUT
-if ~exist(csv_preprocessed_folder, 'dir')
+csv_preprocessed_folder   = [root_folder_path '_csv_marker_files/'];     %INPUT
+if ~exist(csv_preprocessed_folder, 'dir') && save_info.save_marker 
     mkdir(csv_preprocessed_folder)
 end
 
@@ -84,11 +92,11 @@ if isempty(dataset_name)
         fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
 
         % Preprocess the dataset
-        [~, ~] = preprocess_dataset(root_datasets_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
+        [~, ~] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                     mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, numbers_files);
     end  
 else
         % Preprocess a specific dataset
-        [~, DATA_STRUCT] = preprocess_dataset(root_datasets_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
+        [~, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                               mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, numbers_files);
 end
