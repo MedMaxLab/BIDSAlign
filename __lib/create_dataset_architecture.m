@@ -16,12 +16,14 @@ function create_dataset_architecture()
         sessFolders = sessFolders(3:end);
 
         if isempty(sessFolders)
-           movefile([subject_folder_name '/*'],[subject_folder_name '/sess-01/eeg/']) %If no session folders present, assume 1 session.
+           mkdir([subject_folder_name '/sess-01/eeg'])
+           movefile([subject_folder_name '/*'],[subject_folder_name '/sess-01/eeg']) %If no session folders present, assume 1 session.
 
         elseif length(sessFolders)==1 && string(sessFolders(1).name) == "eeg"
-           session_folder_name = [pwd '/' sessFolders(1).name];                
-           movefile([session_folder_name '/*'],[subject_folder_name '/sess-01/eeg/'])
-           disp(pwd)
+           session_folder_name = [pwd '/' sessFolders(1).name];   
+           mkdir([subject_folder_name '/sess-01/eeg'])
+           movefile([session_folder_name '/*'],[subject_folder_name '/sess-01/eeg'])
+
            rmdir eeg
         else         
             for j=1:length(sessFolders)
