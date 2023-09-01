@@ -28,20 +28,20 @@ end
 
 %% Set Inputs
 % Set the root path of the EEG datasets (server)
-root_folder_path    = '/home/zanola/eeg_datasets/'; %INPUT
-root_datasets_path  = '/data/zanola/datasets/';  %INPUT  /readonly/openeuro
-git_path            = '/home/zanola/eeg_datasets/EEG_ML_dataset/';  %INPUT
+%root_folder_path    = '/home/zanola/eeg_datasets/'; %INPUT
+%root_datasets_path  = '/data/zanola/datasets/';  %INPUT  /readonly/openeuro
+%git_path            = '/home/zanola/eeg_datasets/EEG_ML_dataset/';  %INPUT
 
 % Set the root path of the EEG datasets (local)
-%root_folder_path    = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/'; %INPUT
-%root_datasets_path  = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/Datasets/';  %INPUT
-%git_path            = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/EEG_ML_dataset/';  %INPUT
+root_folder_path    = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/'; %INPUT
+root_datasets_path  = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/Datasets/';  %INPUT
+git_path            = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/EEG_ML_dataset/';  %INPUT
 
 lib_path            = [git_path '__lib']; 
 addpath(lib_path);
 
 % Set the name of the current dataset
-dataset_name = [];                                                         %INPUT
+dataset_name = ['EEG_Alz'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...

@@ -58,17 +58,16 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
 %         error("ERROR: CHECK THE NUMBER OF IC REQUESTED");
 %     end
 
-
-    %% Create/Check Dataset Structure
-    if strcmp(data_info.change_arch,'yes')
-        create_dataset_architecture();
-    end
-
     
     %% Set Folder/Files Path
     % Set the necessary folder and file paths
     dataset_path = [root_datasets_path data_info.dataset_code '/' ];
     cd(dataset_path);
+
+    %% Create/Check Dataset Structure
+    if strcmp(data_info.change_arch,'yes')
+        create_dataset_architecture();
+    end
 
 
     % Check if exist otherwise create set_preprocessed folders
