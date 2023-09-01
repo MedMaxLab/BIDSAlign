@@ -4,7 +4,6 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	cha
 3	SRM_Rest	ds003775		10_10	COMMON		.edf	1024	no			no
 4	MPI_LEMON	MPI_LEMON		10_10	FCZ	VEOG	.vhdr	2500	no			no
 5	EEG_3Stim	ds003490		10_10	CPZ	VEOG,X,Y,Z	.set	500	no			no
-7	EEG_MMI	EEG_MMI		10_10	COMMON		.edf	160	no			no
 9	TDBRAIN	TDBRAIN		10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500	no			no
 10	FEP_CTL2	ds003947		10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000	no			no
 11	UC_SD	UC_SD		10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	no			no
