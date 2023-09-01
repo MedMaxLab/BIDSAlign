@@ -20,15 +20,16 @@ catch
 end
 
 % Launch the parallel pool for parallel computing (if available)
-% try
-%     parpool;
-% catch
-% end
+try
+     parpool;
+catch
+
+end
 
 %% Set Inputs
 % Set the root path of the EEG datasets (server)
 root_folder_path    = '/home/zanola/eeg_datasets/'; %INPUT
-root_datasets_path  = '/home/zanola/eeg_datasets/datasets/';  %INPUT  /readonly/openeuro
+root_datasets_path  = '/data/zanola/datasets/';  %INPUT  /readonly/openeuro
 git_path            = '/home/zanola/eeg_datasets/EEG_ML_dataset/';  %INPUT
 
 % Set the root path of the EEG datasets (local)
@@ -87,7 +88,7 @@ diagnostic_folder_name = '_test';                                          %INPU
 %Create two use modes: if dataset name is specified, preprocess only that
 %dataset otherwise, preprocess all the dataset.
 if isempty(dataset_name)
-   for i=1:height(dataset_info) %<< parfor HERE
+   parfor i=1:height(dataset_info) %<< parfor HERE
         dataset_name = dataset_info.dataset_name{i};
         fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
 
