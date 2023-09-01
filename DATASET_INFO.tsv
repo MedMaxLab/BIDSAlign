@@ -9,7 +9,7 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	cha
 8	Nencki_Symfonia	Nencki_Symfonia	loc_file.bvef	10_5	FCZ		.vhdr	1000	no			no
 9	TDBRAIN	TDBRAIN		10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500	no			no
 10	FEP_CTL2	ds003947		10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000	yes	type	Control	no
-11	UC_SD	UC_SD	loc_file.locs	10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	yes	disease_duration	n/a	no
+11	UC_SD	ds002778	loc_file.locs	10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	yes	disease_duration	n/a	no
 12	EEG_Med	ds001787		10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	no			no
 13	EEG_Alz	ds004504	loaded	10_20	A1-2		.set	500	no			no
 14	EEG_Music	ds002721		10_20	FCZ		.edf	1000	no			no
