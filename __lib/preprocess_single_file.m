@@ -68,7 +68,7 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
     %                                 'FlatlineCriterion', params_info.flatlineC);
 
     %EEG.history = [EEG.history newline 'ASR: FlatLineCriterion ' num2str(params_info.flatlineC) ...
-                   ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
+    %               ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
 
     %% Save the .set file -----------------------------------------------
     %if save_info.save_set
