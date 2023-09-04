@@ -44,9 +44,13 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
         EEG.history = [EEG.history newline 'REMOVE BASELINE FOR EACH CHANNEL'];
     
         %% Resampling -------------------------------------------------------
-        if params_info.sampling_rate ~= data_info.samp_rate
+        if params_info.sampling_rate ~= data_info.samp_rate && data_info.samp_rate > 0 && mod(data_info.samp_rate, 1) == 0 
              [EEG] = pop_resample( EEG, params_info.sampling_rate);
              EEG.history = [EEG.history newline 'RESAMPLING TO: '  num2str(params_info.sampling_rate) 'Hz'];
+        else
+            EEG = [];
+            L=0;
+            return
         end
     
         %% Filter the data --------------------------------------------------
