@@ -40,7 +40,7 @@ lib_path            = [git_path '__lib'];
 addpath(lib_path);
 
 % Set the name of the current dataset
-dataset_name = ['EEG_Alz'];                                                         %INPUT
+dataset_name = ['FEP_CTL2'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
