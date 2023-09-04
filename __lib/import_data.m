@@ -14,7 +14,7 @@ function EEG = import_data(raw_filename, raw_filepath, data_info)
 
     elseif eeg_file_extension == ".vhdr"
         try
-            EEG = pop_loadbv('path',raw_filepath,'hdrfile', raw_filename,  [1:-1], [1:-1]);
+            EEG = pop_loadbv(raw_filepath, raw_filename,  [1:-1], [1:-1]);
         catch
             EEG = [];
             disp(['SKIPPED: ' raw_filepath raw_filename]);
