@@ -62,8 +62,8 @@ params_info = struct('low_freq',0.1,...                                    %INPU
                      'lineC',4);
 
 %Set how many files to preprocess
-%numbers_files = struct('N_subj','all','N_sess','all','N_obj','all');                   %INPUT
-numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);
+numbers_files = struct('N_subj','all','N_sess','all','N_obj','all');                   %INPUT
+%numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);
 
 % Read the dataset information from a tsv file
 dataset_info_filename = 'DATASET_INFO.tsv';                               %INPUT
