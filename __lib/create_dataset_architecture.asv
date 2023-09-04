@@ -25,6 +25,9 @@ function create_dataset_architecture()
            movefile([session_folder_name '/*'],[subject_folder_name '/sess-01/eeg'])
 
            rmdir eeg
+
+        elseif length(sessFolders)==1 && string(sessFolders(1).name) ~= "eeg"
+            movefile(sessFolders,'sess-01')
     
         else         
             for j=1:length(sessFolders)
