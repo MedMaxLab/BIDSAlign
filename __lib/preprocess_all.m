@@ -40,7 +40,7 @@ lib_path            = [git_path '__lib'];
 addpath(lib_path);
 
 % Set the name of the current dataset
-dataset_name = [];                                                         %INPUT
+dataset_name = ['TDBRAIN'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
