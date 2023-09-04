@@ -9,6 +9,7 @@ function EEG = import_data(raw_filename, raw_filepath, data_info)
             EEG = pop_loadset('filename',raw_filename,'filepath',raw_filepath);
         catch
             EEG = [];
+            disp(['SKIPPED: ' raw_filepath]);
         end
 
     elseif eeg_file_extension == ".vhdr"
@@ -16,12 +17,14 @@ function EEG = import_data(raw_filename, raw_filepath, data_info)
             EEG = pop_loadbv('path',raw_filepath,'hdrfile', raw_filename,  [1:-1], [1:-1]);
         catch
             EEG = [];
+            disp(['SKIPPED: ' raw_filepath]);
         end
     elseif eeg_file_extension == ".edf" || eeg_file_extension == ".bdf"
         try
             EEG = pop_biosig(raw_filename); 
         catch
             EEG = [];
+            disp(['SKIPPED: ' raw_filename]);
         end
 
 %     elseif eeg_file_extension == ".csv" && ~isempty(nchan) 

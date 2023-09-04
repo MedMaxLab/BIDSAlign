@@ -255,7 +255,6 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
         subject_folder = [data_dataset_path subject_name];
 
         cd(subject_folder);
-    	disp(pwd);
         check_ch1_root = dir('*_channels.tsv');
         check_el1_root = dir('*_electrodes.tsv');
     
