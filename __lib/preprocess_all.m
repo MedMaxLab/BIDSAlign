@@ -20,10 +20,10 @@ catch
 end
 
 % Launch the parallel pool for parallel computing (if available)
-try
-     parpool;
-catch
-end
+%try
+%     parpool;
+%catch
+%end
 
 %% Set Inputs
 % Set the root path of the EEG datasets (server)
@@ -40,7 +40,7 @@ lib_path            = [git_path '__lib'];
 addpath(lib_path);
 
 % Set the name of the current dataset
-dataset_name = ['TDBRAIN'];                                                         %INPUT
+dataset_name = ['EEG_Alz'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
@@ -87,7 +87,7 @@ diagnostic_folder_name = '_test';                                          %INPU
 %Create two use modes: if dataset name is specified, preprocess only that
 %dataset otherwise, preprocess all the dataset.
 if isempty(dataset_name)
-   parfor i=1:height(dataset_info) %<< parfor HERE
+   for i=1:height(dataset_info) %<< parfor HERE
         dataset_name = dataset_info.dataset_name{i};
         fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_name ' ---\n']);
 
