@@ -40,7 +40,7 @@ lib_path            = [git_path '__lib'];
 addpath(lib_path);
 
 % Set the name of the current dataset
-dataset_name = ['FEP_CTL2'];                                                         %INPUT
+dataset_name = ['HBN_EO_EC'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
