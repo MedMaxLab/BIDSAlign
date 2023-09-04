@@ -70,6 +70,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
         end
     else
         %Fig 4. 1)
+        [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true, EEG);
         B = EEG.chanlocs;
         channel_location_file_extension = "nan";
         L = [];
