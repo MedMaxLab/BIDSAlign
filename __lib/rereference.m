@@ -5,8 +5,11 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
     standard_reference = params_info.standard_ref;
 
     %% Create list of available channels --------------------------------
-    B_labels = arrayfun(@(x) upper(erase(x.labels, ["." ".."])), B, 'UniformOutput', false);
-    listB = string(B_labels);
+    NchanB = length(B);
+    listB = strings(NchanB,1);
+    for t = 1:NchanB
+        listB(t) = B(t).labels;
+    end
 
     %% Reref the data to average reference ------------------------------
     if strcmp(standard_reference,"COMMON")
