@@ -48,9 +48,10 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
              [EEG] = pop_resample( EEG, params_info.sampling_rate);
              EEG.history = [EEG.history newline 'RESAMPLING TO: '  num2str(params_info.sampling_rate) 'Hz'];
         else
-            EEG = [];
-            L=0;
-            return
+             EEG.srate = data_info.samp_rate;
+             EEG.xmax = EEG.pnts/data_info.samp_rate;
+             [EEG] = pop_resample( EEG, params_info.sampling_rate);
+             EEG.history = [EEG.history newline 'RESAMPLING TO: '  num2str(params_info.sampling_rate) 'Hz'];
         end
     
         %% Filter the data --------------------------------------------------
