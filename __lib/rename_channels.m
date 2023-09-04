@@ -38,7 +38,7 @@ function [B] = rename_channels(B, data_info, channel_systems, EEG_history, EEG)
         if ~isempty(J)
             B(J).labels = ['E' data_info.channel_system(end-2:end)];
             if EEG_history
-                EEG.history = [EEG.history newline 'CHANGE CHANNEL NAME:' CZ 'TO' B(J).labels];
+                EEG.history = [EEG.history newline 'CHANGE CHANNEL NAME: CZ TO' B(J).labels];
             end
         end
     end
