@@ -5,13 +5,24 @@ function EEG = import_data(raw_filename, raw_filepath, data_info)
     %nchan              = data_info.nchan;
 
     if eeg_file_extension == ".set"
-        EEG = pop_loadset('filename',raw_filename,'filepath',raw_filepath);
+        try
+            EEG = pop_loadset('filename',raw_filename,'filepath',raw_filepath);
+        catch
+            EEG = [];
+        end
 
     elseif eeg_file_extension == ".vhdr"
-        EEG = pop_loadbv(raw_filepath, raw_filename,  [1:-1], [1:-1]);
-
+        try
+            EEG = pop_loadbv('path',raw_filepath,'hdrfile', raw_filename,  [1:-1], [1:-1]);
+        catch
+            EEG = [];
+        end
     elseif eeg_file_extension == ".edf" || eeg_file_extension == ".bdf"
-        EEG = pop_biosig(raw_filename); 
+        try
+            EEG = pop_biosig(raw_filename); 
+        catch
+            EEG = [];
+        end
 
 %     elseif eeg_file_extension == ".csv" && ~isempty(nchan) 
 %         %number of channels

@@ -325,7 +325,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
                                                   channel_systems, data_info, channel_to_remove, params_info, template_info, L, save_info);
                 
                 %% Save data to template (and interpolation) ----------------
-                if save_info.save_data
+                if save_info.save_data && ~isempty(EEG)
                     [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, channel_systems,...
                                                               EEG, template_info, save_info, data_info, params_info, subj_info);
 
