@@ -3,6 +3,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Clear all variables, close figures, and clear the command window
+
+%module unload matlab/2019a
+%module load matlab/2022a
+
+
 clear all
 close all
 clc
