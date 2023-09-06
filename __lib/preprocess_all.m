@@ -28,7 +28,8 @@ end
 %% Set Inputs
 % Set the root path of the EEG datasets (server)
 root_folder_path    = '/home/zanola/eeg_datasets/'; %INPUT
-root_datasets_path  = '/data/zanola/datasets/';  %INPUT  /readonly/openeuro
+root_data_path       = '/data/zanola/'
+root_datasets_path  = [root_data_path 'datasets/'];  %INPUT  /readonly/openeuro
 git_path            = '/home/zanola/eeg_datasets/EEG_ML_dataset/';  %INPUT
 
 % Set the root path of the EEG datasets (local)
@@ -40,7 +41,7 @@ lib_path            = [git_path '__lib'];
 addpath(lib_path);
 
 % Set the name of the current dataset
-dataset_name = ['HBN_EO_EC'];                                                         %INPUT
+dataset_name = ['MPI_LEMON'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
@@ -71,12 +72,12 @@ dataset_info_filename = 'DATASET_INFO.tsv';                               %INPUT
 dataset_info = readtable([git_path dataset_info_filename],'format','%f%s%s%s%s%s%s%s%f%s%s%s%s','filetype','text');
 
 % Check if exist otherwise create mat_preprocessed_folder
-mat_preprocessed_folder   = [root_folder_path '_mat_preprocessed/'];     %INPUT
+mat_preprocessed_folder   = [root_data_path '_mat_preprocessed/'];     %INPUT
 if ~exist(mat_preprocessed_folder, 'dir')
    mkdir(mat_preprocessed_folder)
 end
 % Check if exist otherwise create csv_marker_files folder
-csv_preprocessed_folder   = [root_folder_path '_csv_marker_files/'];     %INPUT
+csv_preprocessed_folder   = [root_data_path '_csv_marker_files/'];     %INPUT
 if ~exist(csv_preprocessed_folder, 'dir') && save_info.save_marker 
     mkdir(csv_preprocessed_folder)
 end

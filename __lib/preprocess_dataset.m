@@ -157,7 +157,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
         T = [];
         warning(['PARTICIPANT FILE NOT FOUND IN: ' data_dataset_path]);
     end
-    
+    head(T)    
     %% Import diagnostic test -----------------------------------------------
     
     diagnostic_folder_path = [data_dataset_path diagnostic_folder_name];
@@ -170,19 +170,22 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
 
         for jj = 1:numel(C)
             F = fullfile(diagnostic_folder_path,N{ii},C{jj});
+            
 
-            if ~isempty(T)
+            if ~isempty(T)		
                 T_new = readtable(F,"FileType","text");
+		
                 T_feats = T_new.Properties.VariableNames(2:end);
                 Nfeat = length(T_feats);
                 c = [false true(1,Nfeat)];
 
                 for i=1:Nfeat
                     T_type = class(T_new.(i+1));
-
+		   
                     if ~strcmp(T_type,'cell')
+		
                         T = [T table(NaN([height(T) 1]),'VariableNames',T_feats(i))];
-                    else
+			else
                         c(i+1) = false;
                     end
                 end
@@ -199,7 +202,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
             end
         end
     end
-    
+
+
     %% Extract selected patients
     % Check if subject selection is required
     if strcmp(data_info.select_subjects,'yes') && isempty(T)
@@ -276,9 +280,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
         % Load subject information, and check if the folder name is found
         % inside the participant.tsv file
         if ~isempty(T)
+            
             O = find(strcmp(subject_name,T{:,1}));
             if ~isempty(O)
+		
                 subj_info = table2struct(T(O,:));
+		disp(subj_info)
             else
                 %warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE; SUBJECT INFO NOT LOADED.');
                 subj_info = [];

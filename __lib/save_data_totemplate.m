@@ -101,7 +101,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, m
     %% Save and Create Tensor or Save Matrix standard template ----------
     data_tensor_size = size(template_info.template_tensor);
 
-    DATA_STRUCT.filepath = [raw_filepath '\' raw_filename];
+    DATA_STRUCT.filepath = [raw_filepath '/' raw_filename];
     DATA_STRUCT.pad_file = pad_interpol_channels; 
     DATA_STRUCT.subj_info = subj_info;
     

@@ -5,6 +5,7 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
     standard_reference = params_info.standard_ref;
 
     %% Create list of available channels --------------------------------
+    %disp(B(1))
     NchanB = length(B);
     listB = strings(NchanB,1);
     for t = 1:NchanB

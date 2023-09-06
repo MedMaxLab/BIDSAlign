@@ -82,6 +82,6 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, raw_channe
         %    EEG.history = [EEG.history newline 'SAVE .SET FILE: ' data_info.set_folder set_preprocessed_filename];
         %end
     else
-        L=0;
+        L=[];
     end
 end
