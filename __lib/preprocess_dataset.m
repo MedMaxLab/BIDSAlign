@@ -157,7 +157,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
         T = [];
         warning(['PARTICIPANT FILE NOT FOUND IN: ' data_dataset_path]);
     end
-    head(T)    
+
     %% Import diagnostic test -----------------------------------------------
     
     diagnostic_folder_path = [data_dataset_path diagnostic_folder_name];
@@ -285,7 +285,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
             if ~isempty(O)
 		
                 subj_info = table2struct(T(O,:));
-		disp(subj_info)
+
             else
                 %warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE; SUBJECT INFO NOT LOADED.');
                 subj_info = [];
