@@ -10,3 +10,7 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	cha
 9	EEG_Med	ds001787		10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	no			no
 10	EEG_Alz	ds004504	loaded	10_20	A1-2		.set	500	no			no
 11	EEG_Music	ds002721		10_20	FCZ		.edf	1000	no			no
+12	BMI_HDEEG_1	ds004444		GSN129	CZ		.edf	1000	no			no
+13	BMI_HDEEG_2	ds004446		GSN129	CZ		.edf	1000	no			no
+14	BMI_HDEEG_3	ds004447		GSN129	CZ		.edf	1000	no			no
+15	BMI_HDEEG_4	ds004448		GSN129	CZ		.edf	1000	no			no
