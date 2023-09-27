@@ -1,4 +1,4 @@
-quit%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%            Script for processing EEG DATASET with BIDS STRUCTURE    %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -47,7 +47,7 @@ lib_path            = [git_path '__lib'];
 addpath(lib_path);
 
 % Set the name of the current dataset
-dataset_name = ['MPI_LEMON'];                                                         %INPUT
+dataset_name = ['TDBRAIN'];                                                         %INPUT
 
 % Create a struct to store the save information                            %INPUT
 save_info = struct('save_data',true, ...
