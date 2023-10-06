@@ -1,53 +1,56 @@
 
-function EEG = import_data(raw_filename, raw_filepath, data_info)
-    
-    eeg_file_extension = convertCharsToStrings(data_info.eeg_file_extension);
-    %nchan              = data_info.nchan;
+% Function: import_data
+% Description: Imports EEG data from various file formats using EEGLAB functions.
+%
+% Input:
+%   - raw_filename: Name of the EEG data file (including the file extension).
+%   - raw_filepath: Path to the directory where the EEG data file is located.
+%
+% Output:
+%   - EEG: EEG data structure loaded from the specified file. If loading fails
+%          or the file format is unsupported, EEG will be an empty array ([]).
+%
+% Supported EEG File Formats:
+%   - .set: EEG data is loaded using 'pop_loadset' from EEGLAB.
+%   - .vhdr: EEG data is loaded using 'pop_loadbv' from EEGLAB.
+%   - .edf or .bdf: EEG data is loaded using 'pop_biosig' from EEGLAB.
+%
+% Usage example:
+%   EEG = import_data('sample_data.set', '/path/to/data/', struct('eeg_file_extension', '.set'));
+%
+% Note: Make sure EEGLAB is installed and configured properly in your MATLAB environment.
 
-    if eeg_file_extension == ".set"
+% Author: [Andrea Zanola]
+% Date: [04/10/2023]
+
+function EEG = import_data(raw_filename, raw_filepath)
+    
+    [~,~,eeg_file_extension] = fileparts(raw_filename);
+
+    if isequal(eeg_file_extension,'.set')
         try
             EEG = pop_loadset('filename',raw_filename,'filepath',raw_filepath);
         catch
             EEG = [];
-            disp(['SKIPPED: ' raw_filepath raw_filename]);
+            disp(['CORRUPTED .SET FILE: ' raw_filepath raw_filename]);
         end
 
-    elseif eeg_file_extension == ".vhdr"
+    elseif isequal(eeg_file_extension,'.vhdr')
         try
             EEG = pop_loadbv(raw_filepath, raw_filename,  [1:-1], [1:-1]);
         catch
             EEG = [];
-            disp(['SKIPPED: ' raw_filepath raw_filename]);
+            disp(['CORRUPTED .VHDR FILE: ' raw_filepath raw_filename]);
         end
-    elseif eeg_file_extension == ".edf" || eeg_file_extension == ".bdf"
+    elseif isequal(eeg_file_extension,'.edf') || isequal(eeg_file_extension,'.bdf')
         try
             EEG = pop_biosig(raw_filename); 
         catch
             EEG = [];
-            disp(['SKIPPED: ' raw_filepath raw_filename]);
+            disp(['CORRUPTED .EDF or .BDF FILE: ' raw_filepath raw_filename]);
         end
-
-%     elseif eeg_file_extension == ".csv" && ~isempty(nchan) 
-%         %number of channels
-%         if nchan < 0 || mod(nchan, 1) ~= 0
-%             error("ERROR: NEGATIVE OR NON-INTEGER NUMBER OF CHANNELS");
-%         else
-%             raw_file = csvread(raw_filename);
-%             if min(size(raw_file))==1                   %IF DATA ARE SAVED WITH A ONE COLUMN FORMAT. (see TDBRAIN)
-%                 L = length(raw_file)/nchan;             
-%                 if rem(length(raw_file),nchan)==0
-%                     raw_file = reshape(raw_file,[L,nchan]);
-%                     raw_file = raw_file';
-%                 else
-%                     error("ERROR: LENGHT OF DATA NOT MULTIPLE OF CHANNEL NUMBERS");
-%                 end
-%             %else is not needed, because raw_file already calculated
-%             end
-%             EEG = pop_importdata('dataformat','array','nbchan',nchan,'data',raw_file,'srate',data_info.samp_rate,'chanlocs',data_info.channel_location_filename,...
-%                                  'pnts',0,'xmin',0);
-%         end
     else
-        error("ERROR: UNSUPPORTED EEG FILE EXTENSION");
+        error('ERROR: UNSUPPORTED EEG FILE EXTENSION');
     end
 
 
