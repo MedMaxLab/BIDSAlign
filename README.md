@@ -1,4 +1,4 @@
-# EEG_ML_dataset
+# BIDSAlign
 This is the reference repository for the paper < >.
 This library called < > preprocess public dataset saved in BIDS structure, uniforming the outputs to a common template.
 
