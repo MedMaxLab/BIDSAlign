@@ -4,11 +4,17 @@ This library called < > preprocess public dataset saved in BIDS structure, unifo
 
 ## Preparation Steps
 You have to create a folder where you will store all the datasets present in DATASET_INFO.csv. 
+DATASET_INFO.csv is a file structured in the following way:
+| dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate | select_subjects | label_name | label_value | change_arch |
+|--------------------------|------------------|--------------|---------------------------|----------------|-------------------|-------------------|--------------------|-----------|-----------------|------------|-------------|-------------|
+| 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | no        | no              |            |             |             |
+| 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       | no              |            |             |             |
+
 Please remember that you have to specify the name of the dataset not the name of the folder that instead corresponds to dataset code in DATASET_INFO.csv. 
 Since this project uses institutional computing resources, you can choose between two paths, 'local' or 'server' and setting the variable *modality*.
 If you want to use parallel computing resources please set:
 ```
-use_parpool = true;
+TO DO;
 ```
 This will allows to process multiple datasets in parallel.
 
