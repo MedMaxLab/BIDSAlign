@@ -76,6 +76,7 @@ In the current version of the library, the following preprocessing steps are ava
 6. Rereference
 7. ICA
 8. ASR
+
 Please note that EEG data are assumed to be saved in $\mu V$.
 
 
