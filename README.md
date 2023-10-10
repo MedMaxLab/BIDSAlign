@@ -5,10 +5,10 @@ This library called < > preprocess public dataset saved in BIDS structure, unifo
 ## Preparation Steps
 You have to create a folder where you will store all the datasets present in DATASET_INFO.csv. 
 DATASET_INFO.csv is a file structured in the following way:
-| dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate | select_subjects | label_name | label_value | change_arch |
-|--------------------------|------------------|--------------|---------------------------|----------------|-------------------|-------------------|--------------------|-----------|-----------------|------------|-------------|-------------|
-| 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | no        | no              |            |             |             |
-| 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       | no              |            |             |             |
+| dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate | select_subjects | label_name | label_value |
+|--------------------------|------------------|--------------|---------------------------|----------------|-------------------|-------------------|--------------------|-----------|-----------------|------------|-------------|
+| 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | no        | no              |            |             |
+| 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       | no              |            |             |
 
 Please remember that you have to specify the name of the dataset not the name of the folder that instead corresponds to dataset code in DATASET_INFO.csv. 
 Since this project uses institutional computing resources, you can choose between two paths, 'local' or 'server' and setting the variable *modality*.
@@ -20,11 +20,19 @@ This will allows to process multiple datasets in parallel.
 
 # BIDS Format
 This library can preprocess datasets structured with a BIDS format. Thus is expected the same structure of https://bids.neuroimaging.io/ .
-However if you set:
+However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset. For all the cases handled, please see <>.
+As specified in the BIDS format, *participant_file.tsv* should be stored in the dataset folder.
+If other diagnostical tests have been performed and stored in .csv files, please create a diagnostical folder and set the corresponding name:
 ```
-use_parpool = true;
+diagnostic_folder_name = '_test';
 ```
-you can change in-place the folder structure of the dataset. For all the cases handled, please see <>.
+
+# Channel Location
+If a specific channel location should be used for the entire dataset, please enter the filename in the corresponding column in DATASET_INFO.csv. 
+If the eeg files have already the channel coordinates, please enter 'loaded' in the corresponding colum in DATASET_INFO.csv.
+If no channel location is specified, and the field is left empty, than *_electrodes.tsv* files are used.
+*_electrodes.tsv* and *_channels.tsv* files could be saved in every position inside the BIDS structure. These files will be used for all the eeg recording contained in the folder position.
+
 
 # Usage Modalities
 This library allows 3 way of using:
