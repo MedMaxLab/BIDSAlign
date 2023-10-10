@@ -23,11 +23,12 @@ This will allows to process multiple datasets in parallel.
 # BIDS Format
 This library can preprocess datasets structured with a BIDS format. Thus is expected in input a dataset structured as shown in https://bids.neuroimaging.io/ .
 However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset. For all the cases handled, please see <>.
-As specified by the BIDS format, *participant_file.tsv* should be stored in the dataset folder.
+As specified by the BIDS format, *participants.tsv* should be stored in the dataset folder.
 If other diagnostical tests have been performed and stored in .csv files, please create a diagnostical folder and set the corresponding name:
 ```
 diagnostic_folder_name = '_test';
 ```
+Please note that the 1° column of the *participants.tsv* or any other files reporting diagnostical test, has to be the subjects name.
 Folders inside the dataset folder, should have the name of the corresponding subject. Thus the subjects names in *participants.tsv* should match the folder names.
 
 
@@ -75,6 +76,7 @@ In the current version of the library, the following preprocessing steps are ava
 6. Rereference
 7. ICA
 8. ASR
+Please note that EEG data are assumed to be saved in $\muV$.
 
 
 # Compatibility
