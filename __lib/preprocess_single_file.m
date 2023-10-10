@@ -78,6 +78,25 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
             EEG.history = [EEG.history newline 'REMOVE BASELINE FOR EACH CHANNEL'];
         end
 
+        %% Remove initial and final part of the recording
+        if params_info.prep_steps.rmsegments
+            pi = int32(params_info.dt_i*params_info.sampling_rate);
+            pf = int32(params_info.dt_f*params_info.sampling_rate);
+            if length(EEG.data)-pf-pi>0
+                EEG.data = EEG.data(:,pi:end-pf); 
+                EEG.pnts = length(EEG.data);
+                EEG.xmax = EEG.pnts/data_info.samp_rate;
+                EEG.history = [EEG.history newline 'Removed first ' num2str(params_info.dt_i) ' and last ' num2str(params_info.dt_f) ' s'];
+
+
+            elseif length(EEG.data)-pf>0
+                EEG.data = EEG.data(:,1:end-pf); 
+                EEG.pnts = length(EEG.data);
+                EEG.xmax = EEG.pnts/data_info.samp_rate;
+                EEG.history = [EEG.history newline 'Removed last ' num2str(dt_f) ' s'];
+            end
+        end
+
         %% Resampling 
         if params_info.sampling_rate ~= data_info.samp_rate && mod(EEG.srate, 1) == 0 && params_info.prep_steps.resampling
              [EEG] = pop_resample( EEG, params_info.sampling_rate);
@@ -113,25 +132,6 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
         %% ICA
         if params_info.prep_steps.ICA
             [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', params_info.n_ica, 'verbose','off');
-        end
-
-        %% Remove initial and final part of the recording
-        if params_info.prep_steps.segment_removal
-            pi = int32(params_info.dt_i*params_info.sampling_rate);
-            pf = int32(params_info.dt_f*params_info.sampling_rate);
-            if length(EEG.data)-pf-pi>0
-                EEG.data = EEG.data(:,pi:end-pf); 
-                EEG.pnts = length(EEG.data);
-                EEG.xmax = EEG.pnts/data_info.samp_rate;
-                EEG.history = [EEG.history newline 'Removed first ' num2str(params_info.dt_i) ' and last ' num2str(params_info.dt_f) ' s'];
-
-
-            elseif length(EEG.data)-pf>0
-                EEG.data = EEG.data(:,1:end-pf); 
-                EEG.pnts = length(EEG.data);
-                EEG.xmax = EEG.pnts/data_info.samp_rate;
-                EEG.history = [EEG.history newline 'Removed last ' num2str(dt_f) ' s'];
-            end
         end
 
         %% ASR 

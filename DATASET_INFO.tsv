@@ -1,16 +1,16 @@
-dataset_number_reference	dataset_name	dataset_code	channel_location_filename	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate	select_subjects	label_name	label_value	change_arch
-1	HBN_EO_EC	ds004186	loaded	GSN129	CZ		.set	500	no			no
-2	Test_Retest_Rest	ds004148		10_10	FCZ		.vhdr	500	no			no
-3	SRM_Rest	ds003775		10_10	COMMON		.edf	1024	no			no
-4	MPI_LEMON	MPI_LEMON		10_10	FCZ	VEOG	.vhdr	2500	no			no
-5	EEG_3Stim	ds003490		10_10	CPZ	VEOG,X,Y,Z	.set	500	no			no
-6	TDBRAIN	TDBRAIN		10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500	no			no
-7	FEP_CTL2	ds003947		10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000	no			no
-8	UC_SD	ds002778		10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	no			no
-9	EEG_Med	ds001787		10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	no			no
-10	EEG_Alz	ds004504	loaded	10_20	A1-2		.set	500	no			no
-11	EEG_Music	ds002721		10_20	FCZ		.edf	1000	no			no
-12	BMI_HDEEG_1	ds004444		GSN129	CZ		.edf	1000	no			no
-13	BMI_HDEEG_2	ds004446		GSN129	CZ		.edf	1000	no			no
-14	BMI_HDEEG_3	ds004447		GSN129	CZ		.edf	1000	no			no
-15	BMI_HDEEG_4	ds004448		GSN129	CZ		.edf	1000	no			no
+dataset_number_reference	dataset_name	dataset_code	channel_location_filename	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate	select_subjects	label_name	label_value
+1	HBN_EO_EC	ds004186	loaded	GSN129	CZ		.set	500	no		
+2	Test_Retest_Rest	ds004148		10_10	FCZ		.vhdr	500	no		
+3	SRM_Rest	ds003775		10_10	COMMON		.edf	1024	no		
+4	MPI_LEMON	MPI_LEMON		10_10	FCZ	VEOG	.vhdr	2500	no		
+5	EEG_3Stim	ds003490		10_10	CPZ	VEOG,X,Y,Z	.set	500	no		
+6	TDBRAIN	TDBRAIN		10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500	no		
+7	FEP_CTL2	ds003947		10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000	no		
+8	UC_SD	ds002778		10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	no		
+9	EEG_Med	ds001787		10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	no		
+10	EEG_Alz	ds004504	loaded	10_20	A1-2		.set	500	no		
+11	EEG_Music	ds002721		10_20	FCZ		.edf	1000	no		
+12	BMI_HDEEG_1	ds004444		GSN129	CZ		.edf	1000	no		
+13	BMI_HDEEG_2	ds004446		GSN129	CZ		.edf	1000	no		
+14	BMI_HDEEG_3	ds004447		GSN129	CZ		.edf	1000	no		
+15	BMI_HDEEG_4	ds004448		GSN129	CZ		.edf	1000	no		
