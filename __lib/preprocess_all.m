@@ -14,24 +14,20 @@ clear all
 close all
 clc
 
+%% Set Variables
 modality = 'local'; % or local
 use_parpool = true; % use parpool if available
 dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info file 
 diagnostic_folder_name = '_test';  % Set the name for the folders with diagnostic tests
 
-single_file = false; % preprocess a single file
+%% Select Modality
+single_file  = false; % preprocess a single file
+dataset_name = [];  % Set the name of the current dataset
 
-%% Select Preferences
-% Set the name of the current dataset
-dataset_name = [];  
-
-% Set the name and the path of the file
 raw_filename = []; %raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
 raw_filepath = []; %raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
-
-
-% Set how many files to preprocess (insert a number or 'all')             
-numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);  
+        
+numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);  % Set how many files to preprocess (insert a number or 'all')    
 
 %% Select parameters 
 % Create a struct to store the save information                            
