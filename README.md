@@ -14,7 +14,7 @@ Please remember that you have to specify the name of the dataset not the name of
 Since this project uses institutional computing resources, you can choose between two paths, 'local' or 'server' and setting the variable *modality*.
 If you want to use parallel computing resources please set:
 ```
-TO DO;
+use_parpool = true;
 ```
 This will allows to process multiple datasets in parallel.
 
