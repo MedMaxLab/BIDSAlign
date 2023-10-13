@@ -22,7 +22,7 @@ diagnostic_folder_name = '_test';  % Set the name for the folders with diagnosti
 
 %% Select Modality
 single_file  = false; % preprocess a single file
-dataset_name = [];  % Set the name of the current dataset
+dataset_name = ['EEG_3Stim'];  % Set the name of the current dataset
 
 raw_filename = []; %raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
 raw_filepath = []; %raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
@@ -53,10 +53,10 @@ params_info = struct('low_freq',0.1,...                     %filtering
                      'ica_type','fastica',...               %ICA
                      'non_linearity','tanh',...             %ICA
                      'n_ica',25,...                         %ICA
-                     'dt_i',4,...                           %segment removal
-                     'dt_f',4,...                           %segment removal
+                     'dt_i',10,...                          %segment removal [s]
+                     'dt_f',0,...                           %segment removal [s]
                      'prep_steps',struct('rmchannels'     ,true,...
-                                         'rmsegments',true,...
+                                         'rmsegments'     ,true,...
                                          'rmbaseline'     ,true,...
                                          'resampling'     ,true,...
                                          'filtering'      ,true,...

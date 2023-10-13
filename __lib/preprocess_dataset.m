@@ -57,8 +57,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
                        'label_value', dataset_info.label_value{dataset_index},...
                        'label_name', dataset_info.label_name{dataset_index},...
                        'dataset_name', dataset_name,...
-                       'channel_to_remove',dataset_info.channel_to_remove{dataset_index}, ...
-                       'change_arch',dataset_info.change_arch{dataset_index});
+                       'channel_to_remove',dataset_info.channel_to_remove{dataset_index});
+                       %'change_arch',dataset_info.change_arch{dataset_index});
                        %'voltage_unit', dataset_info.units{dataset_index},...
                        %'nchan', dataset_info.nchan(dataset_index),...
  
@@ -76,12 +76,6 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
     %% Set Folder/Files Path
     dataset_path = [root_datasets_path data_info.dataset_code '/' ];
     cd(dataset_path);
-
-    %% Create/Check Dataset Structure
-    if strcmp(data_info.change_arch,'yes')
-        create_dataset_architecture();
-    end
-
 
     %% Check if folder already exist otherwise create set_preprocessed folder
     if save_info.save_set
