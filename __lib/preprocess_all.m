@@ -15,19 +15,19 @@ close all
 clc
 
 %% Set Variables
-modality = 'local'; % or local
-use_parpool = true; % use parpool if available
+modality = 'server'; % or local
+use_parpool = false; % use parpool if available
 dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info file 
 diagnostic_folder_name = '_test';  % Set the name for the folders with diagnostic tests
 
 %% Select Modality
 single_file  = false; % preprocess a single file
-dataset_name = ['EEG_3Stim'];  % Set the name of the current dataset
+dataset_name = ['BMI_HDEEG_1'];  % Set the name of the current dataset
 
 raw_filename = []; %raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
 raw_filepath = []; %raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
         
-numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);  % Set how many files to preprocess (insert a number or 'all')    
+numbers_files = struct('N_subj','all','N_sess','all','N_obj','all');  % Set how many files to preprocess (insert a number or 'all')    
 
 %% Select parameters 
 % Create a struct to store the save information                            
@@ -44,7 +44,7 @@ params_info = struct('low_freq',0.1,...                     %filtering
                      'standard_ref','CZ', ...               %standard ref
                      'interpol_method','spherical',...      %interpolation
                      'flatlineC',5,...                      %1° ASR
-                     'channelC',0.7,...                     %1° ASR
+                     'channelC',0.8,...                     %1° ASR
                      'lineC',4, ...                         %1° ASR
                      'burstC',20,...                        %2° ASR
                      'windowC',0.25,...                     %2° ASR
@@ -54,7 +54,7 @@ params_info = struct('low_freq',0.1,...                     %filtering
                      'non_linearity','tanh',...             %ICA
                      'n_ica',25,...                         %ICA
                      'dt_i',10,...                          %segment removal [s]
-                     'dt_f',0,...                           %segment removal [s]
+                     'dt_f',16,...                          %segment removal [s]
                      'prep_steps',struct('rmchannels'     ,true,...
                                          'rmsegments'     ,true,...
                                          'rmbaseline'     ,true,...
