@@ -100,10 +100,6 @@ end
 % Set paths and check modality
 if strcmp(modality,'server')
 
-    % Select MATLAB Version
-    module unload matlab/2019a
-    module load matlab/2022a
-
     % Set eeglab path
     eeglab_path = '/home/zanola/eeglab2023.0/';
     addpath(eeglab_path);
