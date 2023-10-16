@@ -27,7 +27,7 @@ dataset_name = ['BMI_HDEEG_1'];  % Set the name of the current dataset
 raw_filename = []; %raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
 raw_filepath = []; %raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
         
-numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);  % Set how many files to preprocess (insert a number or 'all')    
+numbers_files = struct('N_subj','all','N_sess','all','N_obj','all');  % Set how many files to preprocess (insert a number or 'all')    
 
 %% Select parameters 
 % Create a struct to store the save information                            
@@ -100,10 +100,12 @@ end
 % Set paths and check modality
 if strcmp(modality,'server')
 
+    % Select MATLAB Version
+    module unload matlab/2019a
+    module load matlab/2022
     % Set eeglab path
     eeglab_path = '/home/zanola/eeglab2023.0/';
     addpath(eeglab_path);
-    eeglab; close;
 
     % Set various paths (server)
     root_folder_path    = '/home/zanola/eeg_datasets/'; 
@@ -117,7 +119,6 @@ elseif strcmp(modality,'local')
 
     eeglab_path = 'E:/02_Documenti/05_PhD/Lezioni/eeglab2023.0';
     addpath(eeglab_path);
-    eeglab; close
 
     % Set various paths (local)
     root_folder_path    = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/'; 
