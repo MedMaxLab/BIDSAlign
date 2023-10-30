@@ -15,19 +15,19 @@ close all
 clc
 
 %% Set Variables
-modality = 'server'; % or local
+modality = 'local'; % or local
 use_parpool = false; % use parpool if available
 dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info file 
 diagnostic_folder_name = '_test';  % Set the name for the folders with diagnostic tests
 
 %% Select Modality
 single_file  = false; % preprocess a single file
-dataset_name = ['BMI_HDEEG_1'];  % Set the name of the current dataset
+dataset_name = ['EEG_Alz'];  % Set the name of the current dataset
 
 raw_filename = []; %raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
 raw_filepath = []; %raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
         
-numbers_files = struct('N_subj',1,'N_sess',1,'N_obj',1);  % Set how many files to preprocess (insert a number or 'all')    
+numbers_files = struct('N_subj','all','N_sess','all','N_obj','all');  % Set how many files to preprocess (insert a number or 'all')    
 
 %% Select parameters 
 % Create a struct to store the save information                            
@@ -53,8 +53,8 @@ params_info = struct('low_freq',0.1,...                     %filtering
                      'ica_type','fastica',...               %ICA
                      'non_linearity','tanh',...             %ICA
                      'n_ica',25,...                         %ICA
-                     'dt_i',10,...                          %segment removal [s]
-                     'dt_f',16,...                          %segment removal [s]
+                     'dt_i',0,...                          %segment removal [s]
+                     'dt_f',0,...                          %segment removal [s]
                      'prep_steps',struct('rmchannels'     ,true,...
                                          'rmsegments'     ,true,...
                                          'rmbaseline'     ,true,...
@@ -62,7 +62,7 @@ params_info = struct('low_freq',0.1,...                     %filtering
                                          'filtering'      ,true,...
                                          'rereference'    ,true,...
                                          'ICA'            ,false,...
-                                         'ASR'            ,true) );
+                                         'ASR'            ,false) );
 
 %% Check Modality
 % Check the modality of single subject
@@ -197,13 +197,10 @@ elseif isempty(dataset_name) && ~single_file
                                              mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, numbers_files);
     end  
 else
-    if use_parpool && ~single_file
-        warning('PARPOOL NOT USED SINCE SPECIFIC DATASET WAS SELECTED');
-    else
-        warning('PARPOOL NOT USED SINCE SPECIFIC FILE WAS SELECTED');
-    end
 
     if single_file
+        warning('PARPOOL NOT USED SINCE SPECIFIC FILE WAS SELECTED');
+
         % Preprocess a specific file
         out = regexp(raw_filepath ,'\','split');
         dataset_code = out{end-4};
@@ -213,6 +210,8 @@ else
                                              mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name,...
                                              raw_filename, raw_filepath);
     else   
+        warning('PARPOOL NOT USED SINCE SPECIFIC DATASET WAS SELECTED');
+        
         % Preprocess a specific dataset
         [~,DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                              mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, numbers_files);  
