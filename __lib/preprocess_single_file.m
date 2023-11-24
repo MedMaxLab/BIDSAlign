@@ -141,7 +141,7 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
         %present.
 
         [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info, channel_to_remove, channel_systems);
-        
+
         %% Rereference the data
         if params_info.prep_steps.rereference
             [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B);

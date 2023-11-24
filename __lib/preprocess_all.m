@@ -22,18 +22,18 @@ diagnostic_folder_name = '_test';  % Set the name for the folders with diagnosti
 
 %% Select Modality
 single_file  = false; % preprocess a single file
-dataset_name = ['EEG_Alz'];  % Set the name of the current dataset
+dataset_name = ['SRM_Rest'];  % Set the name of the current dataset
 
 raw_filename = []; %raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
 raw_filepath = []; %raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
         
-numbers_files = struct('N_subj','all','N_sess','all','N_obj','all');  % Set how many files to preprocess (insert a number or 'all')    
+numbers_files = struct('N_subj',20,'N_sess',1,'N_obj',1);  % Set how many files to preprocess (insert a number or 'all')    
 
 %% Select parameters 
 % Create a struct to store the save information                            
-save_info = struct('save_data',true, ...
+save_info = struct('save_data',false, ...
                    'save_data_as','matrix', ...
-                   'save_set', false,...
+                   'save_set', true,...
                    'save_struct',true, ...
                    'save_marker',false);
 
@@ -41,7 +41,7 @@ save_info = struct('save_data',true, ...
 params_info = struct('low_freq',0.1,...                     %filtering                              
                      'high_freq',49, ...                    %filtering
                      'sampling_rate',250, ...               %resampling
-                     'standard_ref','CZ', ...               %standard ref
+                     'standard_ref','COMMON', ...               %standard ref
                      'interpol_method','spherical',...      %interpolation
                      'flatlineC',5,...                      %1° ASR
                      'channelC',0.8,...                     %1° ASR
@@ -52,7 +52,7 @@ params_info = struct('low_freq',0.1,...                     %filtering
                      'th_reject',1000,... %uV               %amplitude threshold
                      'ica_type','fastica',...               %ICA
                      'non_linearity','tanh',...             %ICA
-                     'n_ica',25,...                         %ICA
+                     'n_ica',20,...                         %ICA
                      'dt_i',0,...                          %segment removal [s]
                      'dt_f',0,...                          %segment removal [s]
                      'prep_steps',struct('rmchannels'     ,true,...
@@ -61,7 +61,7 @@ params_info = struct('low_freq',0.1,...                     %filtering
                                          'resampling'     ,true,...
                                          'filtering'      ,true,...
                                          'rereference'    ,true,...
-                                         'ICA'            ,false,...
+                                         'ICA'            ,true,...
                                          'ASR'            ,false) );
 
 %% Check Modality
@@ -134,7 +134,7 @@ end
 
 %% Import Dataset Information
 % Read the dataset information from a tsv file                            
-dataset_info = readtable([git_path dataset_info_filename],'format','%f%s%s%s%s%s%s%s%f%s%s%s%s','filetype','text');
+dataset_info = readtable([git_path dataset_info_filename],'format','%f%s%s%s%s%s%s%s%s%f%s%s%s%s','filetype','text');
 
 % Check for errors
 for i=1:height(dataset_info) 
@@ -213,7 +213,7 @@ else
         warning('PARPOOL NOT USED SINCE SPECIFIC DATASET WAS SELECTED');
         
         % Preprocess a specific dataset
-        [~,DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
+        [EEG,DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                              mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, numbers_files);  
     end
 end

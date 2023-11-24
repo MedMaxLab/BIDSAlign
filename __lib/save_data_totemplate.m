@@ -140,7 +140,7 @@ function [listB] = list_chan_systems(B,channel_system,template_info,channel_syst
 
     %GSN129, GSN257 channel systems
     elseif strcmp(channel_system, channel_systems{4}) || strcmp(channel_system, channel_systems{5})
-        for t=1:NchanB
+        for t = 1:NchanB
             mask = template_info.conversion(:,2) == B(t).labels;
             if any(mask) %in this way we neglect channels that are not present in the conversion file
                 listB(t) = template_info.conversion(mask,1);

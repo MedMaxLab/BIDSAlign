@@ -50,7 +50,7 @@
 % Date: [04/10/2023]
 
 function [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info, channel_to_remove, channel_systems)
- 
+
     if ~strcmp(data_info.channel_location_filename, "loaded")
         if ~isempty(data_info.electrodes_filename)
     
@@ -65,12 +65,12 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
                 C = loadbvef(data_info.electrodes_filename);
                 B = C(3:end); %first 2 labels are REF and GND           %CHECK THIS PART !!!
             else
-                B = readlocs(data_info.electrodes_filename,'filetype',channel_location_file_extension(2:end));
+                B = readlocs(data_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','native');
             end
 
             % Keep in consideration if some channels have strange name from
             % the channel location file
-            [B] = rename_channels(B, data_info, channel_systems, false, []);      
+            [B] = rename_channels(B, data_info, channel_systems, false, []);     
             [~,listB] = list_chan(B);
 
             % Keep in consideration if some channels have strange name from
@@ -78,8 +78,9 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             %Note that EEG.history should be true, if EEG.chanlocs is
             %passed; in such a way we can update the EEG.history
             [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, channel_systems, true, EEG);
-            [~,listE] = list_chan(EEG.chanlocs);
 
+            [~,listE] = list_chan(EEG.chanlocs);
+            
             % Keep in consideration if some channels have been removed, and
             % update the list of channels read from chanloc file
             Nremove = length(channel_to_remove{1});
@@ -95,6 +96,9 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             % Filter EEG.chanlocs using the logical index array
             B =  B(matching_labels);
             EEG.chanlocs = B;
+            if ~isempty(data_info.nose_dir)
+                EEG = pop_chanedit(EEG, 'nosedir', data_info.nose_dir);
+            end
             EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' data_info.electrodes_filename];
             
             
