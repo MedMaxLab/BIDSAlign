@@ -37,12 +37,7 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
     l = strfind(raw_filename,'_');
     event_filename = [raw_filename(1:l(end)) 'events.tsv'];
     if isfile(event_filename)
-        [EEG] = pop_importevent(EEG,'event',event_filename);
-        try
-            [EEG] = pop_importevent(EEG,'event',event_filename);
-        catch
-            warning('WARNING: EVENT NOT IMPORTED DUE TO ERROR')
-        end
+        [EEG] = pop_importevent(EEG,event_filename);
     end
 
     if ~isempty(EEG)
@@ -183,7 +178,7 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
                                              'NoLocsChannelCriterion', 0.45,...            %default
                                              'NoLocsChannelCriterionExcluded', 0.1,...     %default
                                              'MaxMem', 4096, ...                           %default
-                                             'availableRAM_GB', NaN);                      %default);
+                                             'availableRAM_GB', NaN);                      %defaultC);
 
             EEG.history = [EEG.history newline 'ASR: FlatLineCriterion ' num2str(params_info.flatlineC) ...
                            ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];

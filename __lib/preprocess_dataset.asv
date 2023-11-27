@@ -14,11 +14,16 @@
 %   - mat_preprocessed_folder: The path to save the preprocessed data in MAT format.
 %   - csv_preprocessed_folder: The path to save preprocessed marker data in CSV format.
 %   - diagnostic_folder_name: The name of the diagnostic folder within the dataset.
-%   - selection_info: Structure containing selection parameters.
+%   - numbers_files: Structure specifying the number of subjects, sessions, and objects to process.
 %
 % Output:
 %   - EEG: EEG data structure after preprocessing.
 %   - DATA_STRUCT: Structure containing preprocessed data information.
+%
+% Usage example:
+%   [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, ...
+%                                           save_info, params_info, mat_preprocessed_folder, csv_preprocessed_folder, ...
+%                                           diagnostic_folder_name, numbers_files);
 %
 % Notes:
 %   - This function preprocesses all the EEG data for a specified dataset, 
@@ -30,7 +35,7 @@
 
 function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                                  mat_preprocessed_folder, csv_preprocessed_folder, ...
-                                                 diagnostic_folder_name, selection_info)
+                                                 diagnostic_folder_name, numbers_files, task_selected)
 
     %% Handle Compatibility
     % Find the row corresponding to the dataset name
@@ -48,6 +53,9 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
                        'channel_reference', dataset_info.channel_reference{dataset_index},...
                        'eeg_file_extension', dataset_info.eeg_file_extension{dataset_index},...
                        'samp_rate', dataset_info.samp_rate(dataset_index),...
+                       'select_subjects', dataset_info.select_subjects{dataset_index},...
+                       'label_value', dataset_info.label_value{dataset_index},...
+                       'label_name', dataset_info.label_name{dataset_index},...
                        'dataset_name', dataset_name,...
                        'channel_to_remove',dataset_info.channel_to_remove{dataset_index},...
                        'nose_dir',dataset_info.nose_direction{dataset_index});
@@ -199,21 +207,21 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
 
     %% Extract selected patients
     % Check if subject selection is required
-    if selection_info.select_subjects && isempty(T)
+    if strcmp(data_info.select_subjects,'yes') && isempty(T)
         error('UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE LOADED');
     
-    elseif selection_info.select_subjects && ~isempty(T)
+    elseif strcmp(data_info.select_subjects,'yes') && ~isempty(T)
         % Select control subjects based on group information
         idx_column = linspace(1,width(T),width(T));
-        I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name));
+        I = idx_column(ismember(T.Properties.VariableNames, data_info.label_name));
         subj_list = T.(1);                                  %FIRST COLUMN ALWAYS ID PARTICIPANT
-        mask = strcmp(T.(I), selection_info.label_value);                                     
+        mask = strcmp(T.(I), data_info.label_value);                                     
         subj_list = subj_list(mask,:);
         T = T(mask,:);
         
         cd(dataset_path);
     
-    elseif ~selection_info.select_subjects
+    elseif strcmp(data_info.select_subjects,'no')
         % Process all subjects in the dataset
         cd(dataset_path);
         d = dir(pwd);
@@ -237,11 +245,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
     
     %% Process all subjects in the dataset ----------------------------------
     N_subj = length(subj_list);
-    if ~strcmp(selection_info.N_subj,'all')
-        if selection_info.N_subj>N_subj
+    if ~strcmp(numbers_files.N_subj,'all')
+        if numbers_files.N_subj>N_subj
             warning('NUMBER OF SUBJECTS REQUIRED IS TO HIGH');
         end
-        N_subj = min(N_subj,selection_info.N_subj);
+        N_subj = min(N_subj,numbers_files.N_subj);
     end
 
     L = [];
@@ -269,11 +277,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
         sess_list = dfolders(~ismember({dfolders(:).name},{'.','..'}));
         N_sess    = length(sess_list);
 
-        if ~strcmp(selection_info.N_sess,'all')
-            if selection_info.N_sess>N_sess
+        if ~strcmp(numbers_files.N_sess,'all')
+            if numbers_files.N_sess>N_sess
                 warning('NUMBER OF SESSIONS REQUIRED IS TO HIGH');
             end
-            N_sess = min(N_sess,selection_info.N_sess);
+            N_sess = min(N_sess,numbers_files.N_sess);
         end
 
         % Load subject information, and check if the folder name is found
@@ -313,8 +321,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
             z_list = [];
             for z=1:N_obj
                 mask = false;
-                for p=1:length(selection_info.task_toselect)
-                    mask = mask || contains(filelist(z).name, selection_info.task_toselect{p});
+                for p=1:length(task_selected)
+                    mask = mask || contains(filelist(z).name, task_selected{p});
                 end
                 if mask 
                     z_list = [z_list, z];
@@ -323,12 +331,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder
             filelist = filelist(z_list);
             N_obj = length(filelist);
             
-            % Select on the basis of number of objects
-            if ~strcmp(selection_info.N_obj,'all')
-                if selection_info.N_obj>N_obj
+            % Select on th
+            if ~strcmp(numbers_files.N_obj,'all')
+                if numbers_files.N_obj>N_obj
                     warning('NUMBER OF OBJECTS REQUIRED IS TO HIGH');
                 end
-                N_obj = min(N_obj,selection_info.N_obj);
+                N_obj = min(N_obj,numbers_files.N_obj);
             end
 
             %% Preprocess all files of a session -----------------------
