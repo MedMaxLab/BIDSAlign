@@ -1,6 +1,6 @@
 dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nose_direction	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate
 1	HBN_EO_EC	ds004186	loaded		GSN129	CZ		.set	500
-2	Test_Retest_Rest	ds004148		#NOME?	10_10	FCZ		.vhdr	500
+2	Test_Retest_Rest	ds004148		+Y	10_10	FCZ		.vhdr	500
 3	SRM_Rest	ds003775			10_10	COMMON		.edf	1024
 4	MPI_LEMON	MPI_LEMON			10_10	FCZ	VEOG	.vhdr	2500
 5	EEG_3Stim	ds003490			10_10	CPZ	VEOG,X,Y,Z	.set	500

@@ -21,11 +21,11 @@ dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info 
 diagnostic_folder_name = '_test';  % Set the name for the folders with diagnostic tests
 
 %% Select Modality
-single_file  = false; % preprocess a single file
+single_file  = true; % preprocess a single file
 dataset_name = ['UC_SD'];  % Set the name of the current dataset
 
-raw_filename = []; %raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
-raw_filepath = []; %raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
+raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
+raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
 
 %% Select parameters 
 %Create a struct to store selection information
@@ -35,7 +35,8 @@ selection_info = struct('N_subj','all',...
                         'select_subjects',false,...
                         'label_name','',...
                         'label_value','',...
-                        'task_toselect', {{'task-rest'}});
+                        'session_totake',{{}},...
+                        'task_totake', {{}});
 
 % Create a struct to store the save information                            
 save_info = struct('save_data',false, ...
@@ -133,11 +134,9 @@ elseif strcmp(modality,'local')
     git_path            = [root_folder_path 'EEG_ML_dataset/']; 
     lib_path            = [git_path '__lib']; 
     addpath(lib_path);
-
 else
     error(['ERROR: UNRECOGNAIZED MODALITY: ' modality]);
 end
-
 
 %% Import Dataset Information
 % Read the dataset information from a tsv file                            
@@ -183,7 +182,6 @@ if use_parpool && isempty(dataset_name) && ~single_file
             error('ERROR: PARPOOL NOT AVAILABLE SET use_parpool TO FALSE');
         end
     end
-    
     % Launch Parpool
     parfor i=1:height(dataset_info)
         dataset_name = dataset_info.dataset_name{i};
@@ -204,10 +202,8 @@ elseif isempty(dataset_name) && ~single_file
                                              mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, selection_info);
     end  
 else
-
     if single_file
         warning('PARPOOL NOT USED SINCE SPECIFIC FILE WAS SELECTED');
-
         % Preprocess a specific file
         out = regexp(raw_filepath ,'\','split');
         dataset_code = out{end-4};
@@ -218,7 +214,6 @@ else
                                              raw_filename, raw_filepath);
     else   
         warning('PARPOOL NOT USED SINCE SPECIFIC DATASET WAS SELECTED');
-        
         % Preprocess a specific dataset
         [EEG,DATA_STRUCT] = preprocess_dataset(root_datasets_path, root_folder_path, lib_path, dataset_info, dataset_name, save_info, params_info, ...
                                              mat_preprocessed_folder, csv_preprocessed_folder, diagnostic_folder_name, selection_info);  

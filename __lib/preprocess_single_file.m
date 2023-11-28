@@ -1,47 +1,43 @@
 
-% Function: preprocess_single_file
-% Description: Preprocesses a single EEG data file, including data import,
-% channel management, filtering, resampling, re-referencing, artifact removal,
-% and saving the preprocessed data in a .set file.
-%
-% Input:
-%   - raw_filepath: Path to the directory where the raw EEG data file is located.
-%   - raw_filename: Name of the raw EEG data file.
-%   - set_preprocessed_filename: Name for the preprocessed .set file.
-%   - channel_systems: Information about different channel systems.
-%   - data_info: A structure containing information about the EEG data.
-%   - channel_to_remove: List of channels to be removed (optional).
-%   - params_info: A structure containing preprocessing parameters.
-%   - template_info: Information about channel template files.
-%   - L: A structure containing channel information (updated).
-%   - save_info: A structure containing saving options for preprocessed data.
-%
-% Output:
-%   - EEG: Preprocessed EEG data structure.
-%   - L: Updated channel information structure.
-%
-% Notes:
-%   - This function performs various preprocessing steps on EEG data, as
-%     specified in the params_info structure, and saves the preprocessed data
-%     as a .set file if specified in save_info.
-%
-% Author: [Andrea Zanola]
-% Date: [04/10/2023]
-
-function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_preprocessed_filename, ...
-                                          channel_systems, data_info, channel_to_remove, params_info, template_info, L, save_info)
-
+function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_preprocessed_filename, event_filename,...
+                                          data_info, params_info, template_info, L, save_info)
+    % Function: preprocess_single_file
+    % Description: Preprocesses a single EEG data file, including data import,
+    % channel management, filtering, resampling, re-referencing, artifact removal,
+    % and saving the preprocessed data in a .set file.
+    %
+    % Input:
+    %   - raw_filepath: Path to the directory where the raw EEG data file is located.
+    %   - raw_filename: Name of the raw EEG data file.
+    %   - set_preprocessed_filename: Name for the preprocessed .set file.
+    %   - data_info: A structure containing information about the EEG data.
+    %   - params_info: A structure containing preprocessing parameters.
+    %   - template_info: Information about channel template files.
+    %   - L: A structure containing channel information (updated).
+    %   - save_info: A structure containing saving options for preprocessed data.
+    %
+    % Output:
+    %   - EEG: Preprocessed EEG data structure.
+    %   - L: Updated channel information structure.
+    %
+    % Notes:
+    %   - This function performs various preprocessing steps on EEG data, as
+    %     specified in the params_info structure, and saves the preprocessed data
+    %     as a .set file if specified in save_info.
+    %
+    % Author: [Andrea Zanola]
+    % Date: [04/10/2023]
+    
     %% Load raw file 
     [EEG] = import_data(raw_filename, raw_filepath);
 
-    l = strfind(raw_filename,'_');
-    event_filename = [raw_filename(1:l(end)) 'events.tsv'];
-    if isfile(event_filename)
+    try
         [EEG] = pop_importevent(EEG,'event',event_filename);
-        try
-            [EEG] = pop_importevent(EEG,'event',event_filename);
-        catch
-            warning('WARNING: EVENT NOT IMPORTED DUE TO ERROR')
+    catch
+        if isempty(event_filename)
+            disp('No Event file loaded.');
+        else
+            warning('WARNING: EVENT NOT IMPORTED DUE TO ERROR');
         end
     end
 
@@ -74,8 +70,8 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
         end
     
         %% Remove Channels
-        if ~isempty(channel_to_remove) && params_info.prep_steps.rmchannels
-            [EEG] = pop_select(EEG, 'rmchannel', channel_to_remove);
+        if ~isempty(data_info.channel_to_remove) && params_info.prep_steps.rmchannels
+            [EEG] = pop_select(EEG, 'rmchannel', data_info.channel_to_remove);
             EEG.history = [EEG.history newline 'REMOVE CHANNELS: '  data_info.channel_to_remove];
         end
 
@@ -86,31 +82,26 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
                 if EEG.xmax - params_info.dt_i - params_info.dt_f>0
                     [EEG] = pop_select(EEG, 'rmtime', [0 params_info.dt_i; EEG.xmax-params_info.dt_f EEG.xmax]);
                     EEG.history = [EEG.history newline 'Removed first ' num2str(params_info.dt_i) ' and last ' num2str(params_info.dt_f) ' s'];
-
+                
                 elseif EEG.xmax - params_info.dt_f>0
                     [EEG] = pop_select(EEG, 'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);
                     EEG.history = [EEG.history newline 'Removed last ' num2str(params_info.dt_f) ' s'];
-
                 else
                     warning('dt_f and dt_i NOT CUT, BEACUSE TOO BIG RESPECT THE LENGHT OF THE EEG RECORDING'); 
                 end
 
             elseif params_info.dt_i==0 && params_info.dt_f>0
-
                 if EEG.xmax - params_info.dt_f>0
                     [EEG] = pop_select(EEG, 'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);
                     EEG.history = [EEG.history newline 'Removed last ' num2str(params_info.dt_f) ' s'];
-
                 else
                     warning('dt_f NOT CUT, BEACUSE TOO BIG RESPECT THE LENGHT OF THE EEG RECORDING');
                 end
 
             elseif params_info.dt_i>0 && params_info.dt_f==0
-
                 if EEG.xmax - params_info.dt_i>0
                     [EEG] = pop_select(EEG, 'rmtime', [0 params_info.dt_i]);
                     EEG.history = [EEG.history newline 'Removed first ' num2str(params_info.dt_i) ' s'];
-
                 else
                     warning('dt_i NOT CUT, BEACUSE TOO BIG RESPECT THE LENGHT OF THE EEG RECORDING');
                 end
@@ -151,7 +142,7 @@ function [EEG,L] = preprocess_single_file(raw_filepath, raw_filename, set_prepro
         %conversion files are used, but non-physiological channels are not
         %present.
 
-        [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info, channel_to_remove, channel_systems);
+        [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info);
 
         %% Rereference the data
         if params_info.prep_steps.rereference

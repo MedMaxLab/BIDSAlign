@@ -27,7 +27,7 @@ function create_dataset_architecture(path)
                 sess_name_file = a{:};
                 folder_name = [subj_name_file '/' sess_name_file '/' def_eeg_name '/'];
             else
-                [ filepath , name , ext ] = fileparts(Files(i).name);
+                [ ~ , name , ~] = fileparts(Files(i).name);
                 subj_name_file = name;
                 folder_name    = [subj_name_file '/' def_sess_name '/' def_eeg_name '/'];
             end
