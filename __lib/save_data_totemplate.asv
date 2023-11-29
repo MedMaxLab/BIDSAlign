@@ -68,7 +68,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
 
     %% Set the standard ref channel as a vector of zeros 
     %Here if Cz is not present, is also interpolated, so then Cz should be 0.
-    if ~isequal(standard_ref_ch,'COMMON')
+    if ~strcmp(standard_ref_ch,"COMMON")
         EEG1.data(listB==standard_ref_ch,:) = zeros(1,length(EEG.data));
     end
 
@@ -99,9 +99,8 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
         for t=1:data_tensor_size(1)
             for u=1:data_tensor_size(2)
                 K = template_info.template_tensor(t,u);
-                if sum(template_info.template_matrix(:,1)==K)==1
-                    DATA_TENSOR(t,u,:) = DATA_MATRIX(template_info.template_matrix(:,1)==K,:);
-                end
+                if 
+                DATA_TENSOR(t,u,:) = DATA_MATRIX(template_info.template_matrix(:,1)==K,:);
             end
         end
         if save_info.save_struct
@@ -121,7 +120,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
             save(path_info.mat_preprocessed_filepath,'DATA_MATRIX');
         end
     else
-        error('ERROR: UNSUPPORTED SAVE FORMAT');
+        error("ERROR: UNSUPPORTED DATA ARCHITECTURE");
     end
 
 end

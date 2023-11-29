@@ -1,5 +1,5 @@
 
-function [B] = rename_channels(B, data_info, channel_systems, EEG_history, EEG)
+function [B] = rename_channels(B, data_info, EEG_history, EEG)
     % Function: rename_channels
     % Description: Renames EEG channel labels based on specified naming conventions
     % and channel systems.
@@ -45,7 +45,7 @@ function [B] = rename_channels(B, data_info, channel_systems, EEG_history, EEG)
     new_names = {'TP9', 'TP10', 'P8', 'P7', 'T8', 'T7'};
 
     % For 10-20, 10-10, 10-5 systems
-    if isequal(data_info.channel_system,channel_systems{1}) || isequal(data_info.channel_system, channel_systems{2}) || isequal(data_info.channel_system, channel_systems{3})
+    if isequal(data_info.channel_system,data_info.channel_systems{1}) || isequal(data_info.channel_system, data_info.channel_systems{2}) || isequal(data_info.channel_system, data_info.channel_systems{3})
         for i=1:length(old_names)
             A = find(listB==old_names(i));
             if ~isempty(A) %check if an old name is present
@@ -58,7 +58,7 @@ function [B] = rename_channels(B, data_info, channel_systems, EEG_history, EEG)
     end
 
     % For GSN129, GSN257 systems
-    if isequal(data_info.channel_system, channel_systems{4}) || isequal(data_info.channel_system, channel_systems{5})
+    if isequal(data_info.channel_system, data_info.channel_systems{4}) || isequal(data_info.channel_system, data_info.channel_systems{5})
         J = find(listB=='CZ');
         if ~isempty(J)
             B(J).labels = ['E' data_info.channel_system(end-2:end)];

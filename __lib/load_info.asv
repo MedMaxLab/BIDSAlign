@@ -1,5 +1,5 @@
 
-function [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info)
+function [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info)
     % Function: preprocess_dataset
     % Description: Preprocesses a dataset of EEG recordings, extracts relevant information,
     % and saves the preprocessed data to a template-based data structure or matrix format.
@@ -27,11 +27,11 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     %% Check if the imported data has correct values
 
     if data_info.samp_rate < 0 || mod(data_info.samp_rate, 1) ~= 0
-        error('ERROR: NEGATIVE OR NON-INTEGER SAMPLING RATE');
+        error("ERROR: NEGATIVE OR NON-INTEGER SAMPLING RATE");
     end
     %filter frequencies
     if params_info.low_freq>params_info.high_freq || params_info.low_freq<0 || params_info.high_freq<0
-        error('ERROR: CHECK THE FREQUENCIES FOR THE FILTER');
+        error("ERROR: CHECK THE FREQUENCIES FOR THE FILTER");
     end
     
     %% Set Folder/Files Path
@@ -79,8 +79,8 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
         end
         standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
     
-    elseif isequal(data_info.channel_system,data_info.channel_systems{1}) || isequal(data_info.channel_system, data_info.channel_systems{2}) || isequal(data_info.channel_system,data_info.channel_systems{3})
-        conversion = 'nan';
+    elseif isequal(data_info.channel_system,data_info.channel_systems{1}) || isequal(data_info.channel_system, data_info.channel_systems{2}) || strcmp(data_info.channel_system,data_info.channel_systems{3})
+        conversion = "nan";
         standard_chanloc = [channel_location_folder 'chanloc_template_' '10_5' '.sfp'];
 
     else
@@ -132,14 +132,6 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
             else
                 T = T_new;
             end
-        end
-    end
-
-    %% Check if folder already exist otherwise create set_preprocessed folder
-    if save_info.save_set
-        path_info.set_folder = [path_info.root_folder_path 'set_preprocessed_' data_info.dataset_code '/'];
-        if ~exist(path_info.set_folder, 'dir')
-            mkdir(path_info.set_folder)
         end
     end
 end

@@ -70,7 +70,7 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
             %Table III: D) error: channel T not present
             error('ERROR: NEW REFERENCE CHANNEL NOT REGISTERED');
     
-        elseif isequal(dataset_reference,standard_reference)                  
+        elseif strcmp(dataset_reference,standard_reference)                  
             %Table III: B)-C) nothing to do
             disp('Rereference case: B-C');
         else     
@@ -78,7 +78,7 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
             disp('Rereference case: A-F');
             
             EEG = pop_reref( EEG, C,'keepref','on');
-            EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' standard_reference '(keepref: on)'];
+            EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' convertStringsToChars(standard_reference) '(keepref: on)'];
         end
 
     end

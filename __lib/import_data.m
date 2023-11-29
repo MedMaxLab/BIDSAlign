@@ -31,7 +31,7 @@ function EEG = import_data(raw_filename, raw_filepath)
             EEG = pop_loadset('filename',raw_filename,'filepath',raw_filepath);
         catch
             EEG = [];
-            disp(['CORRUPTED .SET FILE: ' raw_filepath raw_filename]);
+            warning(['CORRUPTED .SET FILE: ' raw_filepath raw_filename]);
         end
 
     elseif isequal(eeg_file_extension,'.vhdr')
@@ -39,14 +39,14 @@ function EEG = import_data(raw_filename, raw_filepath)
             EEG = pop_loadbv(raw_filepath, raw_filename,  [1:-1], [1:-1]);
         catch
             EEG = [];
-            disp(['CORRUPTED .VHDR FILE: ' raw_filepath raw_filename]);
+            warning(['CORRUPTED .VHDR FILE: ' raw_filepath raw_filename]);
         end
     elseif isequal(eeg_file_extension,'.edf') || isequal(eeg_file_extension,'.bdf')
         try
             EEG = pop_biosig(raw_filename); 
         catch
             EEG = [];
-            disp(['CORRUPTED .EDF or .BDF FILE: ' raw_filepath raw_filename]);
+            warning(['CORRUPTED .EDF or .BDF FILE: ' raw_filepath raw_filename]);
         end
     else
         error('ERROR: UNSUPPORTED EEG FILE EXTENSION');

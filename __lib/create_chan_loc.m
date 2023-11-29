@@ -1,5 +1,5 @@
 
-function [C] = create_chan_loc(EEG, data_info, list_ref, template_info, channel_systems)
+function [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
     % Function: create_chan_loc
     % Description: Create a new channel location structure based on given inputs.
     % This function generates a new channel location structure based on the
@@ -24,13 +24,11 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info, channel_
     %
     % Author: [Andrea Zanola]
     % Date: [04/10/2023]
-
-    channel_system = convertCharsToStrings(data_info.channel_system);
     
     %% Create list of channels from chanloc standard template
-    [~,~,ext] = fileparts(data_info.standard_chanloc);
-    S = readlocs(data_info.standard_chanloc,'filetype',ext(2:end));
-    [S] = rename_channels(S, data_info, channel_systems, false, []);
+    [~,~,ext] = fileparts(template_info.standard_chanloc);
+    S = readlocs(template_info.standard_chanloc,'filetype',ext(2:end));
+    [S] = rename_channels(S, data_info, false, []);
 
     [~,listS] = list_chan(S);
 
@@ -39,7 +37,7 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info, channel_
         Z = EEG.chanlocs;
         [NchanZ,listZ] = list_chan(Z);
     else
-        if strcmp(channel_system, channel_systems{4}) || strcmp(channel_system, channel_systems{5})
+        if isequal(data_info.channel_system, data_info.channel_systems{4}) || isequal(data_info.channel_system, data_info.channel_systems{5})
             NchanZ = length(list_ref);
             listZ = strings(NchanZ,1);
             for i = 1:NchanZ
@@ -47,7 +45,7 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info, channel_
                 listZ(i) = template_info.conversion(J,2);
             end
         else
-            listZ = list_ref;
+            listZ  = list_ref;
             NchanZ = length(listZ);
         end
     end
@@ -57,7 +55,8 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info, channel_
     for i=1:NchanZ
         J = find(listS == listZ(i));
         if isempty(J)
-            error('ERROR: CHANNEL NAME NOT FOUND IN THE STANDARD TEMPLATE: ');
+            disp(listZ(i))
+            error('ERROR: CHANNEL NAME NOT FOUND IN THE STANDARD TEMPLATE.');
         else
             C(i) = S(J);
         end

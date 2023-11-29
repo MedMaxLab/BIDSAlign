@@ -1,5 +1,5 @@
 
-function [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info)
+function [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info)
     % Function: load_channel_location
     % Description: Loads channel location information for EEG data. 
     % It either reads channel locations from a file or generates them based on the
@@ -27,33 +27,33 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     % Author: [Andrea Zanola]
     % Date: [04/10/2023]
 
-    if ~strcmp(data_info.channel_location_filename, "loaded")
-        if ~isempty(data_info.electrodes_filename)
+    if ~strcmp(obj_info.channel_location_filename, "loaded")
+        if ~isempty(obj_info.electrodes_filename)
     
             %Fig 4. 4)
             %% Import Channels Location -----------------------------------------
-            [~,~,channel_location_file_extension] = fileparts(data_info.electrodes_filename);
+            [~,~,channel_location_file_extension] = fileparts(obj_info.electrodes_filename);
 
             %I = find(channel_location_filepath=='.');
             %channel_location_file_extension = channel_location_filepath(I+1:end);
     
             if isequal(channel_location_file_extension,'.bvef')
-                C = loadbvef(data_info.electrodes_filename);
+                C = loadbvef(obj_info.electrodes_filename);
                 B = C(3:end); %first 2 labels are REF and GND           %CHECK THIS PART !!!
             else
-                B = readlocs(data_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','native');
+                B = readlocs(obj_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','native');
             end
 
             % Keep in consideration if some channels have strange name from
             % the channel location file
-            [B] = rename_channels(B, data_info, data_info.channel_systems, false, []);     
+            [B] = rename_channels(B, data_info, false, []);     
             [~,listB] = list_chan(B);
 
             % Keep in consideration if some channels have strange name from
             % the channel location field of EEG struct          
             %Note that EEG.history should be true, if EEG.chanlocs is
             %passed; in such a way we can update the EEG.history
-            [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, data_info.channel_systems, true, EEG);
+            [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, true, EEG);
 
             [~,listE] = list_chan(EEG.chanlocs);
             
@@ -62,7 +62,6 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             Nremove = length(data_info.channel_to_remove{1});
             if Nremove > 0
                 [~, ind_remove] = ismember(data_info.channel_to_remove, listB);
-                
                 B(ind_remove(ind_remove ~= 0)) = [];
                 [~,listB] = list_chan(B);
             end
@@ -71,10 +70,10 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             % Filter EEG.chanlocs using the logical index array
             B =  B(matching_labels);
             EEG.chanlocs = B;
-            if ~isempty(data_info.nose_dir)
-                EEG = pop_chanedit(EEG, 'nosedir', data_info.nose_dir);
+            if ~isempty(data_info.nose_direction)
+                EEG = pop_chanedit(EEG, 'nosedir', data_info.nose_direction);
             end
-            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' data_info.electrodes_filename];
+            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' obj_info.electrodes_filename];
             
         else
             %Fig 4. 3)
@@ -83,19 +82,17 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             %generate L only one time
             if isempty(L)
                 
-                [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, data_info.channel_systems, true, EEG);
-                [L] = create_chan_loc(EEG, data_info, [], template_info, data_info.channel_systems);
+                [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, true, EEG);
+                [L] = create_chan_loc(EEG, data_info, [], template_info);
             end
             B = L;
-            
             EEG.chanlocs = B;
-            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' data_info.standard_chanloc];
-            [~,~,channel_location_file_extension] = fileparts(data_info.standard_chanloc);
-            %channel_location_file_extension = ext(2:end);
+            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' template_info.standard_chanloc];
+            [~,~,channel_location_file_extension] = fileparts(template_info.standard_chanloc);
         end
     else
         %Fig 4. 1)
-        [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, data_info.channel_systems, true, EEG);
+        [EEG.chanlocs] = rename_channels(EEG.chanlocs, data_info, true, EEG);
         B = EEG.chanlocs;
         channel_location_file_extension = "nan";
         L = [];
