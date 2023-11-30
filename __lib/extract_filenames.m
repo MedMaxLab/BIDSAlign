@@ -93,4 +93,16 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
         obj_info.electrodes_filename = [];
     end
 
+    %% Extract Event Filename
+    l = strfind(obj_info.raw_filename,'_');
+    if ~isempty(l)
+        event_name = [obj_info.raw_filename(1:l(end)) 'events.tsv'];
+        if isfile(event_name)
+            obj_info.event_filename = event_name;
+        else
+            obj_info.event_filename = [];
+        end
+    else
+        obj_info.event_filename = [];
+    end
 end

@@ -16,34 +16,38 @@ clc
 
 %% Set Variables
 modality = 'local'; % or local
-use_parpool = true; % use parpool if available
+use_parpool = false; % use parpool if available
 dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info file 
 path_info.diagnostic_folder_name = '_test';  % Set the name for the folders with diagnostic tests
 
 %% Select Modality
 single_file  = false; % preprocess a single file
-dataset_name = [];  % Set the name of the current dataset
+dataset_name = ['UC_SD'];  % Set the name of the current dataset
 
 raw_filename = [];%['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
 raw_filepath = [];%['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
 
 %% Select parameters 
 %Create a struct to store selection information
-selection_info = struct('N_subj',1,...
-                        'N_sess',1,...
-                        'N_obj',1,...
+selection_info = struct('sub_i',[3],...
+                        'sub_f',[6],...
+                        'ses_i',[],...
+                        'ses_f',[],...
+                        'obj_i',[],...
+                        'obj_f',[],...
                         'select_subjects',false,...
                         'label_name','',...
                         'label_value','',...
+                        'subjects_totake',{{}},...
                         'session_totake',{{}},...
                         'task_totake', {{}});
 
 % Create a struct to store the save information                            
 save_info = struct('save_data',true, ...
-                   'save_data_as','tensor', ...
-                   'save_set', true,...
-                   'save_struct',true, ...
-                   'save_marker',false);
+                   'save_data_as','matrix', ...
+                   'save_set', false,...
+                   'save_struct',false, ...
+                   'save_marker',true);
 
 % Set the parameters for preprocessing
 params_info = struct('low_freq',0.1,...                     %filtering                              
@@ -109,37 +113,23 @@ end
 obj_info.raw_filename = raw_filename;
 obj_info.raw_filepath = raw_filepath;
 
-% Check the modality of single subject
-if single_file
-    if isempty(obj_info.raw_filepath) || obj_info.isempty(raw_filename) 
-        error('ERROR: SPECIFY THE NAME AND THE PATH OF THE DESIRED FILE');
-    end
-else
-% Check number of files requested if we are preprocessing an entire dataset
-    if ischar(selection_info.N_subj)
-        if ~isequal(selection_info.N_subj,'all')
-            error('ERROR: INVALID STRING, ONLY "all" CAN BE INSERTED');
-        end
-    elseif selection_info.N_subj<=0
-        error('ERROR: INSERTED NEGATIVE NUMBER IN numbers_files.N_subj');
-    end
-
-    if ischar(selection_info.N_sess)
-        if ~isequal(selection_info.N_sess,'all')
-            error('ERROR: INVALID STRING, ONLY "all" CAN BE INSERTED');
-        end
-    elseif selection_info.N_sess<=0
-        error('ERROR: INSERTED NEGATIVE NUMBER IN numbers_files.N_sess');
-    end
-
-    if ischar(selection_info.N_obj)
-        if ~isequal(selection_info.N_obj,'all')
-            error('ERROR: INVALID STRING, ONLY "all" CAN BE INSERTED');
-        end
-    elseif selection_info.N_obj<=0
-        error('ERROR: INSERTED NEGATIVE NUMBER IN numbers_files.N_obj');
-    end
-end
+% % Check the modality of single subject
+% if single_file
+%     if isempty(obj_info.raw_filepath) || obj_info.isempty(raw_filename) 
+%         error('ERROR: SPECIFY THE NAME AND THE PATH OF THE DESIRED FILE');
+%     end
+% else
+%     % Check number of files requested if we are preprocessing an entire dataset
+%     if selection_info.N_sub<-1
+%         error('ERROR: INSERTED NEGATIVE NUMBER IN selection_info.N_subj. ONLY -1 IS ACCEPTED.');
+%     end
+%     if selection_info.N_ses<-1
+%         error('ERROR: INSERTED NEGATIVE NUMBER IN selection_info.N_sess. ONLY -1 IS ACCEPTED.');
+%     end
+%     if selection_info.N_obj<-1
+%         error('ERROR: INSERTED NEGATIVE NUMBER IN selection_info.N_obj. ONLY -1 IS ACCEPTED.');
+%     end
+% end
 
 %% Import Dataset Information
 % Read the dataset information from a tsv file                            

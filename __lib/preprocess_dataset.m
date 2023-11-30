@@ -34,34 +34,31 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
 
     %% Extract selected patients
     cd(path_info.dataset_path);
+
     % Check if subject selection is required
     if selection_info.select_subjects && isempty(T)
         error('UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE LOADED');
 
     elseif selection_info.select_subjects && ~isempty(T)
-        % Select control subjects based on group information
+
         idx_column = linspace(1,width(T),width(T));
         I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name));
-        subj_list = T.(1);                                  %FIRST COLUMN ALWAYS ID PARTICIPANT
+        subj_list = T.(1);                                  %first column always ID
         mask = strcmp(T.(I), selection_info.label_value);                                     
         subj_list = subj_list(mask,:);
         T = T(mask,:);
     else
         d = dir(pwd);
-        dfolders = d([d(:).isdir]); %select all folders
+        dfolders = d([d(:).isdir]);
+
         %exclude some folders
         dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',path_info.diagnostic_folder_name,'.datalad','code','derivatives'}));
         subj_list = {dfolders.name};
     end
 
     % Select files on the basis of number of subjects
-    N_subj = length(subj_list);
-    if ~strcmp(selection_info.N_subj,'all')
-        if selection_info.N_subj>N_subj
-            warning('NUMBER OF SUBJECTS REQUIRED IS TOO HIGH');
-        end
-        N_subj = min(N_subj,selection_info.N_subj);
-    end
+    [vec_subj, subj_list] = get_elements(subj_list, selection_info.sub_i, selection_info.sub_f, ...
+                                         selection_info.subjects_totake,'SUBJECTS');
 
     %% Check Channel/Electrodes file name 
     obj_info.check_ch0_root = dir([path_info.dataset_path '*_channels.tsv']);
@@ -74,11 +71,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     end
 
     L = [];
-    
-    %% Preprocess all subjects
-    for j=1:N_subj
+    counts = [0,0,0];
 
-        fprintf([' \t\t\t\t\t\t\t\t ---' data_info.dataset_name '- SUBJECT PROCESSED: ' num2str(j) '/' num2str(N_subj) ' ---\n']);
+    %% Preprocess all subjects
+    for j=vec_subj
+        counts(1)=counts(1)+1;
+        fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- SUBJECT PROCESSED: ' num2str(counts(1)) '/' num2str(length(vec_subj)) ' ---\n']);
 
         subject_name   = subj_list{j};
         subject_folder = [path_info.dataset_path subject_name];
@@ -112,36 +110,15 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
         d         = dir(pwd);
         dfolders  = d([d(:).isdir]);
         sess_list = dfolders(~ismember({dfolders(:).name},{'.','..'}));
-        N_sess    = length(sess_list);
-
-        % Take only sessions selected
-        if ~isempty(selection_info.session_totake)
-            z_list = [];
-            for z = 1:N_sess
-                mask = false;
-                for p=1:length(selection_info.session_totake)
-                    mask = mask || contains(sess_list(z).name, selection_info.session_totake{p});
-                end
-                if mask 
-                    z_list = [z_list, z];
-                end
-            end
-            sess_list = sess_list(z_list);
-            N_sess = length(sess_list);
-        end
 
         % Select files on the basis of number of sessions
-        if ~strcmp(selection_info.N_sess,'all')
-            if selection_info.N_sess>N_sess
-                warning('NUMBER OF SESSIONS REQUIRED IS TOO HIGH');
-            end
-            N_sess = min(N_sess,selection_info.N_sess);
-        end
-    
-        %% Preprocess all sessions for a subject
-        for k = 1:N_sess
+        [vec_sess, sess_list] = get_elements(sess_list, selection_info.ses_i, selection_info.ses_f, ...
+                                             selection_info.session_totake, 'SESSIONS');
 
-            fprintf([' \t\t\t\t\t\t\t\t ---' data_info.dataset_name '- SESSION PROCESSED: ' num2str(k) '/' num2str(N_sess) ' ---\n']);
+        %% Preprocess all sessions for a subject
+        for k = vec_sess
+            counts(2)=counts(2)+1;
+            fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- SESSION PROCESSED: ' num2str(counts(2)) '/' num2str(length(vec_sess)) ' ---\n']);
 
             session_name           = sess_list(k).name;
             subject_session_folder = [subject_folder '/' session_name '/eeg/'];
@@ -153,65 +130,35 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
 
             %% Extract selected objects
             obj_info.raw_filepath  = pwd;
-            filelist      = dir(['*' data_info.eeg_file_extension]);
-            N_obj         = length(filelist);
+            obj_list      = dir(['*' data_info.eeg_file_extension]);
 
-            % Take only task selected
-            if ~isempty(selection_info.task_totake)
-                z_list = [];
-                for z = 1:N_obj
-                    mask = false;
-                    for p=1:length(selection_info.task_totake)
-                        mask = mask || contains(filelist(z).name, selection_info.task_totake{p});
-                    end
-                    if mask 
-                        z_list = [z_list, z];
-                    end
-                end
-                filelist = filelist(z_list);
-                N_obj = length(filelist);
-            end
-
-            % Select files on the basis of number of objects
-            if ~strcmp(selection_info.N_obj,'all')
-                if selection_info.N_obj>N_obj
-                    warning('NUMBER OF OBJECTS REQUIRED IS TOO HIGH');
-                end
-                N_obj = min(N_obj,selection_info.N_obj);
-            end
+            % Select files on the basis of number of sessions
+            [vec_obj, obj_list] = get_elements(obj_list, selection_info.obj_i, selection_info.obj_f, ...
+                                               selection_info.task_totake, 'OBJECTS');
 
             %% Preprocess all files of a session -----------------------
-            for i=1:N_obj
+            for i=vec_obj
+                counts(3)=counts(3)+1;
+                fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- OBJECT PROCESSED: ' num2str(counts(3)) '/' num2str(length(vec_obj)) ' ---\n']);
 
-                fprintf([' \t\t\t\t\t\t\t\t ---' data_info.dataset_name '- OBJECT PROCESSED: ' num2str(i) '/' num2str(N_obj) ' ---\n']);
-
-                obj_info.raw_filename              = filelist(i).name;
+                obj_info.raw_filename              = obj_list(i).name;
                 obj_info.preprocessed_filename     = [int2str(data_info.dataset_number_reference) '_' int2str(j) '_' int2str(k) '_' int2str(i)];
                 obj_info.set_preprocessed_filename = [obj_info.preprocessed_filename data_info.eeg_file_extension];
                 obj_info.mat_preprocessed_filename = [path_info.mat_preprocessed_filepath obj_info.preprocessed_filename '.mat'];
-    	
-                % extract right electrodes and channels filename
+
+    	        fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING: ' subject_name '/' session_name '/' obj_list(i).name ' ' num2str(i) '/' num2str(length(vec_obj)) ' ---\n']);
+                
+                % extract right electrodes, channels and event filenames
                 [obj_info] = extract_filenames(obj_info, path_info, data_info);
 
-                % Get Event Filename
-                l = strfind(obj_info.raw_filename,'_');
-                if ~isempty(l)
-                    event_name = [obj_info.raw_filename(1:l(end)) 'events.tsv'];
-                    if isfile(event_name)
-                        obj_info.event_filename = event_name;
-                    else
-                        obj_info.event_filename = [];
-                    end
-                else
-                    obj_info.event_filename = [];
-                end
-
+                %% Run preprocess
                 [EEG, L] = preprocess_single_file(L, obj_info, data_info, params_info, path_info, template_info, save_info);
                 
                 %% Save data to template (and interpolation)
                 if save_info.save_data && ~isempty(EEG)
                     [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info);
-
+                    
+                    % Export events
                     if ~isempty(EEG.event) && save_info.save_marker
                         eeg_eventtable(EEG,'exportFile',[path_info.csv_preprocessed_folder obj_info.preprocessed_filename '.csv'],'dispTable',false);
                     end
