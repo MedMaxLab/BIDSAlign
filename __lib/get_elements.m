@@ -1,5 +1,25 @@
 
 function [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level)
+    % Function: get_elements
+    % Description: Retrieves a subset of elements from a list based on specified criteria.
+    %
+    % Input:
+    %   - list: List of elements to select from.
+    %   - index_i: Starting index for selection (optional).
+    %   - index_f: Ending index for selection (optional).
+    %   - select_files: Cell array of strings to filter the list based on file names (optional).
+    %   - folder_level: String specifying the folder level for filtering (e.g., 'SUBJECTS').
+    %
+    % Output:
+    %   - vec_list: List of selected indices from the original list.
+    %   - list: Updated list after applying the specified selection criteria.
+    %
+    % Notes:
+    %   - This function allows the user to filter a list of elements based on various criteria,
+    %     including index range, file name filtering, and folder level.
+    %
+    % Author: [Andrea Zanola]
+    % Date: [11/12/2023]
 
     % Take only selected files
     if ~isempty(select_files)

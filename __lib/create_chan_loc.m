@@ -10,17 +10,9 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
     %   - data_info: Struct containing dataset-specific information.
     %   - list_ref: List of reference channels to use for creating the new channel location structure.
     %   - template_info: Struct containing channel template information.
-    %   - channel_systems: Cell array of supported channel systems.
     %
     % Output:
     %   - C: New channel location structure containing only the specified channels.
-    %
-    % Usage example:
-    %   C = create_chan_loc(EEG, data_info, list_ref, template_info, channel_systems);
-    %
-    % Notes:
-    %   - This function creates a new channel location structure based on the provided inputs
-    %     and ensures that the resulting structure contains only the specified channels.
     %
     % Author: [Andrea Zanola]
     % Date: [04/10/2023]

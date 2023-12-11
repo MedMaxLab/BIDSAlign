@@ -29,8 +29,8 @@ raw_filepath = [];%['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\
 
 %% Select parameters 
 %Create a struct to store selection information
-selection_info = struct('sub_i',[3],...
-                        'sub_f',[6],...
+selection_info = struct('sub_i',[],...
+                        'sub_f',[],...
                         'ses_i',[],...
                         'ses_f',[],...
                         'obj_i',[],...
@@ -112,24 +112,6 @@ end
 %% Check Parameters
 obj_info.raw_filename = raw_filename;
 obj_info.raw_filepath = raw_filepath;
-
-% % Check the modality of single subject
-% if single_file
-%     if isempty(obj_info.raw_filepath) || obj_info.isempty(raw_filename) 
-%         error('ERROR: SPECIFY THE NAME AND THE PATH OF THE DESIRED FILE');
-%     end
-% else
-%     % Check number of files requested if we are preprocessing an entire dataset
-%     if selection_info.N_sub<-1
-%         error('ERROR: INSERTED NEGATIVE NUMBER IN selection_info.N_subj. ONLY -1 IS ACCEPTED.');
-%     end
-%     if selection_info.N_ses<-1
-%         error('ERROR: INSERTED NEGATIVE NUMBER IN selection_info.N_sess. ONLY -1 IS ACCEPTED.');
-%     end
-%     if selection_info.N_obj<-1
-%         error('ERROR: INSERTED NEGATIVE NUMBER IN selection_info.N_obj. ONLY -1 IS ACCEPTED.');
-%     end
-% end
 
 %% Import Dataset Information
 % Read the dataset information from a tsv file                            

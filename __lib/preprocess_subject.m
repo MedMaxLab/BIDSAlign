@@ -1,5 +1,27 @@
 
 function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info)
+    % Function: preprocess_subject
+    % Description: Preprocesses EEG data for a specific file, including loading dataset information,
+    % extracting subject and session names, assigning subject information, extracting channel/electrodes filenames,
+    % setting filenames, and calling the preprocess_single_file function for further preprocessing.
+    %
+    % Input:
+    %   - data_info: Structure containing information about the EEG dataset.
+    %   - save_info: Structure containing information about saving preprocessed data.
+    %   - params_info: Structure containing preprocessing parameters.
+    %   - path_info: Structure containing paths for saving preprocessed data.
+    %   - obj_info: Structure containing information about the EEG data file.
+    %
+    % Output:
+    %   - EEG: EEG data structure after preprocessing.
+    %   - DATA_STRUCT: Structure containing information about the preprocessed data.
+    %
+    % Notes:
+    %   - This function orchestrates the preprocessing steps for a specific subject, including loading
+    %     dataset information, extracting filenames, setting filenames, and calling the preprocess_single_file function.
+    %
+    % Author: [Andrea Zanola]
+    % Date: [11/12/2023]
 
     %% Load Dataset Informations
     [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info);
@@ -53,20 +75,9 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
     obj_info.check_ch2_root = dir('*_channels.tsv');
     obj_info.check_el2_root = dir('*_electrodes.tsv');
 
+    % Extract right electrodes, channels and event filenames
     [obj_info] = extract_filenames(obj_info, path_info, data_info);
 
-    % Get Event Filename
-    l = strfind(obj_info.raw_filename,'_');
-    if ~isempty(l)
-        event_name = [obj_info.raw_filename(1:l(end)) 'events.tsv'];
-        if isfile(event_name)
-            obj_info.event_filename = event_name;
-        else
-            obj_info.event_filename = [];
-        end
-    else
-        obj_info.event_filename = [];
-    end
 
     %% Set filenames
     obj_info.preprocessed_filename     = [obj_info.raw_filename '_prep'];

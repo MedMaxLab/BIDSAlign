@@ -1,3 +1,4 @@
+
 function [NchanB,listB] = list_chan(B)
 % Function: list_chan
 % Description: Extract channel labels from a channel location structure.
@@ -11,14 +12,8 @@ function [NchanB,listB] = list_chan(B)
 %   - NchanB: Number of channels in the structure.
 %   - listB: Cell array of channel labels.
 %
-% Usage example:
-%   [NchanB, listB] = list_chan(B);
-%
-% Notes:
-%   - This function retrieves channel labels from a channel location structure.
-%
 % Author: [Andrea Zanola]
-% Date: [04/10/2023]
+% Date: [11/12/2023]
 
     NchanB = length(B);
     listB = strings(NchanB,1);

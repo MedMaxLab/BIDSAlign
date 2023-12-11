@@ -8,15 +8,11 @@ function [B] = rename_channels(B, data_info, EEG_history, EEG)
     %   - B: A data structure containing EEG channel information.
     %   - data_info: A structure containing information about the EEG data,
     %                including the channel system.
-    %   - channel_systems: Cell array containing supported channel systems.
     %   - EEG_history: A boolean flag indicating whether to update EEG.history.
     %   - EEG: EEG data structure (optional), used to update EEG.history.
     %
     % Output:
     %   - B: Updated data structure with renamed channel labels.
-    %
-    % Usage example:
-    %   B = rename_channels(B, data_info_struct, channel_systems_cell, true, EEG_struct);
     %
     % Notes:
     %   - This function renames EEG channel labels according to specified naming
@@ -24,7 +20,7 @@ function [B] = rename_channels(B, data_info, EEG_history, EEG)
     %     when changes are made (if EEG_history is true).
     %
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
+    % Date: [11/12/2023]
 
     %% Change channels name using upper case and erase dots
 

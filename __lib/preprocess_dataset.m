@@ -5,16 +5,10 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     % and saves the preprocessed data to a template-based data structure or matrix format.
     %
     % Input:
-    %   - root_datasets_path: The root path to the datasets.
-    %   - root_folder_path: The root path to the preprocessed data folders.
-    %   - lib_path: The path to the library folder containing template files.
     %   - dataset_info: Structure containing dataset-specific information.
-    %   - dataset_name: The name of the dataset to preprocess.
     %   - save_info: Structure specifying the data saving options.
     %   - params_info: Structure containing preprocessing parameters.
-    %   - mat_preprocessed_folder: The path to save the preprocessed data in MAT format.
-    %   - csv_preprocessed_folder: The path to save preprocessed marker data in CSV format.
-    %   - diagnostic_folder_name: The name of the diagnostic folder within the dataset.
+    %   - path_info: Structure containing necessary paths.
     %   - selection_info: Structure containing selection parameters.
     %
     % Output:
@@ -27,7 +21,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     %     information, interpolating missing channels, and saving the data.
     %
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
+    % Date: [11/12/2023]
     
     %% Load Dataset Informations
     [data_info, path_info, template_info, T] = load_info(dataset_info, path_info, params_info, save_info);
@@ -148,7 +142,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
 
     	        fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING: ' subject_name '/' session_name '/' obj_list(i).name ' ' num2str(i) '/' num2str(length(vec_obj)) ' ---\n']);
                 
-                % extract right electrodes, channels and event filenames
+                % Extract right electrodes, channels and event filenames
                 [obj_info] = extract_filenames(obj_info, path_info, data_info);
 
                 %% Run preprocess

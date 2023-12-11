@@ -1,28 +1,24 @@
 
 function [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info)
-    % Function: preprocess_dataset
-    % Description: Preprocesses a dataset of EEG recordings, extracts relevant information,
-    % and saves the preprocessed data to a template-based data structure or matrix format.
+    % Function: load_info
+    % Description: Loads information related to EEG dataset, paths, preprocessing parameters, 
+    % and save configurations. Checks the integrity of imported data, sets necessary paths,
+    % creates a template structure for channel information, and imports participant and diagnostic files.
     %
     % Input:
-    %   - root_datasets_path: The root path to the datasets.
-    %   - lib_path: The path to the library folder containing template files.
-    %   - dataset_info: Structure containing dataset-specific information.
-    %   - dataset_name: The name of the dataset to preprocess.
+    %   - data_info: Structure containing information about the EEG dataset.
+    %   - path_info: Structure containing paths to datasets and libraries.
     %   - params_info: Structure containing preprocessing parameters.
-    %   - diagnostic_folder_name: The name of the diagnostic folder within the dataset.
+    %   - save_info: Structure containing information about saving preprocessed data.
     %
     % Output:
-    %   - EEG: EEG data structure after preprocessing.
-    %   - DATA_STRUCT: Structure containing preprocessed data information.
-    %
-    % Notes:
-    %   - This function preprocesses all the EEG data for a specified dataset, 
-    %     including loading participant and diagnostic files, extracting channel 
-    %     information, interpolating missing channels, and saving the data.
+    %   - data_info: Updated structure containing EEG dataset information.
+    %   - path_info: Updated structure containing paths.
+    %   - template_info: Structure containing template information for channel selection.
+    %   - T: Table containing participant information.
     %
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023] 
+    % Date: [11/12/2023]
 
     %% Check if the imported data has correct values
 
@@ -143,3 +139,28 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
         end
     end
 end
+
+
+    % Function: preprocess_dataset
+    % Description: Preprocesses a dataset of EEG recordings, extracts relevant information,
+    % and saves the preprocessed data to a template-based data structure or matrix format.
+    %
+    % Input:
+    %   - root_datasets_path: The root path to the datasets.
+    %   - lib_path: The path to the library folder containing template files.
+    %   - dataset_info: Structure containing dataset-specific information.
+    %   - dataset_name: The name of the dataset to preprocess.
+    %   - params_info: Structure containing preprocessing parameters.
+    %   - diagnostic_folder_name: The name of the diagnostic folder within the dataset.
+    %
+    % Output:
+    %   - EEG: EEG data structure after preprocessing.
+    %   - DATA_STRUCT: Structure containing preprocessed data information.
+    %
+    % Notes:
+    %   - This function preprocesses all the EEG data for a specified dataset, 
+    %     including loading participant and diagnostic files, extracting channel 
+    %     information, interpolating missing channels, and saving the data.
+    %
+    % Author: [Andrea Zanola]
+    % Date: [04/10/2023] 

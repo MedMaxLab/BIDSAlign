@@ -1,43 +1,26 @@
 
 function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     % Function: extract_filenames
-    % Description: Extracts filenames for channel and electrode information
-    % based on the folder structure and user-defined naming conventions.
+    % Description: Extracts filenames related to EEG data, including channels, electrodes, and event files.
     %
     % Input:
-    %   - check_ch0_root, check_ch1_root, check_ch2_root: Root folder objects
-    %     for channel files at different levels of the dataset structure.
-    %   - check_el0_root, check_el1_root, check_el2_root: Root folder objects
-    %     for electrode files at different levels of the dataset structure.
-    %   - raw_filepath: Path to the directory where the raw EEG data file is located.
-    %   - raw_filename: Name of the raw EEG data file.
-    %   - data_info: A structure containing information about the EEG data,
-    %     including the EEG file extension and channel information.
+    %   - obj_info: Structure containing information about the EEG data file.
+    %   - path_info: Structure containing paths for saving preprocessed data.
+    %   - data_info: Structure containing information about the EEG dataset.
     %
     % Output:
-    %   - data_info: Updated structure containing channels and electrodes
-    %     filenames.
-    %
-    % Usage example:
-    %   [data_info] = extract_filenames(check_ch0_root, check_ch1_root, check_ch2_root, ...
-    %                                   check_el0_root, check_el1_root, check_el2_root, ...
-    %                                   '/path/to/raw/', 'raw_data.set', data_info_struct);
+    %   - obj_info: Updated structure with filenames extracted.
     %
     % Notes:
-    %   - This function examines the dataset folder structure to determine the
-    %     appropriate filenames for channel and electrode information.
-    %   - It updates the data_info structure with channel folder information.
+    %   - This function checks for the presence of channel, electrodes, and event files at different levels
+    %     (dataset, subject, session) and assigns filenames accordingly.
     %
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
-    
-    % Note: This function is designed to work with a specific dataset structure
-    % and naming conventions, the BIDS format. The logic for determining filenames 
-    % is based on the provided inputs and dataset organization.
+    % Date: [11/12/2023]
 
     %% Check _channel.tsv file ----------------------------------
     if length(obj_info.check_ch0_root)>1 || length(obj_info.check_ch1_root)>1
-        error('ERROR: TO MUCH CHANNELS FILE IN THE WRONG PLACE');
+        error('ERROR: TO MUCH CHANNEL FILES IN THE WRONG PLACE');
     end
 
     if length(obj_info.check_ch0_root)==1
@@ -68,7 +51,7 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     obj_info.channel_location_filename = data_info.channel_location_filename;
 
     if length(obj_info.check_el0_root)>1 || length(obj_info.check_el1_root)>1
-        error('ERROR: TO MUCH ELECTRODES FILE IN THE WRONG PLACE');
+        error('ERROR: TO MUCH ELECTRODE FILES IN THE WRONG PLACE');
     end
 
     if ~isempty(obj_info.channel_location_filename)

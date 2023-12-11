@@ -1,31 +1,29 @@
 
 function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, path_info, template_info, save_info)
     % Function: preprocess_single_file
-    % Description: Preprocesses a single EEG data file, including data import,
-    % channel management, filtering, resampling, re-referencing, artifact removal,
-    % and saving the preprocessed data in a .set file.
+    % Description: Preprocesses a single EEG data file, including loading raw data,
+    % importing events, managing channel locations, filtering, resampling, and applying
+    % various preprocessing steps such as ASR and ICA.
     %
     % Input:
-    %   - raw_filepath: Path to the directory where the raw EEG data file is located.
-    %   - raw_filename: Name of the raw EEG data file.
-    %   - set_preprocessed_filename: Name for the preprocessed .set file.
-    %   - data_info: A structure containing information about the EEG data.
-    %   - params_info: A structure containing preprocessing parameters.
-    %   - template_info: Information about channel template files.
-    %   - L: A structure containing channel information (updated).
-    %   - save_info: A structure containing saving options for preprocessed data.
+    %   - L: Structure containing information about channel locations.
+    %   - obj_info: Structure containing information about the EEG data file.
+    %   - data_info: Structure containing information about the EEG dataset.
+    %   - params_info: Structure containing preprocessing parameters.
+    %   - path_info: Structure containing paths for saving preprocessed data.
+    %   - template_info: Structure containing template information for channel selection.
+    %   - save_info: Structure containing information about saving preprocessed data.
     %
     % Output:
-    %   - EEG: Preprocessed EEG data structure.
-    %   - L: Updated channel information structure.
+    %   - EEG: EEG data structure after preprocessing.
+    %   - L: Updated structure containing information about channel locations.
     %
     % Notes:
-    %   - This function performs various preprocessing steps on EEG data, as
-    %     specified in the params_info structure, and saves the preprocessed data
-    %     as a .set file if specified in save_info.
+    %   - This function performs various preprocessing steps on a single EEG data file,
+    %     including loading, filtering, resampling, ASR, ICA, and saving the preprocessed file.
     %
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
+    % Date: [11/12/2023]
     
     %% Load raw file 
     [EEG] = import_data(obj_info.raw_filename, obj_info.raw_filepath);

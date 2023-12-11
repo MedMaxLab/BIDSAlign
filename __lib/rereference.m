@@ -21,9 +21,6 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
     %   - "COMMON": Use a common average reference.
     %   - Specific channel label: Reference EEG data to the specified channel.
     %
-    % Usage example:
-    %   EEG = rereference(EEG, struct('channel_reference', 'A1'), struct('standard_ref', 'COMMON'), '.bvef', B);
-    %
     % Notes:
     %   - This function supports different reference schemes, as listed in "Table III"
     %     in the associated paper.

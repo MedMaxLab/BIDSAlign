@@ -8,6 +8,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     % Inputs:
     %   - EEG: EEG structure containing channel information.
     %   - data_info: Struct containing dataset-specific information.
+    %   - obj_info: Structure containing information about the EEG data file.
     %   - L: Channel location structure (optional).
     %   - template_info: Struct containing channel template information.
     %
@@ -17,17 +18,15 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     %   - channel_location_file_extension: File extension of the loaded channel location file.
     %   - B: Channel location structure containing only the specified channels.
     %
-    % Usage example:
-    %   [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, L, template_info, data_info.channel_to_remove, data_info.channel_systems);
-    %
     % Notes:
     %   - This function either loads channel locations from a file or generates
-    %     them based on the channel system information, and updates the EEG structure.
+    %     them based on the channel system information, as listed in "Figure 4"
+    %     in the associated paper.
     %
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
+    % Date: [11/12/2023]
 
-    if ~strcmp(obj_info.channel_location_filename, "loaded")
+    if ~isequal(obj_info.channel_location_filename, 'loaded')
         if ~isempty(obj_info.electrodes_filename)
     
             %Fig 4. 4)

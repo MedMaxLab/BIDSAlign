@@ -1,36 +1,27 @@
 
 function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info)
     % Function: save_data_totemplate
-    % Description: Preprocesses and saves EEG data to a template-based data
-    % structure or matrix format.
+    % Description: Saves preprocessed EEG data to a standard template (tensor or matrix).
     %
     % Input:
-    %   - raw_filepath: The path to the raw EEG data file.
-    %   - raw_filename: The name of the raw EEG data file.
-    %   - mat_preprocessed_filepath: The path to save the preprocessed data.
-    %   - channel_systems: Cell array containing supported channel systems.
-    %   - EEG: EEG data structure containing the raw EEG data.
-    %   - template_info: Structure containing information about the template.
-    %   - save_info: Structure specifying the data saving options.
-    %   - data_info: Structure containing information about the EEG data.
+    %   - EEG: EEG data structure.
+    %   - obj_info: Structure containing information about the EEG data file.
+    %   - template_info: Structure containing information about the channel template.
+    %   - save_info: Structure with information about the saving process.
+    %   - path_info: Structure containing paths for saving preprocessed data.
+    %   - data_info: Structure containing information about the EEG dataset.
     %   - params_info: Structure containing preprocessing parameters.
-    %   - subj_info: Information about the subject (optional).
+    %   - subj_info: Structure containing information about the subject.
     %
     % Output:
-    %   - EEG: EEG data structure after preprocessing.
-    %   - DATA_STRUCT: Structure containing preprocessed data information.
-    %
-    % Usage example:
-    %   [EEG, DATA_STRUCT] = save_data_totemplate(raw_filepath, raw_filename, mat_preprocessed_filepath, ...
-    %                           channel_systems, EEG, template_info, save_info, data_info, params_info, subj_info);
+    %   - EEG: Updated EEG data structure.
+    %   - DATA_STRUCT: Structure containing information about the saved data.
     %
     % Notes:
-    %   - This function preprocesses EEG data, interpolates missing channels,
-    %     scales voltage channels, and saves the data to a template-based data
-    %     structure or matrix format.
+    %   - This function interpolates missing channels, updates channel names, and saves data to a standard template.
     %
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
+    % Date: [11/12/2023]
 
     chans_DATA_MATRIX = length(template_info.template_matrix(:,1));
     standard_ref_ch   = params_info.standard_ref;
