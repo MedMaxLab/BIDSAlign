@@ -65,17 +65,17 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, f
             vec_list = vec(index_i:end);
         end
     else
-        if index_i > index_f %Cases C,D,F
+        if index_i > index_f %Cases C,D,F (f<i<N; f<N<i; N<f<i)
             error(['ERROR: ' folder_acronym '_I>' folder_acronym '_F']);
         else
-            if index_i > N %Case E
+            if index_i > N %Case E (N<i<f)
                 warning([folder_acronym '_I AND ' folder_acronym '_F> N ' folder_level]);
                 vec_list = vec;
             else
-                if index_f > N %Case B
+                if index_f > N %Case B (i<N<f)
                     warning([folder_acronym '_F> N ' folder_level]);
                     vec_list = vec(index_i:end);
-                else %Case A
+                else %Case A (i<f<N)
                     vec_list = vec(index_i:index_f);
                 end
             end

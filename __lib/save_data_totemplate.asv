@@ -97,9 +97,9 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
         end
         if save_info.save_struct
             DATA_STRUCT.data = DATA_TENSOR;
-            save(obj_info.mat_preprocessed_filename,'DATA_STRUCT');
+            save(path_info.mat_preprocessed_filepath,'DATA_STRUCT');
         else
-            save(obj_info.mat_preprocessed_filename,'DATA_TENSOR');
+            save(path_info.mat_preprocessed_filepath,'DATA_TENSOR');
         end
 
     elseif strcmp(save_info.save_data_as,'matrix')
@@ -109,7 +109,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
             DATA_STRUCT.data = DATA_MATRIX;
             save(obj_info.mat_preprocessed_filename,'DATA_STRUCT');
         else
-            save(obj_info.mat_preprocessed_filename,'DATA_MATRIX');
+            save(path_info.mat_preprocessed_filepath,'DATA_MATRIX');
         end
     else
         error('ERROR: UNSUPPORTED SAVE FORMAT');
