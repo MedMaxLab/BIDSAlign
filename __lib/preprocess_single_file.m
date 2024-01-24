@@ -210,7 +210,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         %% ICA
         if params_info.prep_steps.ICA
             if verbose
-                [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', params_info.n_ica, 'verbose','off');
+                [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica), 'verbose','off');
             else
                 [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', params_info.n_ica, 'verbose','off');");
             end
