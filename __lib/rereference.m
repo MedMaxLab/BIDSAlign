@@ -1,5 +1,5 @@
 
-function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B)
+function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose)
     % Function: rereference
     % Description: Rereferences EEG data to a new reference electrode channel
     % based on the specified standard reference or a specific channel.
@@ -29,6 +29,9 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
     %
     % Author: [Andrea Zanola]
     % Date: [04/10/2023]
+    if nargin < 6
+        verbose = false;
+    end
 
     dataset_reference  = data_info.channel_reference; %Current EEG Ref
     standard_reference = params_info.standard_ref;    %Desired New Ref
@@ -39,12 +42,18 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
     %% Reref the data to average reference ------------------------------
     if isequal(upper(standard_reference),'COMMON')
         if isequal(upper(dataset_reference),'COMMON')
-            disp('Rereference case: H');
+            if verbose
+                disp('Rereference case: H');
+            end
             %Table III: H) nothing to do                                                            
         else
             %Table III: G) common reref + if required interpolate channel T and/or channel S  
-            disp('Rereference case: G');
-            EEG = pop_reref( EEG, [],'keepref','on');                      
+            if verbose
+                disp('Rereference case: G');
+                EEG = pop_reref( EEG, [],'keepref','on');      
+            else
+                [~,EEG] = evalc("pop_reref( EEG, [],'keepref','on');");
+            end
             EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' standard_reference];
         end
     else
@@ -62,21 +71,28 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
         end
 
         %% Reref the data to a specific channel------------------------------
-        if isempty(C) && ~isequal(dataset_reference,standard_reference)    
-            disp('Rereference case: D');
+        if isempty(C) && ~isequal(dataset_reference,standard_reference)
+            if verbose
+                disp('Rereference case: D');
+            end
             %Table III: D) error: channel T not present
             error('ERROR: NEW REFERENCE CHANNEL NOT REGISTERED');
     
         elseif isequal(dataset_reference,standard_reference)                  
             %Table III: B)-C) nothing to do
-            disp('Rereference case: B-C');
+            if verbose
+                disp('Rereference case: B-C');
+            end
         else     
             %Table III: A)-F) rereference the data
-            disp('Rereference case: A-F');
-            
-            EEG = pop_reref( EEG, C,'keepref','on');
+            if verbose
+                disp('Rereference case: A-F');
+                EEG = pop_reref( EEG, C,'keepref','on');
+            else
+                [~,EEG] = evalc("pop_reref( EEG, C,'keepref','on');");
             EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' standard_reference '(keepref: on)'];
-        end
+            end
 
+        end
     end
 end

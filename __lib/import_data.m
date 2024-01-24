@@ -1,5 +1,5 @@
 
-function EEG = import_data(raw_filename, raw_filepath)
+function EEG = import_data(raw_filename, raw_filepath, verbose)
     % Function: import_data
     % Description: Imports EEG data from various file formats using EEGLAB functions.
     %
@@ -23,6 +23,9 @@ function EEG = import_data(raw_filename, raw_filepath)
     
     % Author: [Andrea Zanola]
     % Date: [04/10/2023]
+    if nargin < 3
+        verbose = false;
+    end
 
     [~,~,eeg_file_extension] = fileparts(raw_filename);
 
@@ -31,7 +34,9 @@ function EEG = import_data(raw_filename, raw_filepath)
             EEG = pop_loadset('filename',raw_filename,'filepath',raw_filepath);
         catch
             EEG = [];
-            warning(['CORRUPTED .SET FILE: ' raw_filepath raw_filename]);
+            if verbose
+                warning(['CORRUPTED .SET FILE: ' raw_filepath raw_filename]);
+            end
         end
 
     elseif isequal(eeg_file_extension,'.vhdr')
@@ -39,14 +44,18 @@ function EEG = import_data(raw_filename, raw_filepath)
             EEG = pop_loadbv(raw_filepath, raw_filename,  [1:-1], [1:-1]);
         catch
             EEG = [];
-            warning(['CORRUPTED .VHDR FILE: ' raw_filepath raw_filename]);
+            if verbose
+                warning(['CORRUPTED .VHDR FILE: ' raw_filepath raw_filename]);
+            end
         end
     elseif isequal(eeg_file_extension,'.edf') || isequal(eeg_file_extension,'.bdf')
         try
             EEG = pop_biosig(raw_filename); 
         catch
             EEG = [];
-            warning(['CORRUPTED .EDF or .BDF FILE: ' raw_filepath raw_filename]);
+            if verbose
+                warning(['CORRUPTED .EDF or .BDF FILE: ' raw_filepath raw_filename]);
+            end
         end
     else
         error('ERROR: UNSUPPORTED EEG FILE EXTENSION');

@@ -1,5 +1,5 @@
 
-function [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level)
+function [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level, verbose)
     % Function: get_elements
     % Description: Retrieves a subset of elements from a list based on specified criteria.
     %
@@ -22,6 +22,10 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, f
     % Date: [11/12/2023]
 
     % Take only selected files
+    if nargin < 6
+        verbose =  false;
+    end
+    
     if ~isempty(select_files)
         z_list = [];
         for z = 1:length(list)
@@ -52,14 +56,18 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, f
             vec_list = vec;
     elseif isempty(index_i) && ~isempty(index_f)
         if index_f>=N
-            warning([folder_acronym '_F IS IGNORED SINCE> N ' folder_level]);
+            if verbose
+                warning([folder_acronym '_F IS IGNORED SINCE> N ' folder_level]);
+            end
             vec_list = vec;
         else
             vec_list = vec(1:index_f);
         end
     elseif ~isempty(index_i) && isempty(index_f)
         if index_i>=N
-            warning([folder_acronym '_I IS IGNORED SINCE> N ' folder_level]);
+            if verbose
+                warning([folder_acronym '_I IS IGNORED SINCE> N ' folder_level]);
+            end
             vec_list = vec;
         else
             vec_list = vec(index_i:end);
@@ -69,11 +77,15 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, f
             error(['ERROR: ' folder_acronym '_I>' folder_acronym '_F']);
         else
             if index_i > N %Case E (N<i<f)
-                warning([folder_acronym '_I AND ' folder_acronym '_F> N ' folder_level]);
+                if verbose
+                    warning([folder_acronym '_I AND ' folder_acronym '_F> N ' folder_level]);
+                end
                 vec_list = vec;
             else
                 if index_f > N %Case B (i<N<f)
-                    warning([folder_acronym '_F> N ' folder_level]);
+                    if verbose
+                        warning([folder_acronym '_F> N ' folder_level]);
+                    end
                     vec_list = vec(index_i:end);
                 else %Case A (i<f<N)
                     vec_list = vec(index_i:index_f);

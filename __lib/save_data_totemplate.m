@@ -1,5 +1,5 @@
 
-function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info)
+function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info, verbose)
     % Function: save_data_totemplate
     % Description: Saves preprocessed EEG data to a standard template (tensor or matrix).
     %
@@ -23,6 +23,9 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
 
+    if nargin < 9
+        verbose = false;
+    end
     chans_DATA_MATRIX = length(template_info.template_matrix(:,1));
     standard_ref_ch   = params_info.standard_ref;
    
@@ -48,7 +51,11 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
         L1 = create_chan_loc(EEG, data_info, template_info.template_matrix, template_info);
         
         %with pop_interp channel_location, coordinates are mixed. But chanlocs is not used anymore.
-        EEG1 = pop_interp(EEG, L1, params_info.interpol_method); 
+        if verbose
+            EEG1 = pop_interp(EEG, L1, params_info.interpol_method); 
+        else
+            [~, EEG1] = evalc('pop_interp(EEG, L1, params_info.interpol_method);');
+        end
     else
         EEG1 = EEG;
     end

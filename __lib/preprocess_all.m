@@ -1,214 +1,425 @@
-
-% Script: Preprocess EEG Datasets with BIDS Structure
-% Description: Preprocesses multiple EEG datasets with a BIDS structure,
-% applying various preprocessing steps and saving the preprocessed data.
+function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
+% documentation
 %
-% Note: This script requires EEGLAB to be installed and configured.
-% You need to set appropriate paths and parameters before running the script.
+%
+% License: MIT
 % 
-% Author: [Andrea Zanola]
-% Date: [04/10/2023]
-
-%% Clear Workspace and Initialize
-clear all
-%close all
-clc
-
-%% Set Variables
-modality = 'local'; % or local
-use_parpool = false; % use parpool if available
-dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info file 
-path_info.diagnostic_folder_name = '_test';  % Set the name for the folders with diagnostic tests
-
-%% Select Modality
-single_file  = false; % preprocess a single file
-dataset_name = ['UC_SD'];  % Set the name of the current dataset
-
-raw_filename = [];%['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
-raw_filepath = [];%['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
-
-%% Select parameters 
-%Create a struct to store selection information
-selection_info = struct('sub_i',[],...
-                        'sub_f',[],...
-                        'ses_i',[],...
-                        'ses_f',[],...
-                        'obj_i',[],...
-                        'obj_f',[],...
-                        'select_subjects',false,...
-                        'label_name','',...
-                        'label_value','',...
-                        'subjects_totake',{{}},...
-                        'session_totake',{{}},...
-                        'task_totake', {{}});
-
-% Create a struct to store the save information                            
-save_info = struct('save_data',true, ...
-                   'save_data_as','matrix', ...
-                   'save_set', false,...
-                   'save_struct',true, ...
-                   'save_marker',false);
-
-% Set the parameters for preprocessing
-params_info = struct('low_freq',0.1,...                     %filtering                              
-                     'high_freq',49, ...                    %filtering
-                     'sampling_rate',250, ...               %resampling
-                     'standard_ref','COMMON', ...               %standard ref
-                     'interpol_method','spherical',...      %interpolation
-                     'flatlineC',5,...                      %1° ASR
-                     'channelC',0.8,...                     %1° ASR
-                     'lineC',4, ...                         %1° ASR
-                     'burstC',20,...                        %2° ASR
-                     'windowC',0.25,...                     %2° ASR
-                     'burstR','on',...                      %2° ASR
-                     'th_reject',1000,... %uV               %amplitude threshold
-                     'ica_type','fastica',...               %ICA
-                     'non_linearity','tanh',...             %ICA
-                     'n_ica',20,...                         %ICA
-                     'dt_i',0,...                          %segment removal [s]
-                     'dt_f',0,...                          %segment removal [s]
-                     'prep_steps',struct('rmchannels'     ,true,...
-                                         'rmsegments'     ,true,...
-                                         'rmbaseline'     ,true,...
-                                         'resampling'     ,true,...
-                                         'filtering'      ,true,...
-                                         'rereference'    ,true,...
-                                         'ICA'            ,false,...
-                                         'ASR'            ,false) );
-
-%% Set Paths
-if strcmp(modality,'server')
-
-    % Set eeglab path
-    path_info.eeglab_path = '/home/zanola/eeglab2023.0/';
-    addpath(path_info.eeglab_path);
-    eeglab; close;
-
-    % Set various paths (server)
-    path_info.root_folder_path    = '/home/zanola/eeg_datasets/'; 
-    path_info.root_data_path      = '/data/zanola/'; 
-    path_info.root_datasets_path  = [path_info.root_data_path 'datasets/'];  
-
-    path_info.git_path            = [path_info.root_folder_path 'EEG_ML_dataset/'];
-    path_info.lib_path            = [path_info.git_path '__lib']; 
-    addpath(path_info.lib_path);
-
-elseif strcmp(modality,'local')
-
-    path_info.eeglab_path = 'E:/02_Documenti/05_PhD/Lezioni/eeglab2023.0';
-    addpath(path_info.eeglab_path);
-    eeglab; close
-
-    % Set various paths (local)
-    path_info.root_folder_path    = 'E:/02_Documenti/05_PhD/1°_anno/EEG_Prep/'; 
-    path_info.root_datasets_path  = [path_info.root_folder_path 'Datasets/']; 
-    path_info.root_data_path      = path_info.root_datasets_path;
-
-
-    path_info.git_path            = [path_info.root_folder_path 'EEG_ML_dataset/']; 
-    path_info.lib_path            = [path_info.git_path '__lib']; 
-    addpath(path_info.lib_path);
-else
-    error(['ERROR: UNRECOGNAIZED MODALITY: ' modality]);
-end
-
-%% Check Parameters
-obj_info.raw_filename = raw_filename;
-obj_info.raw_filepath = raw_filepath;
-
-%% Import Dataset Information
-% Read the dataset information from a tsv file                            
-dataset_info = readtable([path_info.git_path dataset_info_filename],'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
-
-% Check for errors
-for i=1:height(dataset_info) 
-    matching_rows = strcmp(dataset_info.dataset_name, dataset_info.dataset_name{i});
-    c = sum(matching_rows);
     
-    if c == 0
-        error('ERROR: CHECK THE DATASET NAME');
-    elseif c > 1
-        error(['ERROR: MULTIPLE DATASETS HAVE THE SAME NAME IN ' dataset_info_filename]);
+    
+    % --------------------------------------------------------
+    %                ARGUMENT PARSING
+    % --------------------------------------------------------
+    
+    % ----------- setting defaults -----------------------
+    filePath = mfilename('fullpath');
+    filePath = filePath(1:length(filePath)-14);
+    
+    defaultDatasetPath='';
+    defaultOutputPath= '';
+    defaultOutputMatPath = '';
+    defaultOutputCsvPath = '';
+    defaultOutputSetPath = '';
+    defaultEeglabPath = '';
+    
+    defaultSelectionInfo= struct;
+    defaultProcessInfo= struct;
+    defaultSaveInfo= struct;
+    defaultPathInfo = struct;
+    
+    defaultSettingName= 'default';
+    
+    defaultSingleFile = false;
+    defaultSingleDatasetName = '';
+    defaultSingleFileName = '';
+    
+    defaultVerbose= false;
+    defaultParPool = false;
+    defaultSolveNoGui = false;
+    defaultDiagnosticName = '_diagnostic_test';
+
+
+    % ------------- create input parses ----------------
+    p = inputParser;
+    validStringChar= @(x) isstring(x) || ischar(x);
+    validstruct = @(x) isstruct(x);
+    validBool= @(x) islogical(x);
+    validFile = @(x) isfile(x);
+    p.addRequired( 'dataset_info_filename', validFile);
+    
+    p.addOptional( 'path_info', defaultPathInfo, validstruct);
+    p.addOptional('preprocess_info', defaultProcessInfo, validstruct);
+    p.addOptional('selection_info', defaultSelectionInfo, validstruct);
+    p.addOptional('save_info', defaultSaveInfo, validstruct);
+    p.addParameter('setting_name', defaultSettingName, validStringChar);
+    
+    p.addParameter( 'single_file', defaultSingleFile, validBool);
+    p.addParameter( 'single_dataset_name', defaultSingleDatasetName, validStringChar);
+    p.addParameter( 'single_file_name', defaultSingleFileName, validStringChar);
+    
+    p.addParameter( 'diagnostic_folder_name', defaultDiagnosticName, validStringChar);
+    p.addParameter('use_parpool', defaultParPool, validBool);
+    p.addParameter( 'solve_nogui', defaultSolveNoGui, validBool);
+    p.addParameter( 'verbose', defaultVerbose, validBool);
+    
+    p.addParameter( 'dataset_path', defaultDatasetPath, validStringChar);
+    p.addParameter( 'output_path', defaultOutputPath, validStringChar);
+    p.addParameter( 'output_mat_path', defaultOutputMatPath, validStringChar);
+    p.addParameter( 'output_csv_path', defaultOutputCsvPath, validStringChar);
+    p.addParameter( 'output_set_path', defaultOutputSetPath, validStringChar);
+    p.addParameter( 'eeglab_path', defaultEeglabPath, validStringChar);
+    
+    parse(p, dataset_info_filename, varargin{:});    
+    
+    % -- extract parameters from input parser --
+    selection_info = p.Results.selection_info;
+    params_info = p.Results.preprocess_info;
+    save_info = p.Results.save_info;
+    path_info = p.Results.path_info;
+    setting_name = p.Results.setting_name;   
+
+    verbose = p.Results.verbose;
+    solve_nogui = p.Results.solve_nogui; 
+    use_parpool = p.Results.use_parpool;
+    
+    single_file = p.Results.single_file;
+    dataset_name = [p.Results.single_dataset_name];
+    raw_filename = p.Results.single_file_name;
+    raw_filepath = [];
+    
+    % --------------------------------------------------------
+    %    GET STRUCTS WITH PREPRO SETTINGS
+    % --------------------------------------------------------
+
+    % basically, if not given, it will try to load a file given in the
+    % setting name, otherwise it will try to load a file placed in the
+    % defaults setting. If both fails, initialize a struct with the default
+    % settings just for this call (if verbose is set to true warnings will
+    % be generated)    
+    if isempty( fieldnames(save_info) )
+       try
+           save_info = load([filePath 'default_settings/' setting_name '/save_info.mat']).save_info;
+       catch
+           try
+               save_info = load([filePath 'default_settings/default/save_info.mat']).save_info;
+           catch
+               save_info = set_save_info();
+           end
+       end
     end
-end
 
-%% Set Folders Names
-% Check if exist otherwise create mat_preprocessed_folder
-path_info.mat_preprocessed_filepath   = [path_info.root_data_path '_mat_preprocessed/'];     
-if ~exist(path_info.mat_preprocessed_filepath, 'dir')
-   mkdir(path_info.mat_preprocessed_filepath)
-end
-% Check if exist otherwise create csv_marker_files folder
-path_info.csv_preprocessed_folder   = [path_info.root_data_path '_csv_marker_files/'];     
-if ~exist(path_info.csv_preprocessed_folder, 'dir') && save_info.save_marker 
-    mkdir(path_info.csv_preprocessed_folder)
-end   
 
-%% Lunch Preprocess of the Datasets
-% Create two use modes: if dataset name is specified, preprocess only that
-% dataset otherwise, preprocess all the dataset in dataset_info.
+    if isempty( fieldnames(selection_info) )
+       try
+           selection_info = load([filePath 'default_settings/' setting_name '/selection_info.mat']).selection_info;
+       catch
+           try
+               selection_info = load([filePath 'default_settings/default/selection_info.mat']).selection_info;
+           catch
+               selection_info = set_selection_info();
+           end
+       end
+    end
 
-if use_parpool && isempty(dataset_name) && ~single_file
+    if isempty( fieldnames(params_info) )
+       try
+           params_info = load([filePath 'default_settings/' setting_name '/preprocessing_info.mat']).params_info;
+       catch
+           try
+               params_info = load([filePath 'default_settings/default/preprocessing_info.mat']).params_info;
+           catch
+               params_info = set_preprocessing_info();
+           end
+       end
+    end
 
-    %% Lunch Parpool
-    %Launch the parallel pool for parallel computing (if available)
-    poolobj = gcp();
-    if ~poolobj.Connected
-        try
-            parpool;
-            catch
-            error('ERROR: PARPOOL NOT AVAILABLE SET use_parpool TO FALSE');
+    if isempty( fieldnames(path_info) )
+       try
+           path_info = load([filePath 'default_settings/' setting_name '/path_info.mat']).path_info;
+       catch
+           try
+               path_info = load([filePath 'default_settings/default/path_info.mat']).path_info;
+           catch
+               path_info = set_path_info();
+           end
+       end
+    end
+
+
+    % for path info, fields will be changed if anything 
+    % new is given as input to this function. 
+    if ~isempty(p.Results.dataset_path)
+       path_info.datasets_path = p.Results.dataset_path;
+       parts = strsplit(path_info.datasets_path, filesep);
+       path_info.root_datasets_path = [strjoin(parts(1:end-1), filesep) '/'];
+    end
+    if ~isempty(p.Results.output_path)
+       path_info.output_path = p.Results.output_path;
+    end
+    if ~isempty(p.Results.dataset_path)
+       path_info.datasets_path = p.Results.dataset_path;
+    end
+    if ~isempty(p.Results.eeglab_path)
+       path_info.eeglab_path = p.Results.eeglab_path;
+    end
+    if ~isempty(p.Results.output_mat_path)
+       path_info.output_mat_path = p.Results.output_mat_path;
+    end
+    if ~isempty(p.Results.output_csv_path)
+       path_info.output_csv_path = p.Results.output_csv_path;
+    end
+    if ~isempty(p.Results.output_set_path)
+       path_info.output_set_path = p.Results.output_set_path;
+    end
+    if ~strcmp(p.Results.diagnostic_folder_name, '_diagnostic_test')
+       path_info.diagnostic_folder_name = p.Results.diagnostic_folder_name;
+    end
+
+    % --------------------------------------------------------
+    %    ADDITIONAL CHECKS ON GIVEN PATHS
+    % --------------------------------------------------------
+
+    % add path to eeglab if given. If not given, check that 
+    % eeglab will start when called by the function
+    if ~isempty(path_info.eeglab_path)
+       addpath(path_info.eeglab_path)
+       search_eeglab_path(verbose)
+    else
+       search_eeglab_path(verbose)
+    end
+
+    % add path to BIDSAlign if not included in the 
+    % search path
+    if ~any(strcmp(path_info.lib_path, strsplit( path ,':')))
+       addpath(path_info.lib_path)
+    end
+
+    % if datasets info wasn't given, raise an error
+    if isempty(path_info.datasets_path)
+       error("dataset_path not given. Be sure it is stored in path_info or give it in input when calling this function")
+    end
+
+    % if single file mode must be performes, check
+    % that such file exists in the current dataset path
+    if single_file
+       if isempty(raw_filename)
+           if isempty(path_info.raw_filepath)
+               error("cannot process a single file without knowing its name or path." + ...
+                    "Please give a proper file name as char or string using the " + ...
+                    " 'raw_filename' argument or set it in the presaved path_info struct");
+           elseif ~validFile(path_info.raw_filepath)
+               error("path_info stored a path which is not valid. Please correct it or give in input a new one" + ...
+                   " using the 'raw_filename' argument"); 
+           end
+       else
+            if validFile(raw_filename)
+                raw_filepath= raw_filename;
+            else
+                path_file_struct = dir([path_info.dataset_path '**/' raw_filename]);
+                if isempty(path_file_struct)
+                    error("cannot find current raw file. Please check that " + ...
+                        "dataset path and raw_filename are correct." + ...
+                        "Give raw_filename with the extension, for example 'sub-01-raw-eeg.bdf' ")
+                else
+                    path_info.raw_filepath = [path_file_struct.folder '/' path_file_struct.name];
+                end
+            end
+       end
+    end
+
+
+    % check that output path is valid
+    if ~isfolder(path_info.output_path)
+        error("given 'output_path' is not a correct path to an existing directory")
+    end
+
+    % if given, check that custom output path
+    % for mat files is valid
+    if ~isempty(path_info.output_mat_path)
+        if ~validpath(path_info.output_mat_path)
+            error(" if given, 'output_mat_path' must be a valid path to an existing directory")
         end
     end
-    % Launch Parpool
-    parfor i=1:height(dataset_info)
-        fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_info.dataset_name{i} ' ---\n']);
-        
-        % Create the data_info struct to store dataset-specific information
-        dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name));
-        data_info = table2struct(dataset_info(i,:));
-        data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{i}, ','); 
 
-        % Preprocess all the dataset
-        [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info);
-    end  
-
-elseif isempty(dataset_name) && ~single_file
-   for i=1:height(dataset_info) 
-        fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_info.dataset_name{i} ' ---\n']);
-
-        % Create the data_info struct to store dataset-specific information
-        dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name));
-        data_info = table2struct(dataset_info(i,:));
-        data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{i}, ','); 
-
-        % Preprocess all the dataset
-        [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info);
-    end  
-else
-    if single_file
-        warning('PARPOOL NOT USED SINCE SPECIFIC FILE WAS SELECTED');
-
-        % Extract Dataset Code Name
-        out = regexp(obj_info.raw_filepath ,'\','split');
-        dataset_code = out{end-4};
-
-        % Create the data_info struct to store dataset-specific information
-        dataset_index = find(strcmp(dataset_info.dataset_code, dataset_code));
-        data_info = table2struct(dataset_info(dataset_index,:));
-        data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{dataset_index}, ',');
-
-        disp(dataset_name)
-        [~,DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info);
-    else   
-        warning('PARPOOL NOT USED SINCE SPECIFIC DATASET WAS SELECTED');
-
-        % Create the data_info struct to store dataset-specific information
-        dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name));
-        data_info = table2struct(dataset_info(dataset_index,:));
-        data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{dataset_index}, ','); 
-
-        % Preprocess a specific dataset
-        [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info);
+    % if given, check that custom output path
+    % for csv files is valid
+    if ~isempty(path_info.output_csv_path)
+        if ~validpath(path_info.output_csv_path)
+            error(" if given, 'output_table_path' must be a valid path to an existing directory")
+        end
     end
+
+    % if given, check that custom output path
+    % for set files is valid
+    if ~isempty(path_info.output_set_path)
+        if ~validpath(path_info.output_set_path)
+            error(" if given, 'output_set_path' must be a valid path to an existing directory")
+        end
+    end
+
+    % --------------------------------------------------------
+    %           CREATE OUTPUT FOLDERS
+    % --------------------------------------------------------
+
+    % Check if exist otherwise create mat_preprocessed folder
+    if isempty(path_info.output_mat_path)
+        path_info.output_mat_path   = [path_info.output_path '_mat_preprocessed/'];     
+        if ~exist(path_info.output_mat_path, 'dir')
+           mkdir(path_info.output_mat_path)
+        end
+    end
+
+    % Check if exist otherwise create csv_marker_files folder
+    if isempty(path_info.output_csv_path) 
+        path_info.output_csv_path   = [path_info.output_path '_csv_marker_files/'];     
+        if ~exist(path_info.output_csv_path, 'dir') && save_info.save_marker 
+            mkdir(path_info.output_csv_path)
+        end   
+    end
+
+    % Check if exist otherwise create set_files folder
+    if isempty(path_info.output_set_path) 
+        path_info.output_set_path   = [path_info.output_path '_set_preprocessed/'];     
+        if ~exist(path_info.output_set_path, 'dir') && save_info.save_set 
+            mkdir(path_info.output_set_path)
+        end   
+    end
+
+    % --------------------------------------------------------
+    %                  OPEN EEGLAB
+    % --------------------------------------------------------
+    % sometimes eeglab nogui fail to load plugins.
+    % if this happens, use the solve_nogui boolean 
+    % and 'eeglab; close' commands will be used
+    if solve_nogui
+       if verbose
+           eeglab; close;
+       else
+           [~] = evalc('eeglab; close;');
+       end
+       addpath(path_info.lib_path);
+    else
+       if verbose
+           eeglab nogui;
+       else
+           [~] = evalc('eeglab nogui;');
+       end
+    end
+
+    % --------------------------------------------------------
+    %       INITIALIZE OBJECT INFO STRUCT
+    % --------------------------------------------------------
+    obj_info.raw_filename = raw_filename;
+    obj_info.raw_filepath = raw_filepath;
+
+    % --------------------------------------------------------
+    %    IMPORT DATASETS INFO FROM TABLE
+    % --------------------------------------------------------
+    % Read the dataset information from a tsv file                            
+    dataset_info = readtable(dataset_info_filename, 'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
+    check_loaded_table( dataset_info);
+    if ~isempty(dataset_name)
+        dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name), 1); 
+        if isempty(dataset_index)
+            error('given dataset name to preprocess not included in the loaded dataset info table')
+        end
+    end
+
+    % |------------------------------------------------------|
+    % |------------------------------------------------------|
+    % |            START PREPROCESSING               |
+    % |------------------------------------------------------|
+    % |------------------------------------------------------|
+    
+    % Create two use modes: if dataset name is specified, preprocess only that
+    % dataset otherwise, preprocess all the dataset in dataset_info.
+
+    % PARPOOL BLOCK 
+    if use_parpool && isempty(dataset_name) && ~single_file
+        %Launch the parallel pool for parallel computing (if available)
+        poolobj = gcp();
+        if ~poolobj.Connected
+            try
+                parpool;
+            catch
+                error('ERROR: parpool not available. Set use_parpool to false (default)');
+            end
+        end
+
+        % slice table to avoid broadcastable warning with parfor
+        dataset_names = dataset_info.dataset_name;
+        channels_to_remove = dataset_info.channel_to_remove;
+
+        % Launch Parpool
+        parfor i=1:height(dataset_info)
+            if verbose
+                fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_names{i} ' ---\n']);
+            end
+
+            % Create the data_info struct to store dataset-specific information
+            % dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name));
+            data_info = table2struct(dataset_info(i,:));
+            data_info.channel_to_remove = strsplit(channels_to_remove{i}, ','); 
+
+            % Preprocess all the dataset
+            [~, ~] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info, verbose);
+        end  
+
+    % SINGLE THREAD BLOCK
+    elseif isempty(dataset_name) && ~single_file
+       for i=1:height(dataset_info) 
+           if verbose
+                fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING DATASET:' dataset_info.dataset_name{i} ' ---\n']);
+           end
+
+            % Create the data_info struct to store dataset-specific information
+            % dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name));
+            data_info = table2struct(dataset_info(i,:));
+            data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{i}, ','); 
+
+            % Preprocess all the dataset
+            [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info, verbose);
+       end
+
+    % SINGLE FILE OR DATASET BLOCK
+    else
+        if single_file
+            if verbose && use_parpool
+                warning('PARPOOL NOT USED SINCE SPECIFIC FILE WAS SELECTED');
+            end
+
+            % Extract Dataset Code Name
+            out = regexp(obj_info.raw_filepath ,'\','split');
+            dataset_code = out{end-4};
+
+            % Create the data_info struct to store dataset-specific information
+            dataset_index = find(strcmp(dataset_info.dataset_code, dataset_code));
+            data_info = table2struct(dataset_info(dataset_index,:));
+            data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{dataset_index}, ',');
+
+            disp(dataset_name)
+            [~,DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose);
+        else
+            if verbose
+                warning('PARPOOL NOT USED SINCE SPECIFIC DATASET WAS SELECTED');
+            end
+
+            % Create the data_info struct to store dataset-specific information
+            dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name));
+            data_info = table2struct(dataset_info(dataset_index,:));
+            data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{dataset_index}, ','); 
+
+            % Preprocess a specific dataset
+            [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info, verbose);
+        end
+    end
+
+    % --------------------------------------------------------
+    %       GO BACK TO STARTING FOLDER
+    % --------------------------------------------------------
+    % preprocessing phase will "cd" into subfolders 
+    % inside dataset path. We need to return 
+    % to the starting folder path
+    cd(path_info.current_path)
+
 end
+

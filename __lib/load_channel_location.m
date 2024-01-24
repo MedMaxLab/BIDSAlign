@@ -1,5 +1,5 @@
 
-function [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info)
+function [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info, verbose)
     % Function: load_channel_location
     % Description: Loads channel location information for EEG data. 
     % It either reads channel locations from a file or generates them based on the
@@ -25,6 +25,9 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
+    if nargin < 6
+        verbose = false
+    end
 
     if ~isequal(obj_info.channel_location_filename, 'loaded')
         if ~isempty(obj_info.electrodes_filename)
@@ -70,7 +73,11 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             B =  B(matching_labels);
             EEG.chanlocs = B;
             if ~isempty(data_info.nose_direction)
-                EEG = pop_chanedit(EEG, 'nosedir', data_info.nose_direction);
+                if verbose
+                    EEG = pop_chanedit(EEG, 'nosedir', data_info.nose_direction);
+                else
+                    [~,EEG] = evalc("pop_chanedit(EEG, 'nosedir', data_info.nose_direction);");
+                end
             end
             EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' obj_info.electrodes_filename];
             

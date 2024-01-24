@@ -1,5 +1,5 @@
 
-function [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info)
+function [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose)
     % Function: load_info
     % Description: Loads information related to EEG dataset, paths, preprocessing parameters, 
     % and save configurations. Checks the integrity of imported data, sets necessary paths,
@@ -19,6 +19,12 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
+    
+    %% Verbose
+    
+    if nargin < 5
+        verbose =  false;
+    end
 
     %% Check if the imported data has correct values
 
@@ -31,7 +37,7 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     end
     
     %% Set Folder/Files Path
-    path_info.dataset_path = [path_info.root_datasets_path data_info.dataset_code '/' ];
+    path_info.dataset_path = [path_info.datasets_path data_info.dataset_code '/' ];
     cd(path_info.dataset_path);
     
     %% Create template struct
@@ -84,9 +90,9 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     end
     
     template_info = struct('template_matrix',template_matrix, ...
-                           'template_tensor',template_tensor, ...
-                           'conversion',conversion,...
-                           'standard_chanloc',standard_chanloc); 
+                                       'template_tensor',template_tensor, ...
+                                       'conversion',conversion,...
+                                       'standard_chanloc',standard_chanloc); 
     
     %% Import participant file
     % Read the participant file
@@ -98,10 +104,14 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
 
     elseif ~isempty(dir([path_info.dataset_path 'participants.*']))
         T = [];
-        warning('PARTICIPANT FILE FOUND BUT UNABLE TO IMPORT THE ASSOCIATED FILE FORMAT. PLEASE CONVERT IT IN .TSV/.CSV'); 
+        if verbose
+            warning('PARTICIPANT FILE FOUND BUT UNABLE TO IMPORT THE ASSOCIATED FILE FORMAT. PLEASE CONVERT IT IN .TSV/.CSV'); 
+        end
     else
         T = [];
-        warning(['PARTICIPANT FILE NOT FOUND IN: ' path_info.dataset_path]);
+        if verbose
+            warning(['PARTICIPANT FILE NOT FOUND IN: ' path_info.dataset_path]);
+        end
     end
 
     %% Import diagnostic test
@@ -133,34 +143,9 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
 
     %% Check if folder already exist otherwise create set_preprocessed folder
     if save_info.save_set
-        path_info.set_folder = [path_info.root_folder_path 'set_preprocessed_' data_info.dataset_code '/'];
+        path_info.set_folder = [path_info.output_set_path data_info.dataset_code '/'];
         if ~exist(path_info.set_folder, 'dir')
             mkdir(path_info.set_folder)
         end
     end
 end
-
-
-    % Function: preprocess_dataset
-    % Description: Preprocesses a dataset of EEG recordings, extracts relevant information,
-    % and saves the preprocessed data to a template-based data structure or matrix format.
-    %
-    % Input:
-    %   - root_datasets_path: The root path to the datasets.
-    %   - lib_path: The path to the library folder containing template files.
-    %   - dataset_info: Structure containing dataset-specific information.
-    %   - dataset_name: The name of the dataset to preprocess.
-    %   - params_info: Structure containing preprocessing parameters.
-    %   - diagnostic_folder_name: The name of the diagnostic folder within the dataset.
-    %
-    % Output:
-    %   - EEG: EEG data structure after preprocessing.
-    %   - DATA_STRUCT: Structure containing preprocessed data information.
-    %
-    % Notes:
-    %   - This function preprocesses all the EEG data for a specified dataset, 
-    %     including loading participant and diagnostic files, extracting channel 
-    %     information, interpolating missing channels, and saving the data.
-    %
-    % Author: [Andrea Zanola]
-    % Date: [04/10/2023] 

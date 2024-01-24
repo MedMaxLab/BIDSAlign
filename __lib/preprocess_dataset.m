@@ -1,5 +1,5 @@
 
-function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params_info, path_info, selection_info)
+function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params_info, path_info, selection_info, verbose)
     % Function: preprocess_dataset
     % Description: Preprocesses a dataset of EEG recordings, extracts relevant information,
     % and saves the preprocessed data to a template-based data structure or matrix format.
@@ -10,6 +10,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     %   - params_info: Structure containing preprocessing parameters.
     %   - path_info: Structure containing necessary paths.
     %   - selection_info: Structure containing selection parameters.
+    %   - verbose: Boolean setting the verbosity level. False will suppress
+    %                    warnings and other disp print
     %
     % Output:
     %   - EEG: EEG data structure after preprocessing.
@@ -23,8 +25,14 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
     
+    %% SET VERBOSE
+    if nargin < 6
+        verbose =  false;
+    end
+    
+    
     %% Load Dataset Informations
-    [data_info, path_info, template_info, T] = load_info(dataset_info, path_info, params_info, save_info);
+    [data_info, path_info, template_info, T] = load_info(dataset_info, path_info, params_info, save_info, verbose);
 
     %% Extract selected patients
     cd(path_info.dataset_path);
@@ -52,7 +60,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
 
     % Select files on the basis of number of subjects
     [vec_subj, subj_list] = get_elements(subj_list, selection_info.sub_i, selection_info.sub_f, ...
-                                         selection_info.subjects_totake,'SUBJECTS');
+                                         selection_info.subjects_totake,'SUBJECTS', verbose);
 
     %% Check Channel/Electrodes file name 
     obj_info.check_ch0_root = dir([path_info.dataset_path '*_channels.tsv']);
@@ -70,7 +78,9 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     %% Preprocess all subjects
     for j=vec_subj
         counts(1)=counts(1)+1;
-        fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- SUBJECT PROCESSED: ' num2str(counts(1)) '/' num2str(length(vec_subj)) ' ---\n']);
+        if verbose
+            fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name ' - PROCESSING SUBJECT: ' num2str(counts(1)) '/' num2str(length(vec_subj)) ' ---\n']);
+        end
 
         subject_name   = subj_list{j};
         subject_folder = [path_info.dataset_path subject_name];
@@ -82,11 +92,15 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
             if ~isempty(O)
                 subj_info = table2struct(T(O,:));
             else
-                warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE.');
+                if verbose
+                    warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE.');
+                end
                 subj_info = [];
             end
         else
-            warning('PARTICIPANT FILE NOT PROVIDED, SUBJECT INFO NOT LOADED.');
+            if verbose
+                warning('PARTICIPANT FILE NOT PROVIDED, SUBJECT INFO NOT LOADED.');
+            end
             subj_info = [];
         end
 
@@ -107,13 +121,14 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
 
         % Select files on the basis of number of sessions
         [vec_sess, sess_list] = get_elements(sess_list, selection_info.ses_i, selection_info.ses_f, ...
-                                             selection_info.session_totake, 'SESSIONS');
+                                             selection_info.session_totake, 'SESSIONS', verbose);
 
         %% Preprocess all sessions for a subject
         for k = vec_sess
             counts(2)=counts(2)+1;
-            fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- SESSION PROCESSED: ' num2str(counts(2)) '/' num2str(length(vec_sess)) ' ---\n']);
-
+            if verbose
+                fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- SESSION PROCESSED: ' num2str(counts(2)) '/' num2str(length(vec_sess)) ' ---\n']);
+            end
             session_name           = sess_list(k).name;
             subject_session_folder = [subject_folder '/' session_name '/eeg/'];
             cd(subject_session_folder);
@@ -128,33 +143,34 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
 
             % Select files on the basis of number of sessions
             [vec_obj, obj_list] = get_elements(obj_list, selection_info.obj_i, selection_info.obj_f, ...
-                                               selection_info.task_totake, 'OBJECTS');
+                                               selection_info.task_totake, 'OBJECTS', verbose);
 
             %% Preprocess all files of a session -----------------------
             for i=vec_obj
                 counts(3)=counts(3)+1;
-                fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- OBJECT PROCESSED: ' num2str(counts(3)) '/' num2str(length(vec_obj)) ' ---\n']);
-
+                if verbose
+                    fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- OBJECT PROCESSED: ' num2str(counts(3)) '/' num2str(length(vec_obj)) ' ---\n']);
+                end
                 obj_info.raw_filename              = obj_list(i).name;
                 obj_info.preprocessed_filename     = [int2str(data_info.dataset_number_reference) '_' int2str(j) '_' int2str(k) '_' int2str(i)];
                 obj_info.set_preprocessed_filename = [obj_info.preprocessed_filename data_info.eeg_file_extension];
-                obj_info.mat_preprocessed_filename = [path_info.mat_preprocessed_filepath obj_info.preprocessed_filename '.mat'];
-
-    	        fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING: ' subject_name '/' session_name '/' obj_list(i).name ' ' num2str(i) '/' num2str(length(vec_obj)) ' ---\n']);
-                
+                obj_info.mat_preprocessed_filename = [path_info.output_mat_path obj_info.preprocessed_filename '.mat'];
+                if verbose
+                    fprintf([' \t\t\t\t\t\t\t\t --- PREPROCESSING: ' subject_name '/' session_name '/' obj_list(i).name ' ' num2str(i) '/' num2str(length(vec_obj)) ' ---\n']);
+                end
                 % Extract right electrodes, channels and event filenames
                 [obj_info] = extract_filenames(obj_info, path_info, data_info);
 
-                %% Run preprocess
-                [EEG, L] = preprocess_single_file(L, obj_info, data_info, params_info, path_info, template_info, save_info);
+              %% Run preprocess
+                [EEG, L] = preprocess_single_file(L, obj_info, data_info, params_info, path_info, template_info, save_info, verbose);
                 
-                %% Save data to template (and interpolation)
+              %% Save data to template (and interpolation)
                 if save_info.save_data && ~isempty(EEG)
-                    [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info);
+                    [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info, verbose);
                     
                     % Export events
                     if ~isempty(EEG.event) && save_info.save_marker
-                        eeg_eventtable(EEG,'exportFile',[path_info.csv_preprocessed_folder obj_info.preprocessed_filename '.csv'],'dispTable',false);
+                        eeg_eventtable(EEG,'exportFile',[path_info.output_csv_path obj_info.preprocessed_filename '.csv'],'dispTable',false);
                     end
                 else
                     DATA_STRUCT = [];

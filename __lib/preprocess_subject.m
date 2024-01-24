@@ -1,5 +1,5 @@
 
-function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info)
+function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose)
     % Function: preprocess_subject
     % Description: Preprocesses EEG data for a specific file, including loading dataset information,
     % extracting subject and session names, assigning subject information, extracting channel/electrodes filenames,
@@ -22,9 +22,12 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
-
+    
+    if nargin < 6
+        verbose =  false;
+    end
     %% Load Dataset Informations
-    [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info);
+    [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose);
     
     %% Extract Subject and Session Name
     out = regexp(obj_info.raw_filepath ,'\','split');
@@ -37,11 +40,15 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
         if ~isempty(O)
             subj_info = table2struct(T(O,:));
         else
-            warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE.');
+            if verbose
+                warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE.');
+            end
             subj_info = [];
         end
     else
-        warning('PARTICIPANT FILE NOT PROVIDED, SUBJECT INFO NOT LOADED.');
+        if verbose
+            warning('PARTICIPANT FILE NOT PROVIDED, SUBJECT INFO NOT LOADED.');
+        end
         subj_info = [];
     end
 
@@ -82,7 +89,7 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
     %% Set filenames
     obj_info.preprocessed_filename     = [obj_info.raw_filename '_prep'];
     obj_info.set_preprocessed_filename = [obj_info.preprocessed_filename data_info.eeg_file_extension];
-    obj_info.mat_preprocessed_filename = [path_info.mat_preprocessed_filepath obj_info.preprocessed_filename '.mat'];
+    obj_info.mat_preprocessed_filename = [path_info.output_mat_path obj_info.preprocessed_filename '.mat'];
     	
 
     [EEG, ~] = preprocess_single_file([], obj_info, data_info, params_info, path_info, template_info, save_info);
@@ -92,7 +99,7 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
         [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info);
 
         if ~isempty(EEG.event) && save_info.save_marker
-            eeg_eventtable(EEG,'exportFile',[path_info.csv_preprocessed_folder obj_info.preprocessed_filename '.csv'],'dispTable',false);
+            eeg_eventtable(EEG,'exportFile',[path_info.output_csv_path obj_info.preprocessed_filename '.csv'],'dispTable',false);
         end
     else
         DATA_STRUCT = [];
