@@ -1,18 +1,21 @@
 
 function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, path_info, template_info, save_info, verbose)
-    % Function: preprocess_single_file
-    % Description: Preprocesses a single EEG data file, including loading raw data,
-    % importing events, managing channel locations, filtering, resampling, and applying
-    % various preprocessing steps such as ASR and ICA.
+    % FUNCTION: preprocess_single_file
+    %
+    % Description: Preprocesses a single EEG data file based on specified parameters.
+    %
+    % Syntax:
+    %   [EEG, L] = preprocess_single_file(L, obj_info, data_info, params_info, path_info, template_info, save_info, verbose)
     %
     % Input:
     %   - L: Structure containing information about channel locations.
     %   - obj_info: Structure containing information about the EEG data file.
-    %   - data_info: Structure containing information about the EEG dataset.
+    %   - data_info: Structure containing general information about the dataset.
     %   - params_info: Structure containing preprocessing parameters.
-    %   - path_info: Structure containing paths for saving preprocessed data.
-    %   - template_info: Structure containing template information for channel selection.
-    %   - save_info: Structure containing information about saving preprocessed data.
+    %   - path_info: Structure specifying paths for different components.
+    %   - template_info: Structure containing template information.
+    %   - save_info: Structure specifying the data saving options.
+    %   - verbose: Boolean setting the verbosity level.
     %
     % Output:
     %   - EEG: EEG data structure after preprocessing.
@@ -20,10 +23,15 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
     %
     % Notes:
     %   - This function performs various preprocessing steps on a single EEG data file,
-    %     including loading, filtering, resampling, ASR, ICA, and saving the preprocessed file.
+    %     including loading, importing events, managing channel locations, renaming channels,
+    %     removing NaN values, removing channels, removing segments, removing baseline,
+    %     resampling, filtering, importing or generating channel locations, rereferencing,
+    %     performing Independent Component Analysis (ICA), and applying Artifact Subspace
+    %     Reconstruction (ASR).
     %
-    % Author: [Andrea Zanola]
-    % Date: [11/12/2023]
+    % Author: [Andrea Zanola, Federico Del Pup]
+    % Date: [25/01/2024]
+
     if nargin <8
         verbose = false;
     end

@@ -1,7 +1,11 @@
 
 function [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level, verbose)
-    % Function: get_elements
+    % FUNCTION: get_elements
+    %
     % Description: Retrieves a subset of elements from a list based on specified criteria.
+    %
+    % Syntax:
+    %   [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level, verbose)
     %
     % Input:
     %   - list: List of elements to select from.

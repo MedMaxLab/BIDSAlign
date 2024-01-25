@@ -1,5 +1,17 @@
 function [] = remove_settings( setting_to_remove)
-
+    % FUNCTION: remove_settings
+    %
+    % Description: Removes one or more stored settings.
+    %
+    % Syntax:
+    %   remove_settings(setting_to_remove)
+    %
+    % Input:
+    %   - setting_to_remove: Name or cell array of names of the settings to be removed.
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
 
     %check if cell array is of char vectors
     if iscell(setting_to_remove)

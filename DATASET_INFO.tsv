@@ -8,7 +8,7 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nos
 7	FEP_CTL2	ds003947			10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000
 8	UC_SD	ds002778			10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512
 9	EEG_Med	ds001787			10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256
-10	EEG_Alz	ds004504	loaded		10_20	A1-2		.set	500
+10	EEG_Alz	ds004504	loaded		10_20	A1-A2		.set	500
 11	EEG_Music	ds002721			10_20	FCZ		.edf	1000
 12	BMI_HDEEG_1	ds004444			GSN129	CZ		.edf	1000
 13	BMI_HDEEG_2	ds004446			GSN129	CZ		.edf	1000

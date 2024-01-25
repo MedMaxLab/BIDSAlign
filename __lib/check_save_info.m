@@ -1,5 +1,20 @@
 function [] = check_save_info(save_info)
-
+    % FUNCTION: check_save_info
+    %
+    % Description: Validates the parameters provided in the save_info structure for data saving.
+    %
+    % Syntax:
+    %   check_save_info(save_info)
+    %
+    % Input:
+    %   - save_info: Structure containing information about data saving options.
+    %
+    % Output: 
+    %   - None. It throws an error if any parameter is invalid.
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
     
     validStringChar= @(x) isstring(x) || ischar(x);
     

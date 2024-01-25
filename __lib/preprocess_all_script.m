@@ -6,8 +6,8 @@
 % Note: This script requires EEGLAB to be installed and configured.
 % You need to set appropriate paths and parameters before running the script.
 % 
-% Author: [Andrea Zanola]
-% Date: [04/10/2023]
+% Author: [Andrea Zanola, Federico Del Pup]
+% Date: [25/01/2024]
 
 %% Clear Workspace and Initialize
 clear

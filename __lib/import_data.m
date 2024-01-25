@@ -1,11 +1,16 @@
 
 function EEG = import_data(raw_filename, raw_filepath, verbose)
-    % Function: import_data
+    % FUNCTION: import_data 
+    %
     % Description: Imports EEG data from various file formats using EEGLAB functions.
+    %
+    % Syntax:
+    %   EEG = import_data(raw_filename, raw_filepath, verbose)
     %
     % Input:
     %   - raw_filename: Name of the EEG data file (including the file extension).
     %   - raw_filepath: Path to the directory where the EEG data file is located.
+    %   - verbose: (Optional) Boolean setting the verbosity level.
     %
     % Output:
     %   - EEG: EEG data structure loaded from the specified file. If loading fails
@@ -16,13 +21,11 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
     %   - .vhdr: EEG data is loaded using 'pop_loadbv' from EEGLAB.
     %   - .edf or .bdf: EEG data is loaded using 'pop_biosig' from EEGLAB.
     %
-    % Usage example:
-    %   EEG = import_data('sample_data.set', '/path/to/data/', struct('eeg_file_extension', '.set'));
-    %
     % Note: Make sure EEGLAB is installed and configured properly in your MATLAB environment.
     
     % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
+    % Date: [11/12/2023]
+
     if nargin < 3
         verbose = false;
     end

@@ -1,5 +1,23 @@
 function empty_table = create_empty_table( datasets_number, data_info, save_path) 
-    
+    % FUNCTION: create_empty_table
+    %
+    % Description: Creates an empty table with specified format for storing dataset information.
+    %
+    % Syntax:
+    %   empty_table = create_empty_table(datasets_number, data_info, save_path)
+    %
+    % Input:
+    %   - datasets_number: Number of datasets to be represented in the table.
+    %   - data_info: (Optional) Cell array containing dataset information.
+    %   - save_path: (Optional) Path to save the table as a CSV file.
+    %
+    % Output: 
+    %   - empty_table: Table with the specified format for storing dataset information.
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
+
     if ~nargin
         datasets_number = 1;
         data_info = {};

@@ -1,34 +1,28 @@
 
 function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose)
-    % Function: rereference
-    % Description: Rereferences EEG data to a new reference electrode channel
-    % based on the specified standard reference or a specific channel.
+    % FUNCTION: rereference
+    % 
+    % Description: Rereferences EEG data based on specified parameters.
+    %
+    % Syntax:
+    %   [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose)
     %
     % Input:
     %   - EEG: EEG data structure.
-    %   - data_info: A structure containing information about the EEG data,
-    %                including the current EEG reference (channel_reference).
-    %   - params_info: A structure containing information about the desired new
-    %                  reference (standard_ref).
-    %   - channel_location_file_extension: File extension of channel location data
-    %                                      (e.g., '.bvef').
-    %   - B: A data structure containing information about EEG channels.
+    %   - data_info: Structure containing information about the EEG dataset.
+    %   - params_info: Structure containing preprocessing parameters.
+    %   - channel_location_file_extension: File extension for channel location file.
+    %   - B: List of available channels.
+    %   - verbose: (Optional) Boolean setting the verbosity level.
     %
     % Output:
-    %   - EEG: EEG data structure with the reference changed as specified.
-    %
-    % Supported Standard References:
-    %   - "COMMON": Use a common average reference.
-    %   - Specific channel label: Reference EEG data to the specified channel.
+    %   - EEG: Updated EEG data structure after rereferencing.
     %
     % Notes:
-    %   - This function supports different reference schemes, as listed in "Table III"
-    %     in the associated paper.
-    %   - If the desired reference channel is not present in the EEG data, an error
-    %     will be raised.
+    %   - This function performs rereferencing based on specified parameters.
     %
-    % Author: [Andrea Zanola]
-    % Date: [04/10/2023]
+    % Author: [Andrea Zanola, Federico Del Pup]
+    % Date: [25/01/2024]
     if nargin < 6
         verbose = false;
     end

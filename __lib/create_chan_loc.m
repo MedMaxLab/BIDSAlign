@@ -1,18 +1,24 @@
 
 function [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
-    % Function: create_chan_loc
-    % Description: Create a new channel location structure based on given inputs.
-    % This function generates a new channel location structure based on the
-    % provided EEG data, dataset-specific information, and reference channels.
+    % FUNCTION: create_chan_loc
     %
-    % Inputs:
-    %   - EEG: EEG structure containing channel information.
-    %   - data_info: Struct containing dataset-specific information.
-    %   - list_ref: List of reference channels to use for creating the new channel location structure.
-    %   - template_info: Struct containing channel template information.
+    % Description: Creates channel locations based on a standard template and a list of channels.
+    %
+    % Syntax:
+    %   [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
+    %
+    % Input:
+    %   - EEG: EEG data structure.
+    %   - data_info: Structure containing general information about the dataset.
+    %   - list_ref: List of channel names or indices for creating channel locations.
+    %   - template_info: Structure containing template information.
     %
     % Output:
-    %   - C: New channel location structure containing only the specified channels.
+    %   - C: Structure containing channel locations.
+    %
+    % Notes:
+    %   - This function creates channel locations by matching the given list of channels
+    %     with a standard template, ensuring compatibility and consistency across datasets.
     %
     % Author: [Andrea Zanola]
     % Date: [04/10/2023]

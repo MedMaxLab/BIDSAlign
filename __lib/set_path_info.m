@@ -1,20 +1,40 @@
-function path_info = set_path_info(varargin)
 
-% Da completare la descrizione delle variabili
-%
-% datasets_path: path where datasets are stored
-% output_path: path where processed data will be saved
-% root_data_path: for know to avoid error during function transition
-% output_mat_path: custom path to .mat prepro files
-% output_csv_path: custom path to csv prepro files
-% output_set_path: custom path to set prepro files
-% current_path: current path, it will be used to call the final cd 
-% diagnostic_folder_name: folder name use for diagnostic files
-% raw_filepath: path to the single eeg file to preprocess
-% lib_path: path to the __lib folder of the BIDSAlign library
-% git_path: path to the BIDSAlign library
-% eeglab_path: path to eeglab 
-% root_folder_path: alias to the root folder path
+function path_info = set_path_info(varargin)
+    % FUNCTION: set_path_info
+    %
+    % Description: Sets or updates the path information for the EEG processing pipeline.
+    %
+    % Syntax:
+    %   path_info = set_path_info(varargin)
+    %
+    % Input:
+    %   - varargin (optional): A list of parameter-value pairs for customizing the path information.
+    %
+    % Output:
+    %   - path_info: A struct containing the path information.
+    %
+    % Parameters:
+    %   - datasets_path (char): Path to the datasets (BIDS-formatted).
+    %   - output_path (char): Path to the output directory.
+    %   - output_mat_path (char): Path to the directory for saving preprocessed EEG data in MAT format.
+    %   - output_csv_path (char): Path to the directory for saving preprocessed EEG data in CSV format.
+    %   - output_set_path (char): Path to the directory for saving preprocessed EEG data in SET format (EEGLAB).
+    %   - eeglab_path (char): Path to the EEGLAB toolbox.
+    %   - raw_filepath (char): Path to the raw EEG data file.
+    %   - diagnostic_folder_name (char): Name of the diagnostic folder.
+    %   - store_settings (logical): A flag indicating whether to store the settings (default: false).
+    %   - setting_name (char): Name of the setting if storing settings (default: 'default').
+    %   - root_data_path: for know to avoid error during function transition
+    %   - current_path: current path, it will be used to call the final cd 
+    %   - raw_filepath: path to the single eeg file to preprocess
+    %   - lib_path: path to the __lib folder of the BIDSAlign library
+    %   - git_path: path to the BIDSAlign library
+    %   - root_folder_path: alias to the root folder path (TO DO)
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
+
 
     filePath = mfilename('fullpath');
     filePath = filePath(1:length(filePath)-13);

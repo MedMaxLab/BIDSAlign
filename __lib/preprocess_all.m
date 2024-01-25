@@ -1,9 +1,50 @@
+
 function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
-% documentation
-%
-%
-% License: MIT
-% 
+    % FUNCTION: preprocess_all
+    % 
+    % Description: Preprocesses EEG datasets based on the provided configuration.
+    %
+    % Syntax:
+    %   DATA_STRUCT = preprocess_all(DATASET_INFO_FILENAME, 'PARAM1', VALUE1, ...)
+    %   preprocesses EEG datasets according to the specified parameters. The
+    %   preprocessing configurations are loaded from DATASET_INFO_FILENAME, and
+    %   additional parameters can be set using parameter-value pairs.
+    %
+    % Input:
+    %   - dataset_info_filename: Full path to the dataset information file (TSV format).
+    %   - varargin: Variable-length input arguments specifying optional parameters.
+    %
+    % Optional Input Parameters:
+    %   - path_info: Structure specifying paths for different components.
+    %   - preprocess_info: Structure containing preprocessing parameters.
+    %   - selection_info: Structure containing selection parameters.
+    %   - save_info: Structure specifying the data saving options.
+    %   - setting_name: String specifying the name of the settings configuration.
+    %   - single_file: Boolean indicating whether to process a single file.
+    %   - single_dataset_name: String specifying the name of the single dataset to process.
+    %   - single_file_name: String specifying the name of the single file to process.
+    %   - diagnostic_folder_name: String specifying the name of the diagnostic folder.
+    %   - use_parpool: Boolean indicating whether to use parallel processing.
+    %   - solve_nogui: Boolean indicating whether to solve potential eeglab nogui issues.
+    %   - verbose: Boolean setting the verbosity level.
+    %   - dataset_path: String specifying the dataset path.
+    %   - output_path: String specifying the output path.
+    %   - output_mat_path: String specifying the custom output path for mat files.
+    %   - output_csv_path: String specifying the custom output path for CSV marker files.
+    %   - output_set_path: String specifying the custom output path for set files.
+    %   - eeglab_path: String specifying the path to EEGLAB.
+    %
+    % Output:
+    %   - EEG: EEG data structure after preprocessing.
+    %   - DATA_STRUCT: Structure containing preprocessed data information.
+    %
+    % Notes:
+    %   - This script preprocesses EEG data, including loading, channel extraction,
+    %     interpolation, and saving. It can process a single file, a single dataset,
+    %     or all datasets in the provided dataset information file.
+    %
+    % Author: [Andrea Zanola, Federico Del Pup]
+    % Date: [25/01/2024]
     
     
     % --------------------------------------------------------

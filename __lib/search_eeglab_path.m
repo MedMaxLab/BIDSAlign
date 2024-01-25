@@ -1,13 +1,24 @@
+
 function [] = search_eeglab_path(verbose)
-% this function will check if eeglab is present in your current search path list
-% In case it is not found, this function will try to search and add automatically the path 
-% by looking at the toolbox folder and in your current working directory. 
-% If nothing is found, a waring is generated and the user is asked to add the path
-% manually by running the following command:
-% 
-%     addpath(' path/to/eeglab')
-%
-% Licence 
+    % FUNCTION: search_eeglab_path
+    %
+    % Description: Searches for the path to the EEGLAB toolbox in your current search path list and adds it to the MATLAB search path.
+    % In case it is not found, this function will try to search and add automatically the path 
+    % by looking at the toolbox folder and in your current working directory. 
+    % If nothing is found, a waring is generated and the user is asked to add the path
+    % manually by running the following command:
+    % 
+    %     addpath(' path/to/eeglab')
+    %
+    % Syntax:
+    %   search_eeglab_path(verbose)
+    %
+    % Input:
+    %   - verbose (optional): A boolean flag indicating whether to display additional information (default: false).
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
 
     if nargin ~= 1
         verbose = false;

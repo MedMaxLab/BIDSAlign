@@ -1,5 +1,21 @@
 function [] = check_path_info(path_info, must_give_datasets_path)
-
+    % FUNCTION: check_path_info
+    %
+    % Description: Validates the paths provided in the path_info structure.
+    %
+    % Syntax:
+    %   check_path_info(path_info, must_give_datasets_path)
+    %
+    % Input:
+    %   - path_info: Structure containing paths for different components.
+    %   - must_give_datasets_path: Boolean indicating whether datasets_path is required (default: false).
+    %
+    % Output: 
+    %   - None. It throws an error if any path is invalid.
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
     
     if nargin < 2
         must_give_datasets_path = false;

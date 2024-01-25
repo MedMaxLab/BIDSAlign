@@ -1,8 +1,13 @@
 
 function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params_info, path_info, selection_info, verbose)
-    % Function: preprocess_dataset
-    % Description: Preprocesses a dataset of EEG recordings, extracts relevant information,
-    % and saves the preprocessed data to a template-based data structure or matrix format.
+    % FUNCTION: preprocess_dataset
+    %
+    % Description: Preprocesses a dataset of EEG recordings, extracts relevant
+    % information, and saves the preprocessed data to a template-based data
+    % structure or matrix format.
+    %
+    % Syntax:
+    %   [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params_info, path_info, selection_info, verbose)
     %
     % Input:
     %   - dataset_info: Structure containing dataset-specific information.
@@ -11,19 +16,19 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     %   - path_info: Structure containing necessary paths.
     %   - selection_info: Structure containing selection parameters.
     %   - verbose: Boolean setting the verbosity level. False will suppress
-    %                    warnings and other disp print
+    %             warnings and other disp print.
     %
     % Output:
     %   - EEG: EEG data structure after preprocessing.
     %   - DATA_STRUCT: Structure containing preprocessed data information.
     %
     % Notes:
-    %   - This function preprocesses all the EEG data for a specified dataset, 
-    %     including loading participant and diagnostic files, extracting channel 
+    %   - This function preprocesses all the EEG data for a specified dataset,
+    %     including loading participant and diagnostic files, extracting channel
     %     information, interpolating missing channels, and saving the data.
     %
-    % Author: [Andrea Zanola]
-    % Date: [11/12/2023]
+    % Author: [Andrea Zanola, Federico Del Pup]
+    % Date: [25/01/2024]
     
     %% SET VERBOSE
     if nargin < 6

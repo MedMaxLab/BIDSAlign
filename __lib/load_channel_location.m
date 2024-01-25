@@ -1,30 +1,32 @@
 
 function [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info, verbose)
-    % Function: load_channel_location
-    % Description: Loads channel location information for EEG data. 
-    % It either reads channel locations from a file or generates them based on the
-    % channel system information.
+    % FUNCTION: load_channel_location
     %
-    % Inputs:
-    %   - EEG: EEG structure containing channel information.
-    %   - data_info: Struct containing dataset-specific information.
+    % Description: Loads or generates channel locations for EEG data based on specified options.
+    %
+    % Syntax:
+    %   [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info, verbose)
+    %
+    % Input:
+    %   - EEG: EEG data structure.
+    %   - data_info: Structure containing general information about the dataset.
     %   - obj_info: Structure containing information about the EEG data file.
-    %   - L: Channel location structure (optional).
-    %   - template_info: Struct containing channel template information.
+    %   - L: Structure containing information about channel locations (optional).
+    %   - template_info: Structure containing template information.
+    %   - verbose: Boolean setting the verbosity level.
     %
-    % Outputs:
-    %   - EEG: EEG structure with updated channel locations.
-    %   - L: Channel location structure.
+    % Output:
+    %   - EEG: Updated EEG data structure with loaded or generated channel locations.
+    %   - L: Updated structure containing information about channel locations.
     %   - channel_location_file_extension: File extension of the loaded channel location file.
-    %   - B: Channel location structure containing only the specified channels.
+    %   - B: Structure containing loaded or generated channel locations.
     %
     % Notes:
-    %   - This function either loads channel locations from a file or generates
-    %     them based on the channel system information, as listed in "Figure 4"
-    %     in the associated paper.
+    %   - This function either loads channel locations from a file, generates them based
+    %     on the channel system or a template, or uses a preloaded structure.
     %
     % Author: [Andrea Zanola]
-    % Date: [11/12/2023]
+    % Date: [25/01/2024]
     if nargin < 6
         verbose = false
     end

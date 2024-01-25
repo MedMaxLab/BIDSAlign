@@ -1,5 +1,20 @@
 function [] = check_preprocessing_info(params_info)
-
+    % FUNCTION: check_preprocessing_info
+    %
+    % Description: Validates the parameters provided in the params_info structure for preprocessing.
+    %
+    % Syntax:
+    %   check_preprocessing_info(params_info)
+    %
+    % Input:
+    %   - params_info: Structure containing parameters for preprocessing.
+    %
+    % Output: 
+    %   - None. It throws an error if any parameter is invalid.
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
 
     bool_args = { 'rmchannels', 'rmsegments', 'rmbaseline', ...
                             'resampling', 'filtering',  'rereference','ICA','ASR'};

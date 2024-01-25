@@ -1,23 +1,24 @@
 
 function [B] = rename_channels(B, data_info, EEG_history, EEG)
-    % Function: rename_channels
-    % Description: Renames EEG channel labels based on specified naming conventions
-    % and channel systems.
+    % FUNCTION: rename_channels
+    %
+    % Description: Renames channels in a structure based on specified rules.
+    %
+    % Syntax:
+    %   [B] = rename_channels(B, data_info, EEG_history, EEG)
     %
     % Input:
-    %   - B: A data structure containing EEG channel information.
-    %   - data_info: A structure containing information about the EEG data,
-    %                including the channel system.
-    %   - EEG_history: A boolean flag indicating whether to update EEG.history.
-    %   - EEG: EEG data structure (optional), used to update EEG.history.
+    %   - B: Structure containing information about channel locations.
+    %   - data_info: Structure containing general information about the dataset.
+    %   - EEG_history: Boolean indicating whether to update EEG.history.
+    %   - EEG: EEG data structure (optional).
     %
     % Output:
-    %   - B: Updated data structure with renamed channel labels.
+    %   - B: Updated structure with renamed channel labels.
     %
     % Notes:
-    %   - This function renames EEG channel labels according to specified naming
-    %     conventions for different channel systems. It also updates EEG.history
-    %     when changes are made (if EEG_history is true).
+    %   - This function changes channel names to uppercase and removes dots or double dots.
+    %   - It also standardizes the nomenclature for certain channels.
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]

@@ -1,5 +1,23 @@
 function [] = check_loaded_table( dataset_info)
 
+% FUNCTION: check_loaded_table
+%
+% Description: Checks the integrity of the loaded dataset information table.
+%
+% Syntax:
+%   check_loaded_table(dataset_info)
+%
+% Input:
+%   - dataset_info: Table containing information about EEG datasets.
+%
+% Notes:
+%   - This function verifies that the input table has the correct structure,
+%     including the right number of columns, column names, and data types.
+%     It also checks for duplicates and empty values in specific columns.
+%
+% Author: [Federico Del Pup]
+% Date: [25/01/2024]
+%
     % check that input is table
     if ~istable(dataset_info)
         error('wrong input class. Please give a table as input argument')

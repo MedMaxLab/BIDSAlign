@@ -1,27 +1,27 @@
 
 function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose)
-    % Function: preprocess_subject
-    % Description: Preprocesses EEG data for a specific file, including loading dataset information,
-    % extracting subject and session names, assigning subject information, extracting channel/electrodes filenames,
-    % setting filenames, and calling the preprocess_single_file function for further preprocessing.
+    % FUNCTION: preprocess_subject
+    %
+    % Description: Preprocesses EEG data for a single subject.
+    %
+    % Syntax:
+    %   [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose)
     %
     % Input:
-    %   - data_info: Structure containing information about the EEG dataset.
-    %   - save_info: Structure containing information about saving preprocessed data.
-    %   - params_info: Structure containing preprocessing parameters.
-    %   - path_info: Structure containing paths for saving preprocessed data.
-    %   - obj_info: Structure containing information about the EEG data file.
+    %   - data_info: Dataset information.
+    %   - save_info: Save settings information.
+    %   - params_info: Preprocessing parameters information.
+    %   - path_info: Paths information.
+    %   - obj_info: Object information.
+    %   - verbose: Flag to display warnings (optional, default is false).
     %
     % Output:
-    %   - EEG: EEG data structure after preprocessing.
-    %   - DATA_STRUCT: Structure containing information about the preprocessed data.
-    %
-    % Notes:
-    %   - This function orchestrates the preprocessing steps for a specific subject, including loading
-    %     dataset information, extracting filenames, setting filenames, and calling the preprocess_single_file function.
+    %   - EEG: Processed EEG data.
+    %   - DATA_STRUCT: Processed data structure.
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
+    %
     
     if nargin < 6
         verbose =  false;

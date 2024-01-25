@@ -1,27 +1,48 @@
 
 function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info, verbose)
-    % Function: save_data_totemplate
-    % Description: Saves preprocessed EEG data to a standard template (tensor or matrix).
+    % FUNCTION: save_data_totemplate
+    %
+    % Description: Saves preprocessed EEG data based on a specified template.
+    %
+    % Syntax:
+    %   [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info, verbose)
     %
     % Input:
     %   - EEG: EEG data structure.
     %   - obj_info: Structure containing information about the EEG data file.
-    %   - template_info: Structure containing information about the channel template.
-    %   - save_info: Structure with information about the saving process.
-    %   - path_info: Structure containing paths for saving preprocessed data.
+    %   - template_info: Structure containing template information.
+    %   - save_info: Structure specifying the data saving options.
+    %   - path_info: Structure containing paths to datasets and libraries.
     %   - data_info: Structure containing information about the EEG dataset.
     %   - params_info: Structure containing preprocessing parameters.
-    %   - subj_info: Structure containing information about the subject.
+    %   - subj_info: Structure containing participant information.
+    %   - verbose: Boolean setting the verbosity level.
     %
     % Output:
     %   - EEG: Updated EEG data structure.
     %   - DATA_STRUCT: Structure containing information about the saved data.
     %
     % Notes:
-    %   - This function interpolates missing channels, updates channel names, and saves data to a standard template.
+    %   - This function saves preprocessed EEG data based on a specified template.
+    %   - It handles missing channels, interpolates if necessary, and saves data in the requested format.
     %
     % Author: [Andrea Zanola]
-    % Date: [11/12/2023]
+    % Date: [25/01/2024]
+    %
+    % Subfunctions:
+    %   - [listB] = list_chan_systems(B, channel_system, template_info, channel_systems)
+    %
+    % Subfunction Description:
+    %   - Lists channels based on the specified channel system.
+    %
+    % Subfunction Input:
+    %   - B: Structure containing information about channel locations.
+    %   - channel_system: Current EEG channel system.
+    %   - template_info: Structure containing template information.
+    %   - channel_systems: Cell array containing supported channel systems.
+    %
+    % Subfunction Output:
+    %   - listB: List of channels based on the specified channel system.
 
     if nargin < 9
         verbose = false;

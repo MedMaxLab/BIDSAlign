@@ -1,15 +1,20 @@
 
 function [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose)
-    % Function: load_info
+    % FUNCTION: load_info
+    %
     % Description: Loads information related to EEG dataset, paths, preprocessing parameters, 
     % and save configurations. Checks the integrity of imported data, sets necessary paths,
     % creates a template structure for channel information, and imports participant and diagnostic files.
+    %
+    % Syntax:
+    %   [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose)
     %
     % Input:
     %   - data_info: Structure containing information about the EEG dataset.
     %   - path_info: Structure containing paths to datasets and libraries.
     %   - params_info: Structure containing preprocessing parameters.
     %   - save_info: Structure containing information about saving preprocessed data.
+    %   - verbose: Boolean setting the verbosity level.
     %
     % Output:
     %   - data_info: Updated structure containing EEG dataset information.

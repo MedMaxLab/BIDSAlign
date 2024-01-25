@@ -1,5 +1,20 @@
 function [] = check_selection_info(selection_info)
-    
+    % FUNCTION: check_selection_info
+    %
+    % Description: Validates the parameters provided in the selection_info structure for dataset selection.
+    %
+    % Syntax:
+    %   check_selection_info(selection_info)
+    %
+    % Input:
+    %   - selection_info: Structure containing information about dataset selection options.
+    %
+    % Output: 
+    %   - None. It throws an error if any parameter is invalid.
+    %
+    % Author: [Federico Del Pup]
+    % Date: [25/01/2024]
+    %
 
     validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
     validStringChar= @(x) isstring(x) || ischar(x);
