@@ -222,7 +222,25 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
             else
                 [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica), 'verbose','off');");
             end
-            EEG.history = [EEG.history newline 'ICA performed'];
+            EEG.history = [EEG.history newline 'ICA performed. ICAtype: ' params_info.ica_type ' .Searched for' num2str(min(EEG.nbchan,params_info.n_ica)) ...
+                           ' components. Non Linearity: ' params_info.non_linearity];
+        end
+
+        %% ICLabel Rejection
+        params_info.iclabel_thresholds = [0 0; 0.9 1; 0.9 1;  0.9 1;  0.9 1;  0.9 1;  0.9 1];
+        params_info.prep_steps.ICLabel_rejection = false;
+
+        if params_info.prep_steps.ICLabel_rejection
+            if verbose
+            [EEG] = iclabel(EEG);
+            [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
+            rejected_comps = find(EEG.reject.gcompreject > 0);
+            [EEG] = pop_subcomp(EEG, rejected_comps);
+            else
+
+            end
+            EEG.history = [EEG.history newline 'ICLabel components rejection. Thresholds applied: ' num2str(params_info.iclabel_thresholds) 
+                           ' respectively for Brain, Muscle, Eye, Heart, Line Noise, Channel Noise, Other.'];
         end
 
         %% ASR 

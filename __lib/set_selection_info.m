@@ -1,6 +1,37 @@
-function selection_info = set_selection_info(varargin)
 
-% Da completare la descrizione delle variabili
+function selection_info = set_selection_info(varargin)
+    % FUNCTION: set_selection_info
+    %
+    % Description: Sets or updates the selection information for the EEG processing pipeline.
+    %
+    % Syntax:
+    %   selection_info = set_selection_info(varargin)
+    %
+    % Input:
+    %   - varargin (optional): A list of parameter-value pairs for customizing the selection information.
+    %
+    % Output:
+    %   - selection_info: A struct containing the selection information.
+    %
+    % Parameters:
+    %   - sub_i (integer): Start index for subject selection.
+    %   - sub_f (integer): End index for subject selection.
+    %   - ses_i (integer): Start index for session selection.
+    %   - ses_f (integer): End index for session selection.
+    %   - obj_i (integer): Start index for object selection.
+    %   - obj_f (integer): End index for object selection.
+    %   - select_subjects (logical): A flag indicating whether to select specific group of subjects.
+    %   - label_name (char): Name of the label for selection, a feature present in participant.tsv file.
+    %   - label_value (char): Value of the label for selection.
+    %   - subjects_totake (cell): Specify the part of the subjects' names to be included in the analysis.
+    %   - session_totake (cell): Specify the part of the sessions' names to be included in the analysis.
+    %   - task_totake (cell): Specify the part of tasks' names to be included in the analysis.
+    %   - store_settings (logical): A flag indicating whether to store the settings (default: false).
+    %   - setting_name (char): Name of the setting if storing settings (default: 'default').
+    %
+    % Author: [Federico Del Pup]
+    % Date: [27/01/2024]
+    % 
 
     defaultSubstart = [];
     defaultSubend = [];

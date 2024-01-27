@@ -1,38 +1,20 @@
 
 function create_dataset_architecture(path)
-    % Function: create_dataset_architecture
-    % Description: Organizes EEG data files in a specified directory following
-    % a standardized folder structure adhering to the Brain Imaging Data
-    % Structure (BIDS) convention. Assumes a default session name of 'sess-01'
-    % and EEG data folder name of 'eeg'.
+    % FUNCTION: create_dataset_architecture
+    %
+    % Description: Organizes EEG dataset files into a BIDS-compliant directory structure.
+    %
+    % Syntax:
+    %   create_dataset_architecture(path)
     %
     % Input:
-    %   - path: The directory path where the dataset is located.
-    %
-    % Parameters:
-    %   - def_sess_name: Default session name, set to 'sess-01'.
-    %   - def_eeg_name: Default EEG data folder name, set to 'eeg'.
-    %
-    % Folder Organization:
-    %   1) No Folder Structure Present:
-    %     - Iterates through EEG data files.
-    %     - Organizes them into subject and session folders following BIDS.
-    %     - Files are moved to appropriate folders, and missing folders are created.
-    %
-    %   2) Existing Folder Structure (Non-BIDS or Missing Parts):
-    %     - Checks for existing folder structures.
-    %     - Creates the necessary directory hierarchy.
-    %
-    % Example Usage:
-    %   create_dataset_architecture('/path/to/dataset');
-    %
-    % Notes:
-    %   - The function assumes the EEG data follows BIDS conventions.
-    %   - The default session name is 'sess-01', and the default EEG data folder
-    %     name is 'eeg'.
+    %   - path (char): The path to the main directory containing EEG dataset files.
     %
     % Author: [Andrea Zanola]
-    % Date: [11/12/2023]
+    % Date: [27/01/2024]
+    %
+    % Examples:
+    %   create_dataset_architecture('/path/to/dataset')
 
     def_sess_name = 'sess-01';
     def_eeg_name = 'eeg';

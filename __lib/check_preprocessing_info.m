@@ -48,7 +48,7 @@ function [] = check_preprocessing_info(params_info)
     if ~validStringChar(params_info.standard_ref)
         error('standard_ref must be a string or a char array')
     else
-        if  ~ (strcmp(params_info.standard_ref, 'COMMON') || any(strcmp(params_info.standard_ref, channel_list )))
+        if  ~ (strcmpi(params_info.standard_ref, 'COMMON') || any(strcmpi(params_info.standard_ref, channel_list )))
             error("standard_ref must be 'COMMON' or a valid channel ")
         end
     end

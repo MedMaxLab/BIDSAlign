@@ -15,11 +15,10 @@ close all
 clc
 
 %% Set General Variables
-modality = 'local';                                             % or local
-use_parpool = false;                                        % use parpool if available
+modality = 'local';                          % or local
+use_parpool = false;                         % use parpool if available
 dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info file 
-path_info.diagnostic_folder_name = '_diagnostic_test';  % Set the name for the folders with diagnostic tests
-verbose = false;                                                % Set the verbosity level
+verbose = false;                             % Set the verbosity level
 current_path = pwd;
 solve_nogui = false;
 

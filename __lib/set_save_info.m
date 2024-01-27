@@ -1,12 +1,35 @@
 function save_info = set_save_info(varargin)
-
-% Da completare la descrizione delle variabili
+    % FUNCTION: set_save_info
+    %
+    % Description: Sets or updates the save information for the EEG processing pipeline.
+    %
+    % Syntax:
+    %   save_info = set_save_info(varargin)
+    %
+    % Input:
+    %   - varargin (optional): A list of parameter-value pairs for customizing the save information.
+    %
+    % Output:
+    %   - save_info: A struct containing the save information.
+    %
+    % Parameters:
+    %   - save_data (logical): A flag indicating whether to save data (default: true).
+    %   - save_data_as (char): File format for saving data (default: 'matrix').
+    %   - save_set (logical): A flag indicating whether to save dataset (default: false).
+    %   - save_struct (logical): A flag indicating whether to save data as a struct (default: false).
+    %   - save_marker (logical): A flag indicating whether to save event markers (default: false).
+    %   - store_settings (logical): A flag indicating whether to store the settings (default: false).
+    %   - setting_name (char): Name of the setting if storing settings (default: 'default').
+    %
+    % Author: [Federico Del Pup]
+    % Date: [27/01/2024]
+    %
 
     defaultSaveData = true;
     defaultSaveType = 'matrix';
     defaultSaveSet = false;
     defaultSaveStruct = false;
-    defaultSaveMarker = true;
+    defaultSaveMarker = false;
     
     defaultStoreSettings= false;
     defaultSettingName = 'default';

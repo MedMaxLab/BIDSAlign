@@ -1,6 +1,49 @@
 function params_info = set_preprocessing_info(varargin)
-
-% Da completare la descrizione delle variabili
+    % FUNCTION: set_preprocessing_info
+    %
+    % Description: Sets or updates the preprocessing parameters for the EEG processing pipeline.
+    %
+    % Syntax:
+    %   params_info = set_preprocessing_info(varargin)
+    %
+    % Input:
+    %   - varargin (optional): A list of parameter-value pairs for customizing the preprocessing parameters.
+    %
+    % Output:
+    %   - params_info: A struct containing the preprocessing parameters.
+    %
+    % Parameters:
+    %   - low_freq (scalar): Low-pass filter frequency(default: 0.1 Hz).
+    %   - high_freq (scalar): High-pass filter frequency (default: 49 Hz).
+    %   - sampling_rate (scalar): EEG data sampling rate (default: 250 Hz).
+    %   - standard_ref (char): Standard reference type (default: 'COMMON').
+    %   - interpol_method (char): Interpolation method (default: 'spherical').
+    %   - flatlineC (scalar): Flatline detection threshold for ASR (default: 5).
+    %   - channelC (scalar): Channel correlation threshold for ASR (default: 0.8).
+    %   - lineC (scalar): Line noise correlation threshold for ASR (default: 4).
+    %   - burstC (scalar): Burst correction threshold for ASR (default: 20).
+    %   - windowC (scalar): Window length for ASR burst correction (default: 0.25).
+    %   - burstR (char): Burst correction rule for ASR (default: 'on').
+    %   - th_reject (scalar): Amplitude threshold for ASR (default: 1000 uV).
+    %   - ica_type (char): ICA algorithm type (default: 'fastica').
+    %   - non_linearity (char): Non-linearity option for ICA (default: 'tanh').
+    %   - n_ica (scalar): Number of components for ICA (default: 20).
+    %   - dt_i (scalar): Start time for segment removal (default: 0 s).
+    %   - dt_f (scalar): End time for segment removal (default: 0 s).
+    %   - rmchannels (logical): Flag for channel removal (default: true).
+    %   - rmsegments (logical): Flag for segment removal (default: true).
+    %   - rmbaseline (logical): Flag for baseline removal (default: true).
+    %   - resampling (logical): Flag for resampling (default: true).
+    %   - filtering (logical): Flag for filtering (default: true).
+    %   - rereference (logical): Flag for rereferencing (default: true).
+    %   - ICA (logical): Flag for performing ICA (default: false).
+    %   - ASR (logical): Flag for performing ASR (default: false).
+    %   - store_settings (logical): Flag for storing settings (default: false).
+    %   - setting_name (char): Name of the setting if storing settings (default: 'default').
+    %
+    % Author: [Federico Del Pup]
+    % Date: [27/01/2024]
+    %
 
     defaultFilterLow = 0.1;
     defaultFilterHigh = 49;
