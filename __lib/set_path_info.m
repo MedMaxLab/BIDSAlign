@@ -50,6 +50,7 @@ function path_info = set_path_info(varargin)
     
     defaultStoreSettings= false;
     defaultSettingName = 'default';
+    defaultSilencewarning = false;
     defaultPathInfo = struct;
     
     
@@ -76,6 +77,7 @@ function path_info = set_path_info(varargin)
     
     p.addParameter('store_settings', defaultStoreSettings, validBool);
     p.addParameter('setting_name', defaultSettingName, validStringChar);
+    p.addParameter('silence_warn', defaultSilencewarning, validBool);
     parse(p, varargin{:});
 
     % Create a struct to store the save information
@@ -85,7 +87,7 @@ function path_info = set_path_info(varargin)
     if  ~isempty(fieldnames(p.Results.path_info)) &&  ...
         length( intersect(fieldnames(p.Results.path_info), p.Parameters') )==8
 
-        param2set = setdiff( p.Parameters(1:end-2), [p.UsingDefaults 'path_info']);
+        param2set = setdiff( p.Parameters(1:end-3), [p.UsingDefaults 'path_info']);
         path_info = p.Results.path_info;
         for i = 1:length(param2set)
                 path_info.(param2set{i}) = p.Results.(param2set{i});          
@@ -118,7 +120,9 @@ function path_info = set_path_info(varargin)
     % it is necessary for BIDSAlign when it construct the path to a file to
     % preprocess
     if isempty(path_info.datasets_path)
-        warning("dataset_path not given. Remember to set it or give it in input to the 'process_all' function")
+        if ~p.Results.silence_warn
+            warning("dataset_path not given. Remember to set it or give it in input to the 'process_all' function")
+        end
     else
         if path_info.datasets_path(end) ~= '/'
             path_info.datasets_path = [path_info.datasets_path '/'];
