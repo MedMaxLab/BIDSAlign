@@ -2,13 +2,13 @@ function DATA_STRUCT = preprocess_all_guided()
 
     clc
     Logo = [  "-------------------------------------------------------------------------------------"
-                            " ______ _____ _____  ______ ______ __ __   "           
-                            "|   __   \_     _|       \ |      __|     _    |   |__|.-------.-------."
-                            "|   __ <_|   |_|  --     |__      |           |   |   ||   _    |        |"
-                            "|______/_____|_____/|_____ |___|___|__|__||___    |__|__|"
-                            "                                                             |_____|      "
-                            "------------------------------------------------------------- MedMax Team --"
-                            ];        
+                    " ______ _____ _____  ______ ______ __ __   "           
+                    "|   __   \_     _|       \ |      __|     _    |   |__|.-------.-------."
+                    "|   __ <_|   |_|  --     |__      |           |   |   ||   _    |        |"
+                    "|______/_____|_____/|_____ |___|___|__|__||___    |__|__|"
+                    "                                                             |_____|      "
+                    "------------------------------------------------------------- MedMax Team --"
+                    ];        
     fprintf('%s\n',Logo{:})
     fprintf('%s\n',[""
         ""]);
@@ -367,7 +367,8 @@ function DATA_STRUCT = preprocess_all_guided()
          " 6 - filtering"
          " 7 - rereferencing"
          " 8 - ICA decopmposition"
-         " 9 - double-phase ASR (one soft and the other, if needed, more aggresive)"
+         " 9 - IC Rejection with ICLabel"
+         " 10 - double-phase ASR (one soft and the other, if needed, more aggresive)"
          ""
          " most of those steps can be performed or not depending on your choice "]);
     sethelp = [""
@@ -428,6 +429,9 @@ function DATA_STRUCT = preprocess_all_guided()
         " 3 - non_linearity : the type of non linearity to use during ICA calculation."
         "                             Must be any of  pow3 | tanh | gauss | skew "
         " 4 - n_ica : the number of components to extract. Must be a positive integer"
+        " ------------------------------------ ICLabel ------------------------------------"
+        " ICrejection will be performed by using the ICLabel plugin. check pop_icflag for more info  "
+        " 1 - iclabel_thresholds : a 7x2 array with threshold values with limits to include for selection as artifacts"
         ""];
     fprintf('%s\n', sethelp)
     guide_command =  [""
@@ -454,6 +458,7 @@ function DATA_STRUCT = preprocess_all_guided()
                                 'burstC',  'windowC', 'th_reject', 'n_ica', 'dt_i'};
     bool_args = { 'rmchannels', 'rmsegments', 'rmbaseline', ...
                                 'resampling', 'filtering',  'rereference','ICA','ASR'};
+    array_args = {'iclabel_thresholds'};
     while~ok
       try
           disp('')
@@ -472,7 +477,7 @@ function DATA_STRUCT = preprocess_all_guided()
               fprintf('%s\n', sethelp)
               fprintf('%s\n', guide_command);
           else
-              info2add = strsplit(info2add, ' ');
+              info2add = regexp(info2add,' ','split','once');
               arg_name = info2add{1};
               arg_value = info2add{2};
               if ~any(strcmp( arg_name, current_args))
@@ -482,6 +487,8 @@ function DATA_STRUCT = preprocess_all_guided()
                   arg_value = str2double(arg_value);
               elseif any(strcmp( arg_name, bool_args))
                   arg_value = string2boolean(arg_value);
+              elseif any(strcmp( arg_name, array_args))
+                  [~,arg_value] = evalc(arg_value);
               end
               params_info = set_preprocessing_info(params_info, arg_name, arg_value);
               check_preprocessing_info(params_info)

@@ -227,17 +227,20 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         end
 
         %% ICLabel Rejection
-        params_info.iclabel_thresholds = [0 0; 0.9 1; 0.9 1;  0.9 1;  0.9 1;  0.9 1;  0.9 1];
-        params_info.prep_steps.ICLabel_rejection = false;
 
-        if params_info.prep_steps.ICLabel_rejection
+        if params_info.prep_steps.ICrejection
             if verbose
-            [EEG] = iclabel(EEG);
-            [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
-            rejected_comps = find(EEG.reject.gcompreject > 0);
-            [EEG] = pop_subcomp(EEG, rejected_comps);
+                [EEG] = iclabel(EEG);
+                [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
+                rejected_comps = find(EEG.reject.gcompreject > 0);
+                [EEG] = pop_subcomp(EEG, rejected_comps);
             else
-
+                % ok comments put to avoid matlab raise unnecessary warnings 
+                % for itc inability to detect variables used inside evalc
+                [~, EEG] = evalc("iclabel(EEG);");  %#ok
+                [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
+                rejected_comps = find(EEG.reject.gcompreject > 0); %#ok
+                [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
             end
             EEG.history = [EEG.history newline 'ICLabel components rejection. Thresholds applied: ' num2str(params_info.iclabel_thresholds) 
                            ' respectively for Brain, Muscle, Eye, Heart, Line Noise, Channel Noise, Other.'];

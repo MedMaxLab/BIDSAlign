@@ -17,12 +17,20 @@ function [] = check_preprocessing_info(params_info)
     %
 
     bool_args = { 'rmchannels', 'rmsegments', 'rmbaseline', ...
-                            'resampling', 'filtering',  'rereference','ICA','ASR'};
+                            'resampling', 'filtering',  'rereference','ICA', ...
+                            'ICrejection', 'ASR'};
     channel_list = load('full_channel_list.mat');
 
     validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
     validStringChar= @(x) isstring(x) || ischar(x);
     
+    % check that boolean args are ok 
+    for i=1:length(bool_args)   
+        if ~islogical(params_info.prep_steps.( bool_args{i} ) )
+            error([bool_args{i} ' must be a boolean'])
+        end   
+    end
+       
     % check that filter params are ok
     if ~isscalar(params_info.low_freq) || ~isscalar(params_info.high_freq)
         error('low_req and high_freq must be scalar values')
@@ -62,6 +70,7 @@ function [] = check_preprocessing_info(params_info)
         end
     end
     
+    % check ASR args
     if ~isscalar(params_info.flatlineC)
         error('flatlineC must be a scalar value')
     else
@@ -101,8 +110,7 @@ function [] = check_preprocessing_info(params_info)
             error(' windowC must be in range [0 1]')
         end
     end
-    
-    
+      
     if ~validStringChar(params_info.burstR)
         error('burstR must be a string or a char array')
     else
@@ -119,7 +127,7 @@ function [] = check_preprocessing_info(params_info)
         end
     end
     
-    
+    % check ICA decomposition args
     if ~validStringChar(params_info.ica_type)
         error('ica_type must be a string or a char array')
     else
@@ -136,7 +144,6 @@ function [] = check_preprocessing_info(params_info)
         end
     end
     
-    
     if ~validScalarInt(params_info.n_ica)
         error('n_ica must be a scalar integer value')
     else
@@ -145,6 +152,20 @@ function [] = check_preprocessing_info(params_info)
         end
     end
     
+    % check IC label arg
+    if ~isnumeric(params_info.iclabel_thresholds)
+        error("iclabel_thresholds must be a numeric array of size 7x2")
+    else
+        if ~isequal(size(params_info.iclabel_thresholds), [7 2])
+            error('Size of ICLabel threshold array must be 7x2')
+        else
+            if max(params_info.iclabel_thresholds, [], 'all') > 1 && min(params_info.iclabel_thresholds, [], 'all')< 0
+                error('values of iclabel_thresholds must be in [0,1]')
+            end       
+        end
+    end
+    
+    %check segment removal arg
     if ~isscalar(params_info.dt_i)
         error('dt_i must be a scalar value')
     else
@@ -159,14 +180,6 @@ function [] = check_preprocessing_info(params_info)
         if params_info.dt_f < 0
             error(' dt_f must be bigger than 0')
         end
-    end
-    
-    for i=1:length(bool_args)
-        
-        if ~islogical(params_info.prep_steps.( bool_args{i} ) )
-            error([bool_args{i} ' must be a boolean'])
-        end
-        
     end
     
 end

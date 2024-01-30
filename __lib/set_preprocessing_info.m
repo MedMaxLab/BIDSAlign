@@ -28,6 +28,7 @@ function params_info = set_preprocessing_info(varargin)
     %   - ica_type (char): ICA algorithm type (default: 'fastica').
     %   - non_linearity (char): Non-linearity option for ICA (default: 'tanh').
     %   - n_ica (scalar): Number of components for ICA (default: 20).
+    %   - iclabel_thresholds: 7x2 array with threshold values with limits to include for selection as artifacts
     %   - dt_i (scalar): Start time for segment removal (default: 0 s).
     %   - dt_f (scalar): End time for segment removal (default: 0 s).
     %   - rmchannels (logical): Flag for channel removal (default: true).
@@ -37,6 +38,7 @@ function params_info = set_preprocessing_info(varargin)
     %   - filtering (logical): Flag for filtering (default: true).
     %   - rereference (logical): Flag for rereferencing (default: true).
     %   - ICA (logical): Flag for performing ICA (default: false).
+    %   - ICrejection (logical): Flag for performing IC rejection via ICLabel (default: false).
     %   - ASR (logical): Flag for performing ASR (default: false).
     %   - store_settings (logical): Flag for storing settings (default: false).
     %   - setting_name (char): Name of the setting if storing settings (default: 'default').
@@ -62,6 +64,7 @@ function params_info = set_preprocessing_info(varargin)
     defaultICAtype = 'fastica';
     defaultICAnonLinearity= 'tanh';
     defaultICAnica = 20;
+    defaultIClabel_thresholds = [0 0; 0.9 1; 0.9 1;  0.9 1;  0.9 1;  0.9 1;  0.9 1];
     
     defaultdtstart = 0;
     defaultdtend = 0;
@@ -73,6 +76,7 @@ function params_info = set_preprocessing_info(varargin)
     defaultDoFiltering = true;
     defaultDoRereferencing = true;
     defaultDoICA = false;
+    defaultDoICrejection = false;
     defaultDoASR = false;
     
     defaultStoreSettings= false;
@@ -86,6 +90,7 @@ function params_info = set_preprocessing_info(varargin)
     validScalar = @(x) isscalar(x);
     validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
     validStruct = @(x) isstruct(x);
+    validNumeric72array= @(x) isnumeric(x) && isequal(size(x), [7 2]);
     
     p.addOptional('params_info', defaultParamInfo, validStruct);
     
@@ -106,6 +111,7 @@ function params_info = set_preprocessing_info(varargin)
     p.addParameter('ica_type', defaultICAtype, validStringChar);
     p.addParameter('non_linearity', defaultICAnonLinearity, validStringChar);
     p.addParameter('n_ica', defaultICAnica, validScalarInt);
+    p.addParameter('iclabel_thresholds', defaultIClabel_thresholds, validNumeric72array);
     
     p.addParameter('dt_i', defaultdtstart, validScalar);
     p.addParameter('dt_f', defaultdtend, validScalar);
@@ -117,6 +123,7 @@ function params_info = set_preprocessing_info(varargin)
     p.addParameter('filtering', defaultDoFiltering, validBool);
     p.addParameter('rereference', defaultDoRereferencing, validBool);
     p.addParameter('ICA', defaultDoICA, validBool);
+    p.addParameter('ICrejection', defaultDoICrejection, validBool);
     p.addParameter('ASR', defaultDoASR, validBool);
     
     p.addParameter('store_settings', defaultStoreSettings, validBool);
@@ -128,7 +135,8 @@ function params_info = set_preprocessing_info(varargin)
     if  ~isempty(fieldnames(p.Results.params_info)) &&  ...
             isempty( setdiff(fieldnames(p.Results.params_info), [p.Parameters'; 'prep_steps']) )
         
-        prepsteps = { 'rmchannels', 'rmsegments'  , 'rmbaseline' , 'resampling','filtering', 'rereference' , 'ICA' ,'ASR'  };
+        prepsteps = { 'rmchannels', 'rmsegments'  , 'rmbaseline' , 'resampling','filtering', ...
+            'rereference' , 'ICA' , 'ICrejection', 'ASR'   };
         param2set = setdiff( setdiff( p.Parameters, {'setting_name' 'standard_ref'}), ...
             [p.UsingDefaults 'params_info']);
         params_info = p.Results.params_info;
@@ -156,6 +164,7 @@ function params_info = set_preprocessing_info(varargin)
                                          'ica_type',p.Results.ica_type ,...                                       %ICA
                                          'non_linearity',p.Results.non_linearity ,...                          %ICA
                                          'n_ica',p.Results.n_ica ,...                                                 %ICA
+                                         'iclabel_thresholds', p.Results.iclabel_thresholds, ...         %ICA
                                          'dt_i',p.Results.dt_i ,...                                                      %segment removal [s]
                                          'dt_f',p.Results.dt_f ,...                                                     %segment removal [s]
                                          'prep_steps', struct( ...                                                     %preprocessing steps to do
@@ -166,6 +175,7 @@ function params_info = set_preprocessing_info(varargin)
                                                                  'filtering'           , p.Results.filtering,...
                                                                  'rereference'    , p.Results.rereference,...
                                                                  'ICA'                 , p.Results.ICA,...
+                                                                 'ICrejection'      , p.Results.ICrejection, ...
                                                                  'ASR'                , p.Results.ASR ) );
     end
          
