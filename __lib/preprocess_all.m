@@ -12,6 +12,11 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     %
     % Input:
     %   - dataset_info_filename: Full path to the dataset information file (TSV format).
+    %                                         If the table is in the current working directory, only the
+    %                                         file name is needed.  The loaded table can be directly given. 
+    %                                         In such a case call the **check_loaded_table**
+    %                                         function to verify if the table format is the required
+    %                                         one.
     %   - varargin: Variable-length input arguments specifying optional parameters.
     %
     % Optional Input Parameters:
@@ -85,7 +90,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     validstruct = @(x) isstruct(x);
     validBool= @(x) islogical(x);
     validFile = @(x) isfile(x);
-    p.addRequired( 'dataset_info_filename', validFile);
+    p.addRequired( 'dataset_info_filename', @(x) validFile || istable(x));
     
     p.addOptional( 'path_info', defaultPathInfo, validstruct);
     p.addOptional('preprocess_info', defaultProcessInfo, validstruct);
@@ -355,9 +360,13 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     % --------------------------------------------------------
     %    IMPORT DATASETS INFO FROM TABLE
     % --------------------------------------------------------
-    % Read the dataset information from a tsv file                            
-    dataset_info = readtable(dataset_info_filename, 'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
-    check_loaded_table( dataset_info);
+    % Read the dataset information from a tsv file
+    if istable(dataset_info_filename)
+        dataset_info = dataset_info_filename;
+    else
+        dataset_info = readtable(dataset_info_filename, 'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
+    end
+    check_loaded_table(dataset_info);
     if ~isempty(dataset_name)
         dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name), 1); 
         if isempty(dataset_index)
@@ -418,7 +427,8 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
             data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{i}, ','); 
 
             % Preprocess all the dataset
-            [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info, verbose);
+            [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, ...
+                path_info, selection_info, verbose);
        end
 
     % SINGLE FILE OR DATASET BLOCK
@@ -450,7 +460,8 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
             data_info.channel_to_remove = strsplit(dataset_info.channel_to_remove{dataset_index}, ','); 
 
             % Preprocess a specific dataset
-            [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, path_info, selection_info, verbose);
+            [~,DATA_STRUCT] = preprocess_dataset(data_info, save_info, params_info, ...
+                path_info, selection_info, verbose);
         end
     end
 
