@@ -33,19 +33,6 @@ function [] = search_eeglab_path(verbose)
         end
     end
 
-    % try searching in the current list of paths
-    addedpath= false;
-    all_search = strsplit( path ,':');
-    for i=1:length(all_search)
-        ith_path = strfind(all_search{i},'eeglab');
-        if not(isempty(ith_path))
-            if verbose
-                disp('Found eeglab path in MATLAB search path')
-            end
-            return
-        end
-    end
-
     % try searching in the toolbox folder
     % maybe it has been added in the toolbox folder but not in the path
     if ismac
