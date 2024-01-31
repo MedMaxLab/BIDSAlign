@@ -1,5 +1,5 @@
 
-function [current_setting_names] = get_stored_settings( )
+function [current_setting_names] = get_stored_settings( include_default )
     % FUNCTION: get_stored_settings
     %
     % Description: Retrieves the names of stored settings folders.
@@ -14,13 +14,20 @@ function [current_setting_names] = get_stored_settings( )
     % Date: [25/01/2024]
     %
 
+    if nargin < 1
+        include_default=false;
+    end
     filePath = mfilename('fullpath');
     filePath = filePath(1:length(filePath)-19);
     d=dir([ filePath '/default_settings']);
     % remove all files (isdir property is 0)
     dfolders = d([d(:).isdir]);
     % remove '.' and '..' and 'default'
-    dfolders = dfolders(~ismember({dfolders(:).name},{'.','..', 'default'}));
+    if include_default
+        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..'}));
+    else
+        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..', 'default'}));
+    end
     current_setting_names = {dfolders.name};
 
 
