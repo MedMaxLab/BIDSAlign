@@ -25,7 +25,7 @@ function [] = search_eeglab_path(verbose)
     end
     
     try 
-        [~] = evalc('eeglab no gui;');
+        [~] = evalc('eeglab nogui;');
         return
     catch
         if verbose
@@ -73,7 +73,7 @@ function [] = search_eeglab_path(verbose)
             addpath(folder_names{i})
             addedpath = true;
             try 
-                [~] = evalc('eeglab no gui;');
+                [~] = evalc('eeglab nogui;');
                 if verbose
                     disp('Found path to EEGLab')
                 end
@@ -102,7 +102,7 @@ function [] = search_eeglab_path(verbose)
             addpath(folder_names{i})
             addedpath = true;
             try 
-                [~] = evalc('eeglab no gui;');
+                [~] = evalc('eeglab nogui;');
                 if verbose
                     disp('Found path to EEGLab')
                 end
@@ -120,7 +120,7 @@ function [] = search_eeglab_path(verbose)
             disp(pathAddedList{1:totPath})
         end
         try 
-            [~] = evalc('eeglab no gui;'); % just to be sure that it does not run
+            [~] = evalc('eeglab nogui;'); % just to be sure that it does not run
         catch
             error("added paths were not associated to the eeglab toolbox. " +...
                 "Please add the correct path manually by running the following " + ...
