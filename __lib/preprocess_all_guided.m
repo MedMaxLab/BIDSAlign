@@ -406,7 +406,7 @@ function DATA_STRUCT = preprocess_all_guided()
         "               Segment removed is the one from dt_f to end. Must be a positive scalar"
         ""
         " ------------------------------------- ASR -------------------------------------"
-        " ( for a complete description of the ASR arguments, we strongly sugges you to take"
+        " ( for a complete description of the ASR arguments, we strongly suggest you to take"
         "    a look at the clean_artifact of the Clean_rawdata EEGLAB plug-in "
         "    link : https://github.com/sccn/clean_rawdata/blob/master/clean_artifacts.m#L1 )"
         ""
