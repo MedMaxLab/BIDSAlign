@@ -33,6 +33,11 @@ function [] = search_eeglab_path(verbose)
         end
     end
 
+    %list of path added
+    addedpath = false;
+    totPath = 0;
+    pathAddedList = cell(100,1);
+    
     % try searching in the toolbox folder
     % maybe it has been added in the toolbox folder but not in the path
     if ismac
@@ -56,6 +61,7 @@ function [] = search_eeglab_path(verbose)
     % remove '.' and '..' 
     dfolders = dfolders(~ismember({dfolders(:).name},{'.','..'}));
     folder_names = {dfolders.name};
+    
     for i=1:length(folder_names)
         ith_path = strfind(folder_names{i},'eeglab');
         if not(isempty(ith_path))
@@ -65,7 +71,17 @@ function [] = search_eeglab_path(verbose)
                 disp('adding it to the current path list')
             end
             addpath(folder_names{i})
-            return
+            addedpath = true;
+            try 
+                [~] = evalc('eeglab no gui;');
+                if verbose
+                    disp('Found path to EEGLab')
+                end
+                return
+            catch
+                totPath = totPath + 1;
+                pathAddedList{totPath} = folder_names{i};
+            end
         end
     end
 
@@ -84,13 +100,27 @@ function [] = search_eeglab_path(verbose)
                 disp('Adding it to the current path list')
             end
             addpath(folder_names{i})
-            addedpath=true;
+            addedpath = true;
+            try 
+                [~] = evalc('eeglab no gui;');
+                if verbose
+                    disp('Found path to EEGLab')
+                end
+                return
+            catch
+                totPath = totPath + 1;
+                pathAddedList{totPath} = folder_names{i};
+            end
         end
     end
 
     if addedpath
+        if verbose 
+            disp('added the following paths without success: ')
+            disp(pathAddedList{1:totPath})
+        end
         try 
-            [~] = evalc('eeglab no gui;');
+            [~] = evalc('eeglab no gui;'); % just to be sure that it does not run
         catch
             error("added paths were not associated to the eeglab toolbox. " +...
                 "Please add the correct path manually by running the following " + ...
