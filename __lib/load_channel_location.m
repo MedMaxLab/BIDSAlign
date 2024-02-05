@@ -28,7 +28,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     % Author: [Andrea Zanola]
     % Date: [25/01/2024]
     if nargin < 6
-        verbose = false
+        verbose = false;
     end
 
     if ~isequal(obj_info.channel_location_filename, 'loaded')

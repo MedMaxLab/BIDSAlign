@@ -1,4 +1,4 @@
-function [output]=string2boolean(string)
+function [output]=string2boolean(str)
     % FUNCTION: string2boolean
     %
     % Description: Converts a string representation of a boolean to a logical value.
@@ -15,9 +15,11 @@ function [output]=string2boolean(string)
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]
     %
-   if strcmp(string,'false') || strcmpi(string,'false')
-     output = false;
-   else
-     output = true;
-   end
+    
+    if strcmpi(str,'false') || isequal(str, 0) || ...
+            strcmpi(str, 'off') || strcmpi(str, 'no')
+      output = false;
+    else
+      output = true;
+    end
 end
