@@ -109,10 +109,11 @@ function selection_info = set_selection_info(varargin)
      % store settings if asked to do so
      if p.Results.store_settings
          filePath = mfilename('fullpath');
-         if not( isfolder( [filePath(1:length(filePath)-18)  '/default_settings/' p.Results.setting_name]) )
-             mkdir( [filePath(1:length(filePath)-18)  '/default_settings/'] , p.Results.setting_name)
+         if not( isfolder( [filePath(1:length(filePath)-18)  filesep 'default_settings' filesep p.Results.setting_name]) )
+             mkdir( [filePath(1:length(filePath)-18)  filesep 'default_settings' filesep] , p.Results.setting_name)
          end
-         save( [ filePath(1:length(filePath)-18)  '/default_settings/' p.Results.setting_name '/selection_info.mat'], 'selection_info');
+         save( [ filePath(1:length(filePath)-18)  filesep 'default_settings' filesep ...
+             p.Results.setting_name filesep 'selection_info.mat'], 'selection_info');
      end
 
 end

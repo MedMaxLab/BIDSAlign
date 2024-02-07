@@ -14,9 +14,6 @@ clear
 close all
 clc
 
-validpath = @(x) isfolder(x);
-validFile = @(x) isfile(x);
-
 %% Set General Variables
 modality = 'local';                          % or local
 use_parpool = false;                         % use parpool if available
@@ -140,7 +137,9 @@ else
     error(['ERROR: UNRECOGNAIZED MODALITY: ' modality]);
 end
 
-path_info = load_settings(setting_name, 'path');
+if strcmp(setting_name, 'test_dev_')
+    path_info = load_settings(setting_name, 'path');
+end
 
 %% additional checks on given paths
 
@@ -172,12 +171,12 @@ if single_file
            error("cannot process a single file without knowing its name or path." + ...
                 "Please give a proper file name as char or string using the " + ...
                 " 'raw_filename' argument or set it in the presaved path_info struct");
-       elseif ~validFile(path_info.raw_filepath)
+       elseif ~isfile(path_info.raw_filepath)
            error("path_info stored a path which is not valid. Please correct it or give in input a new one" + ...
                " using the 'raw_filename' argument"); 
        end
    else
-        if validFile(raw_filename)
+        if isfile(raw_filename)
             raw_filepath= raw_filename;
         else
             path_file_struct = dir([path_info.dataset_path '**/' raw_filename]);
@@ -201,7 +200,7 @@ end
 % if given, check that custom output path
 % for mat files is valid
 if ~isempty(path_info.output_mat_path)
-    if ~validpath(path_info.output_mat_path)
+    if ~isfolder(path_info.output_mat_path)
         error(" if given, 'output_mat_path' must be a valid path to an existing directory")
     end
 end
@@ -209,7 +208,7 @@ end
 % if given, check that custom output path
 % for csv files is valid
 if ~isempty(path_info.output_csv_path)
-    if ~validpath(path_info.output_csv_path)
+    if ~isfolder(path_info.output_csv_path)
         error(" if given, 'output_table_path' must be a valid path to an existing directory")
     end
 end
@@ -217,7 +216,7 @@ end
 % if given, check that custom output path
 % for set files is valid
 if ~isempty(path_info.output_set_path)
-    if ~validpath(path_info.output_set_path)
+    if ~isfolder(path_info.output_set_path)
         error(" if given, 'output_set_path' must be a valid path to an existing directory")
     end
 end

@@ -124,21 +124,21 @@ function path_info = set_path_info(varargin)
             warning("dataset_path not given. Remember to set it or give it in input to the 'process_all' function")
         end
     else
-        if path_info.datasets_path(end) ~= '/'
-            path_info.datasets_path = [path_info.datasets_path '/'];
+        if path_info.datasets_path(end) ~= filesep
+            path_info.datasets_path = [path_info.datasets_path filesep];
         end
     end
-    if ~isempty(path_info.output_path) && path_info.output_path(end) ~= '/'
-        path_info.output_path = [path_info.output_path '/'];
+    if ~isempty(path_info.output_path) && path_info.output_path(end) ~= filesep
+        path_info.output_path = [path_info.output_path filesep];
     end
-    if ~isempty(path_info.output_mat_path) && path_info.output_mat_path(end) ~= '/'
-        path_info.output_mat_path = [path_info.output_mat_path '/'];
+    if ~isempty(path_info.output_mat_path) && path_info.output_mat_path(end) ~= filesep
+        path_info.output_mat_path = [path_info.output_mat_path filesep];
     end
-    if ~isempty(path_info.output_csv_path) && path_info.output_csv_path(end) ~= '/'
-        path_info.output_csv_path = [path_info.output_csv_path '/'];
+    if ~isempty(path_info.output_csv_path) && path_info.output_csv_path(end) ~= filesep
+        path_info.output_csv_path = [path_info.output_csv_path filesep];
     end
-    if ~isempty(path_info.output_set_path) && path_info.output_set_path(end) ~= '/'
-        path_info.output_set_path = [path_info.output_set_path '/'];
+    if ~isempty(path_info.output_set_path) && path_info.output_set_path(end) ~= filesep
+        path_info.output_set_path = [path_info.output_set_path filesep];
     end
     
     
@@ -146,10 +146,11 @@ function path_info = set_path_info(varargin)
      % store settings if asked to do so
      if p.Results.store_settings
          filePath = mfilename('fullpath');
-         if not( isfolder( [filePath(1:length(filePath)-13)  '/default_settings/' p.Results.setting_name]) )
-             mkdir( [filePath(1:length(filePath)-13)  '/default_settings/'] , p.Results.setting_name)
+         if not( isfolder( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep p.Results.setting_name]) )
+             mkdir( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep] , p.Results.setting_name)
          end
-         save( [ filePath(1:length(filePath)-13)  '/default_settings/' p.Results.setting_name '/path_info.mat'], 'path_info');
+         save( [ filePath(1:length(filePath)-13)  filesep 'default_settings' filesep ...
+             p.Results.setting_name filesep 'path_info.mat'], 'path_info');
      end
 
 end

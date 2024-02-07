@@ -73,10 +73,11 @@ function save_info = set_save_info(varargin)
     % store settings if asked to do so
     if p.Results.store_settings
         filePath = mfilename('fullpath');
-        if not( isfolder( [filePath(1:length(filePath)-13)  '/default_settings/' p.Results.setting_name]) )
-            mkdir( [filePath(1:length(filePath)-13)  '/default_settings/'] , p.Results.setting_name)
+        if not( isfolder( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep p.Results.setting_name]) )
+            mkdir( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep] , p.Results.setting_name)
         end
-        save( [ filePath(1:length(filePath)-13)  '/default_settings/' p.Results.setting_name '/save_info.mat'], 'save_info');
+        save( [ filePath(1:length(filePath)-13)  filesep 'default_settings' filesep ...
+            p.Results.setting_name filesep 'save_info.mat'], 'save_info');
     end
 
 end

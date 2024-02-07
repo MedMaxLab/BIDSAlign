@@ -89,8 +89,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     validStringChar= @(x) isstring(x) || ischar(x);
     validstruct = @(x) isstruct(x);
     validBool= @(x) islogical(x);
-    validFile = @(x) isfile(x);
-    p.addRequired( 'dataset_info_filename', @(x) validFile || istable(x));
+    p.addRequired( 'dataset_info_filename', @(x) isfile(x) || istable(x));
     
     p.addOptional( 'path_info', defaultPathInfo, validstruct);
     p.addOptional('preprocess_info', defaultProcessInfo, validstruct);
@@ -252,12 +251,12 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
                error("cannot process a single file without knowing its name or path." + ...
                     "Please give a proper file name as char or string using the " + ...
                     " 'raw_filename' argument or set it in the presaved path_info struct");
-           elseif ~validFile(path_info.raw_filepath)
+           elseif ~isfile(path_info.raw_filepath)
                error("path_info stored a path which is not valid. Please correct it or give in input a new one" + ...
                    " using the 'raw_filename' argument"); 
            end
        else
-            if validFile(raw_filename)
+            if isfile(raw_filename)
                 raw_filepath= raw_filename;
             else
                 path_file_struct = dir([path_info.dataset_path '**/' raw_filename]);
@@ -281,7 +280,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     % if given, check that custom output path
     % for mat files is valid
     if ~isempty(path_info.output_mat_path)
-        if ~validpath(path_info.output_mat_path)
+        if ~isfolder(path_info.output_mat_path)
             error(" if given, 'output_mat_path' must be a valid path to an existing directory")
         end
     end
@@ -289,7 +288,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     % if given, check that custom output path
     % for csv files is valid
     if ~isempty(path_info.output_csv_path)
-        if ~validpath(path_info.output_csv_path)
+        if ~isfolder(path_info.output_csv_path)
             error(" if given, 'output_table_path' must be a valid path to an existing directory")
         end
     end
@@ -297,7 +296,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     % if given, check that custom output path
     % for set files is valid
     if ~isempty(path_info.output_set_path)
-        if ~validpath(path_info.output_set_path)
+        if ~isfolder(path_info.output_set_path)
             error(" if given, 'output_set_path' must be a valid path to an existing directory")
         end
     end
