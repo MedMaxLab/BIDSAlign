@@ -246,6 +246,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                            ' respectively for Brain, Muscle, Eye, Heart, Line Noise, Channel Noise, Other.'];
         end
 
+        nchan_preASR = EEG.nbchan;
         %% ASR 
         if params_info.prep_steps.ASR
             if verbose
@@ -306,6 +307,15 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
             %warning(['EEG FILE REJECTED BECAUSE ' num2str(c) ' ASR WERE NOT ENOUGH TO REACH ' num2str(params_info.th_reject/1000) ' mV']);
             if verbose
                 warning(['EEG FILE STILL GREATER THAN ' num2str(params_info.th_reject/1000) ' mV']);
+            end
+        end
+
+        %% Interpolate if some channels are missing
+        if nchan_preASR>EEG.nbchan
+            if verbose
+                [EEG] = pop_interp(EEG, B, params_info.interpol_method); 
+            else
+                [~, EEG] = evalc('pop_interp(EEG, B, params_info.interpol_method);');
             end
         end
 
