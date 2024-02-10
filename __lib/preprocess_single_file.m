@@ -62,8 +62,9 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
     end
 
     if ~isempty(EEG)
-        EEG.history = ['DATASET: ' data_info.dataset_name];
-        EEG.history = [EEG.history newline 'IMPORT DATA: ' obj_info.raw_filepath obj_info.raw_filename];
+        EEG.history = ['--- PREVIOUS HISTORY ---' EEG.history newline '--- PREPROCESSED WITH BIDS-ALIGN ---'];
+        EEG.history = [EEG.history newline 'DATASET: ' data_info.dataset_name];
+        EEG.history = [EEG.history newline 'IMPORT DATA: ' obj_info.raw_filepath '\' obj_info.raw_filename];
     
         %% CHANLOCS MANAGMENT
         %(1) CHANLOCS MANAGMENT
@@ -93,14 +94,13 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         end
     
         %% Remove Channels
-        if ~isempty(data_info.channel_to_remove) && params_info.prep_steps.rmchannels
+        if ~isempty(data_info.channel_to_remove{1}) && params_info.prep_steps.rmchannels
             if verbose
                 [EEG] = pop_select(EEG, 'rmchannel', data_info.channel_to_remove);
             else
                 [ ~, EEG] = evalc( "pop_select(EEG, 'rmchannel', data_info.channel_to_remove)");
             end
-                
-            EEG.history = [EEG.history newline 'REMOVE CHANNELS: '  data_info.channel_to_remove];
+            EEG.history = [EEG.history newline 'REMOVE CHANNELS: '  strjoin(data_info.channel_to_remove)];
         end
 
         %% Remove initial and final part of the recording
@@ -113,7 +113,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                     else
                          [~,EEG] = evalc("pop_select(EEG, 'rmtime', [0 params_info.dt_i; EEG.xmax-params_info.dt_f EEG.xmax]);");
                     end
-                    EEG.history = [EEG.history newline 'Removed first ' num2str(params_info.dt_i) ' and last ' num2str(params_info.dt_f) ' s'];
+                    EEG.history = [EEG.history newline 'REMOVED FIRST ' num2str(params_info.dt_i) 's AND LAST ' num2str(params_info.dt_f) 's'];
                 
                 elseif EEG.xmax - params_info.dt_f>0
                     if verbose
@@ -121,7 +121,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                     else
                         [~,EEG] = evalc("pop_select(EEG, 'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);");
                     end
-                    EEG.history = [EEG.history newline 'Removed last ' num2str(params_info.dt_f) ' s'];
+                    EEG.history = [EEG.history newline 'REMOVED LAST ' num2str(params_info.dt_f) 's'];
                 else
                     if verbose
                         warning('dt_f and dt_i NOT CUT, BEACUSE TOO BIG RESPECT THE LENGHT OF THE EEG RECORDING'); 
@@ -135,7 +135,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                     else
                         [~, EEG] = evalc("pop_select(EEG, 'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);");
                     end
-                    EEG.history = [EEG.history newline 'Removed last ' num2str(params_info.dt_f) ' s'];
+                    EEG.history = [EEG.history newline 'REMOVED LAST ' num2str(params_info.dt_f) 's'];
                 else
                     if verbose
                         warning('dt_f NOT CUT, BEACUSE TOO BIG RESPECT THE LENGHT OF THE EEG RECORDING');
@@ -147,9 +147,9 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                     if verbose
                         [EEG] = pop_select(EEG, 'rmtime', [0 params_info.dt_i]);
                     else
-                        [EEG] = pop_select(EEG, 'rmtime', [0 params_info.dt_i]);
+                        [EEG] = evalc("pop_select(EEG, 'rmtime', [0 params_info.dt_i]);");
                     end
-                    EEG.history = [EEG.history newline 'Removed first ' num2str(params_info.dt_i) ' s'];
+                    EEG.history = [EEG.history newline 'REMOVED FIRST ' num2str(params_info.dt_i) 's'];
                 else
                     if verbose
                         warning('dt_i NOT CUT, BEACUSE TOO BIG RESPECT THE LENGHT OF THE EEG RECORDING');
@@ -210,40 +210,44 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
 
         [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info, verbose);
 
-        %% Rereference the data
-        if params_info.prep_steps.rereference
-            [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
-        end
-
         %% ICA
-        if params_info.prep_steps.ICA
+        if params_info.prep_steps.ICA || params_info.prep_steps.ICrejection
             if verbose
                 [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica), 'verbose','off');
             else
                 [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica), 'verbose','off');");
             end
-            EEG.history = [EEG.history newline 'ICA performed. ICAtype: ' params_info.ica_type ' .Searched for' num2str(min(EEG.nbchan,params_info.n_ica)) ...
-                           ' components. Non Linearity: ' params_info.non_linearity];
+            EEG.history = [EEG.history newline 'ICA DECOMPOSITION: ' params_info.ica_type ', ' num2str(min(EEG.nbchan,params_info.n_ica)) ...
+                           ' ICs, NON-LINEARITY: ' params_info.non_linearity];
         end
 
         %% ICLabel Rejection
-
-        if params_info.prep_steps.ICrejection
-            if verbose
-                [EEG] = iclabel(EEG);
-                [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
-                rejected_comps = find(EEG.reject.gcompreject > 0);
-                [EEG] = pop_subcomp(EEG, rejected_comps);
+        if params_info.prep_steps.ICrejection && ~isempty(params_info.ic_rej_type)
+            if isequal(params_info.ic_rej_type,'iclabel')
+                if verbose
+                    [EEG] = iclabel(EEG);
+                    [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
+                    rejected_comps = find(EEG.reject.gcompreject > 0);
+                    [EEG] = pop_subcomp(EEG, rejected_comps);
+                else
+                    [~, EEG] = evalc("iclabel(EEG);");
+                    [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
+                    rejected_comps = find(EEG.reject.gcompreject > 0);
+                    [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
+                end
+                EEG.history = [EEG.history newline 'ICLabel REJECTION.' newline 'Thresholds applied: ' num2str(params_info.iclabel_thresholds) 
+                               ' respectively for Brain, Muscle, Eye, Heart, Line Noise, Channel Noise, Other.'];
+        
+            elseif isequal(params_info.ic_rej_type,'mara')
+                if verbose
+                    [EEG, ~] = MARA(EEG);
+                else
+                    [EEG, ~] = evalc("MARA(EEG);");
+                end
+                EEG.history = [EEG.history newline 'MARA REJECTION.'];
             else
-                % ok comments put to avoid matlab raise unnecessary warnings 
-                % for itc inability to detect variables used inside evalc
-                [~, EEG] = evalc("iclabel(EEG);");  %#ok
-                [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
-                rejected_comps = find(EEG.reject.gcompreject > 0); %#ok
-                [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
+                warning('CHECK params_info.ic_rej_type: METHOD NOT ALREADY IMPLEMENTED OR MISPELLED');
             end
-            EEG.history = [EEG.history newline 'ICLabel components rejection. Thresholds applied: ' num2str(params_info.iclabel_thresholds) 
-                           ' respectively for Brain, Muscle, Eye, Heart, Line Noise, Channel Noise, Other.'];
         end
 
         nchan_preASR = EEG.nbchan;
@@ -270,10 +274,10 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                                              'MaxMem', 4096, ...                           %default
                                              'availableRAM_GB', NaN);                      %default);
 
-            EEG.history = [EEG.history newline 'ASR: FlatLineCriterion ' num2str(params_info.flatlineC) ...
+            EEG.history = [EEG.history newline '1° ASR CHANNELS CORRECTION: FlatLineCriterion ' num2str(params_info.flatlineC) ...
                            ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
 
-            if max(max(abs(EEG.data)))>params_info.th_reject 
+            if max(abs(EEG.data),[],'all') > params_info.th_reject 
                 if verbose
                     fprintf(' \t\t\t\t\t\t\t\t --- REMOVE BURST ASR APPLIED ---\n');
                 end
@@ -295,21 +299,19 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                                                  'MaxMem', 4096, ...                           %default
                                                  'availableRAM_GB', NaN);                      %default
 
-                EEG.history = [EEG.history newline 'Another ASR: BurstCriterion ' num2str(params_info.burstC) ...
+                EEG.history = [EEG.history newline '2° ASR WINDOWS REMOVAL: BurstCriterion ' num2str(params_info.burstC) ...
                                ', WindowCriterion ' num2str(params_info.windowC), ', BurstRejection', num2str(params_info.burstR)];
 
             end
         end
 
         %% Remove file if after aggressive ASR, still
-        if max(max(abs(EEG.data)))>params_info.th_reject 
-            %EEG = [];
-            %warning(['EEG FILE REJECTED BECAUSE ' num2str(c) ' ASR WERE NOT ENOUGH TO REACH ' num2str(params_info.th_reject/1000) ' mV']);
+        if max(abs(EEG.data),[],'all') > params_info.th_reject 
             if verbose
                 warning(['EEG FILE STILL GREATER THAN ' num2str(params_info.th_reject/1000) ' mV']);
             end
         end
-
+        
         %% Interpolate if some channels are missing
         if nchan_preASR>EEG.nbchan
             if verbose
@@ -317,16 +319,22 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
             else
                 [~, EEG] = evalc('pop_interp(EEG, B, params_info.interpol_method);');
             end
+            EEG.history = [EEG.history newline 'INTERPOLATION OF REMOVED CHANNELS BY ASR - method: ' params_info.interpol_method];
+        end
+
+        %% Rereference the data
+        if params_info.prep_steps.rereference
+            [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
         end
 
         %% Save the .set file 
         if save_info.save_set
+            EEG.history = [EEG.history newline 'SAVE .SET FILE: ' path_info.set_folder obj_info.set_preprocessed_filename]; 
             if verbose
-                [EEG] = pop_saveset( EEG, 'filename',obj_info.set_preprocessed_filename,'filepath', path_info.set_folder);
+                pop_saveset( EEG, 'filename', obj_info.set_preprocessed_filename,'filepath', path_info.set_folder);
             else
-                [~, EEG] = evalc("pop_saveset( EEG, 'filename',obj_info.set_preprocessed_filename,'filepath', path_info.set_folder);");
-            end
-           EEG.history = [EEG.history newline 'SAVE .SET FILE: ' path_info.set_folder obj_info.set_preprocessed_filename];        
+                evalc("pop_saveset( EEG, 'filename',obj_info.set_preprocessed_filename,'filepath', path_info.set_folder);");
+            end       
         end
     end
 end

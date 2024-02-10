@@ -53,7 +53,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
         subj_list = T.(1);                                  %first column always ID
         mask = strcmp(T.(I), selection_info.label_value);                                     
         subj_list = subj_list(mask,:);
-        T = T(mask,:);
+        Tr = T(mask,:);
     else
         d = dir(pwd);
         dfolders = d([d(:).isdir]);
@@ -66,7 +66,6 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     % Select files on the basis of number of subjects
     [vec_subj, subj_list] = get_elements(subj_list, selection_info.sub_i, selection_info.sub_f, ...
                                          selection_info.subjects_totake,'SUBJECTS', verbose);
-
     %% Check Channel/Electrodes file name 
     obj_info.check_ch0_root = dir([path_info.dataset_path '*_channels.tsv']);
     obj_info.check_el0_root = dir([path_info.dataset_path '*_electrodes.tsv']);
@@ -88,14 +87,15 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
         end
 
         subject_name   = subj_list{j};
+        jj = find(strcmp(T.(1), subject_name));
         subject_folder = [path_info.dataset_path subject_name];
         cd(subject_folder);
 
         %% Load subject information
-        if ~isempty(T)
-            O = find(strcmp(subject_name,T{:,1}));
+        if ~isempty(Tr)
+            O = find(strcmp(subject_name,Tr{:,1}));
             if ~isempty(O)
-                subj_info = table2struct(T(O,:));
+                subj_info = table2struct(Tr(O,:));
             else
                 if verbose
                     warning('SUBJECT FOLDER NAME NOT FOUND IN THE PARTICIPANT FILE.');
@@ -157,7 +157,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
                     fprintf([' \t\t\t\t\t\t\t\t --- ' data_info.dataset_name '- OBJECT PROCESSED: ' num2str(counts(3)) '/' num2str(length(vec_obj)) ' ---\n']);
                 end
                 obj_info.raw_filename              = obj_list(i).name;
-                obj_info.preprocessed_filename     = [int2str(data_info.dataset_number_reference) '_' int2str(j) '_' int2str(k) '_' int2str(i)];
+                obj_info.preprocessed_filename     = [int2str(data_info.dataset_number_reference) '_' int2str(jj) '_' int2str(k) '_' int2str(i)];
                 obj_info.set_preprocessed_filename = [obj_info.preprocessed_filename data_info.eeg_file_extension];
                 obj_info.mat_preprocessed_filename = [path_info.output_mat_path obj_info.preprocessed_filename '.mat'];
                 if verbose

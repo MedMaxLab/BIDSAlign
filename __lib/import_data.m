@@ -38,7 +38,7 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
         catch
             EEG = [];
             if verbose
-                warning(['CORRUPTED .SET FILE: ' raw_filepath raw_filename]);
+                warning(['CORRUPTED OR UNREADABLE .SET FILE: ' raw_filepath raw_filename]);
             end
         end
 
@@ -48,7 +48,7 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
         catch
             EEG = [];
             if verbose
-                warning(['CORRUPTED .VHDR FILE: ' raw_filepath raw_filename]);
+                warning(['CORRUPTED OR UNREADABLE .VHDR FILE: ' raw_filepath raw_filename]);
             end
         end
     elseif isequal(eeg_file_extension,'.edf') || isequal(eeg_file_extension,'.bdf')
@@ -57,7 +57,7 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
         catch
             EEG = [];
             if verbose
-                warning(['CORRUPTED .EDF or .BDF FILE: ' raw_filepath raw_filename]);
+                warning(['CORRUPTED OR UNREADABLE .EDF or .BDF FILE: ' raw_filepath raw_filename]);
             end
         end
     else
