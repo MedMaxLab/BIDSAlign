@@ -41,10 +41,12 @@ function varargout = load_settings( setting_name, info_type )
         field_name = {'path_info', 'params_info', 'selection_info', 'save_info'};
         varargout = cell(1,4);
         for i = 1:4
-            try 
-                varargout{i} = load([ filePath 'default_settings/' setting_name '/' struct_name{i} ]).(field_name{i});
+            try
+                struct_info = load([ filePath 'default_settings/' setting_name '/' struct_name{i} ]).(field_name{i});
+                [~] = evalc(['check_' struct_name{i}(1:end-4) '(struct_info);']);
+                varargout{i} = struct_info;
             catch
-                varargout{i} = ['no ' struct_name{i} ' in ' setting_name 'setting'];
+                varargout{i} = ['no ' struct_name{i} ' in ' setting_name ' setting'];
             end
         end
         if iscellstr(varargout)
@@ -54,21 +56,29 @@ function varargout = load_settings( setting_name, info_type )
                 warning(" setting name exist but doesn't have any valid file and is empty. Removing it to avoid bugs.")
                 remove_settings(setting_name);            
             else
-                warning([" setting name exist but doesn't have any valid file. "
-                    "It is suggested to copy all its content elsewhere and remove the setting name."])
+                warning([' setting name exist but does not have any valid file. '
+                    'It is suggested to copy all its content elsewhere and remove the setting name.'])
             end                
         end
     else
         %nargout=1;
         varargout = cell(1,1);
         if strcmpi(info_type, 'path')
-            varargout{1} = load([ filePath 'default_settings/' setting_name '/' struct_name{1} ]).path_info;
+            struct_info = load([ filePath 'default_settings/' setting_name '/' struct_name{1} ]).path_info;
+            check_path_info(struct_info);
+            varargout{1} = struct_info;
         elseif strcmpi(info_type, 'preprocess')
-            varargout{1} = load([ filePath 'default_settings/' setting_name '/' struct_name{2} ]).params_info;
+            struct_info = load([ filePath 'default_settings/' setting_name '/' struct_name{2} ]).params_info;
+            check_preprocessing_info(struct_info);
+            varargout{1} = struct_info;
         elseif strcmpi(info_type, 'selection')
-            varargout{1} = load([ filePath 'default_settings/' setting_name '/' struct_name{3} ]).selection_info;
+            struct_info = load([ filePath 'default_settings/' setting_name '/' struct_name{3} ]).selection_info;
+            check_selection_info(struct_info);
+            varargout{1} = struct_info;
         elseif strcmpi(info_type, 'save')
-            varargout{1} = load([ filePath 'default_settings/' setting_name '/' struct_name{4} ]).save_info;
+            struct_info = load([ filePath 'default_settings/' setting_name '/' struct_name{4} ]).save_info;
+            check_save_info(struct_info);
+            varargout{1} = struct_info;
         end
     end
 

@@ -32,7 +32,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     %   - use_parpool: Boolean indicating whether to use parallel processing.
     %   - solve_nogui: Boolean indicating whether to solve potential eeglab nogui issues.
     %   - verbose: Boolean setting the verbosity level.
-    %   - dataset_path: String specifying the dataset path.
+    %   - datasets_path: String specifying the dataset path.
     %   - output_path: String specifying the output path.
     %   - output_mat_path: String specifying the custom output path for mat files.
     %   - output_csv_path: String specifying the custom output path for CSV marker files.
@@ -106,7 +106,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     p.addParameter( 'solve_nogui', defaultSolveNoGui, validBool);
     p.addParameter( 'verbose', defaultVerbose, validBool);
     
-    p.addParameter( 'dataset_path', defaultDatasetPath, validStringChar);
+    p.addParameter( 'datasets_path', defaultDatasetPath, validStringChar);
     p.addParameter( 'output_path', defaultOutputPath, validStringChar);
     p.addParameter( 'output_mat_path', defaultOutputMatPath, validStringChar);
     p.addParameter( 'output_csv_path', defaultOutputCsvPath, validStringChar);
@@ -192,28 +192,23 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
 
     % for path info, fields will be changed if anything 
     % new is given as input to this function. 
-    if ~isempty(p.Results.dataset_path)
-       path_info.datasets_path = p.Results.dataset_path;
-       parts = strsplit(path_info.datasets_path, filesep);
-       path_info.root_datasets_path = [strjoin(parts(1:end-1), filesep) '/'];
+    if ~isempty(p.Results.datasets_path)
+       path_info =  set_path_info(path_info, 'datasets_path', p.Results.datasets_path);
     end
     if ~isempty(p.Results.output_path)
-       path_info.output_path = p.Results.output_path;
-    end
-    if ~isempty(p.Results.dataset_path)
-       path_info.datasets_path = p.Results.dataset_path;
+       path_info = set_path_info(path_info, 'output_path', p.Results.output_path);
     end
     if ~isempty(p.Results.eeglab_path)
-       path_info.eeglab_path = p.Results.eeglab_path;
+       path_info = set_path_info(path_info, 'eeglab_path', p.Results.eeglab_path);
     end
     if ~isempty(p.Results.output_mat_path)
-       path_info.output_mat_path = p.Results.output_mat_path;
+       path_info = set_path_info(path_info, 'output_mat_path', p.Results.output_mat_path);
     end
     if ~isempty(p.Results.output_csv_path)
-       path_info.output_csv_path = p.Results.output_csv_path;
+       path_info = set_path_info(path_info, 'output_csv_path', p.Results.output_csv_path);
     end
     if ~isempty(p.Results.output_set_path)
-       path_info.output_set_path = p.Results.output_set_path;
+       path_info = set_path_info(path_info, 'output_set_path', p.Results.output_set_path);
     end
     if ~strcmp(p.Results.diagnostic_folder_name, '_diagnostic_test')
        path_info.diagnostic_folder_name = p.Results.diagnostic_folder_name;
@@ -222,7 +217,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     % --------------------------------------------------------
     %    ADDITIONAL CHECKS ON GIVEN PATHS
     % --------------------------------------------------------
-
+    
     % add path to eeglab if given. If not given, check that 
     % eeglab will start when called by the function
     if ~isempty(path_info.eeglab_path)
@@ -240,37 +235,9 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
 
     % if datasets info wasn't given, raise an error
     if isempty(path_info.datasets_path)
-       error("dataset_path not given. Be sure it is stored in path_info or give it in input when calling this function")
+       error(['datasets_path not given. Be sure it is stored '
+           'in path_info or give it in input when calling this function'])
     end
-
-    % if single file mode must be performes, check
-    % that such file exists in the current dataset path
-    if single_file
-       if isempty(raw_filename)
-           if isempty(path_info.raw_filepath)
-               error("cannot process a single file without knowing its name or path." + ...
-                    "Please give a proper file name as char or string using the " + ...
-                    " 'raw_filename' argument or set it in the presaved path_info struct");
-           elseif ~isfile(path_info.raw_filepath)
-               error("path_info stored a path which is not valid. Please correct it or give in input a new one" + ...
-                   " using the 'raw_filename' argument"); 
-           end
-       else
-            if isfile(raw_filename)
-                raw_filepath= raw_filename;
-            else
-                path_file_struct = dir([path_info.dataset_path '**/' raw_filename]);
-                if isempty(path_file_struct)
-                    error("cannot find current raw file. Please check that " + ...
-                        "dataset path and raw_filename are correct." + ...
-                        "Give raw_filename with the extension, for example 'sub-01-raw-eeg.bdf' ")
-                else
-                    path_info.raw_filepath = [path_file_struct.folder '/' path_file_struct.name];
-                end
-            end
-       end
-    end
-
 
     % check that output path is valid
     if ~isfolder(path_info.output_path)
@@ -300,11 +267,155 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
             error(" if given, 'output_set_path' must be a valid path to an existing directory")
         end
     end
+    
+    % --------------------------------------------------------
+    %                  OPEN EEGLAB
+    % --------------------------------------------------------
+    % sometimes eeglab nogui fail to load plugins.
+    % if this happens, use the solve_nogui boolean 
+    % and 'eeglab; close' commands will be used
+    if solve_nogui
+       if verbose
+           eeglab; close;
+       else
+           [~] = evalc('eeglab; close;');
+       end
+       addpath(path_info.lib_path);
+    else
+       if verbose
+           eeglab nogui;
+       else
+           [~] = evalc('eeglab nogui;');
+       end
+    end
 
+    % --------------------------------------------------------
+    %    IMPORT DATASETS INFO FROM TABLE
+    % --------------------------------------------------------
+    
+    % Read the dataset information from a tsv file
+    if istable(dataset_info_filename)
+        dataset_info = dataset_info_filename;
+    else
+        dataset_info = readtable(dataset_info_filename, 'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
+    end
+    
+    check_loaded_table(dataset_info);
+    
+    % Check if given dataset name is included in the table
+    if ~isempty(dataset_name)
+        dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name), 1); 
+        if isempty(dataset_index)
+            error('given dataset name to preprocess not included in the loaded dataset info table')
+        end
+    end
+
+    % --------------------------------------------------------
+    %    MANAGE SINGLE FILE 
+    % --------------------------------------------------------
+
+    % if single file mode must be performes, check
+    % that such file exists in the current dataset path
+    if single_file
+
+        % if no filename is given check if path_info.raw_filepath brings to a
+        % valid file
+        if isempty(raw_filename)
+            [raw_filepath, dataset_name, path_info]  = ...
+                check_single_file_path(path_info, dataset_info, dataset_name );
+
+        else
+            % if isfile it means that a valid path to a file was given. In such
+            % a case, do as previously for all paths and write it in path info
+            % and check if it's valid
+            if isfile(raw_filename)
+                path_info.raw_filepath = raw_filename;
+                [raw_filepath, dataset_name, path_info]  = ...
+                    check_single_file_path(path_info, dataset_info, dataset_name );
+            else
+                % if raw_filename is not a path but only the name of a file,
+                % we must retrieve a possible file to the path, then do as
+                % always and write it in the path_info and check its validity.
+
+                % first check if the given raw_filename brings to a valid 
+                % file in the datasets path               
+                path_file_struct = dir([path_info.datasets_path '**/' raw_filename]);
+                if isempty(path_file_struct)
+                    error("cannot find current raw file. Please check that " + ...
+                        "dataset path and raw_filename are correct." + ...
+                        "Give raw_filename with the extension, for example 'sub-01-raw-eeg.bdf' ")
+                else
+                    % if there are multiple files with the same name, the only
+                    % way to retrieve the right single path is by looking at
+                    % the single_dataset name. So, if not given, raise an error
+                    if size(path_file_struct,1) > 1
+                        if isempty(dataset_name)
+                            error(['detected multiple file with the same name. ' ...
+                                ' Please specify which dataset to consider using the' ...
+                                ' single_dataset_name argument.'])
+                        else
+                            % in the other case, use the dataset_info table to
+                            % retrieve all eeg records of such dataset and do
+                            % an intersection with the possible files found. If
+                            % the intersection brings to a single file, then we
+                            % are ok, otherwise throw an error
+                            rows=  strcmp( dataset_name , dataset_info.dataset_name);
+                            code_and_format = dataset_info{rows,["dataset_code", "eeg_file_extension"]};
+                            filelist = get_dataset_file_list(path_info.datasets_path, ...
+                                code_and_format{1}, code_and_format{2});
+                            allfilepaths = cell(length(filelist),1);
+
+                            % create cell array with all the full paths to eeg
+                            % files for the selected dataset
+                            for i=1:length(filelist)
+                                allfilepaths{i} = [filelist(i).folder filesep filelist(i).name];
+                            end
+
+                            % create cell array with all the full paths to eeg
+                            % files compatible with raw file name
+                            path_file_cell = cell(length(path_file_struct),1);
+                            for i=1:length(path_file_struct)
+                                path_file_cell{i} = [path_file_struct(i).folder filesep path_file_struct(i).name];
+                            end
+
+                            % intersection to get the right file to preprocess
+                            final_path_found = intersect(path_file_cell, allfilepaths);
+                            if length(final_path_found)>1
+                                error(['multiple file with the same name in the '
+                                    dataset_name ' dataset. The only way to avoid this is '
+                                    ' by giving the full path to the file you want to preprocess']) 
+                            else
+                                % check is performed below
+                                path_info.raw_filepath = final_path_found{1};
+                            end
+                        end
+
+                    else
+                        path_info.raw_filepath = [path_file_struct.folder filesep path_file_struct.name];
+                    end
+                    % now that path_info.raw_filepath is set correctly 
+                    % verify that everything has gone correctly for this block
+                    [raw_filepath, dataset_name, path_info]  = ...
+                        check_single_file_path(path_info, dataset_info, dataset_name );
+
+                end  
+            end % end of "if isfile(raw_filename)"
+        end % end of "if isempty(raw_filename)"
+        
+        raw_filename = strsplit(raw_filepath, filesep);
+        raw_filename = raw_filename{end};
+    end % end of "if signle file"
+
+
+    % --------------------------------------------------------
+    %       INITIALIZE OBJECT INFO STRUCT
+    % --------------------------------------------------------
+    obj_info.raw_filename = raw_filename;
+    obj_info.raw_filepath = raw_filepath;
+    
     % --------------------------------------------------------
     %           CREATE OUTPUT FOLDERS
     % --------------------------------------------------------
-
     % Check if exist otherwise create mat_preprocessed folder
     if isempty(path_info.output_mat_path)
         path_info.output_mat_path   = [path_info.output_path '_mat_preprocessed/'];     
@@ -328,51 +439,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
             mkdir(path_info.output_set_path)
         end   
     end
-
-    % --------------------------------------------------------
-    %                  OPEN EEGLAB
-    % --------------------------------------------------------
-    % sometimes eeglab nogui fail to load plugins.
-    % if this happens, use the solve_nogui boolean 
-    % and 'eeglab; close' commands will be used
-    if solve_nogui
-       if verbose
-           eeglab; close;
-       else
-           [~] = evalc('eeglab; close;');
-       end
-       addpath(path_info.lib_path);
-    else
-       if verbose
-           eeglab nogui;
-       else
-           [~] = evalc('eeglab nogui;');
-       end
-    end
-
-    % --------------------------------------------------------
-    %       INITIALIZE OBJECT INFO STRUCT
-    % --------------------------------------------------------
-    obj_info.raw_filename = raw_filename;
-    obj_info.raw_filepath = raw_filepath;
-
-    % --------------------------------------------------------
-    %    IMPORT DATASETS INFO FROM TABLE
-    % --------------------------------------------------------
-    % Read the dataset information from a tsv file
-    if istable(dataset_info_filename)
-        dataset_info = dataset_info_filename;
-    else
-        dataset_info = readtable(dataset_info_filename, 'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
-    end
-    check_loaded_table(dataset_info);
-    if ~isempty(dataset_name)
-        dataset_index = find(strcmp(dataset_info.dataset_name, dataset_name), 1); 
-        if isempty(dataset_index)
-            error('given dataset name to preprocess not included in the loaded dataset info table')
-        end
-    end
-
+    
     % |------------------------------------------------------|
     % |------------------------------------------------------|
     % |            START PREPROCESSING               |
