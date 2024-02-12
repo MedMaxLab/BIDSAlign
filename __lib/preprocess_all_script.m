@@ -74,7 +74,9 @@ params_info = struct('low_freq',1,...                          %filtering
                      'ica_type','fastica',...                     %ICA
                      'non_linearity','tanh',...                  %ICA
                      'n_ica',20,...                                  %ICA
+                     'ic_rej_type','mara',... %'mara','iclabel',''-> no rejection;
                      'iclabel_thresholds', [0 0; 0.9 1; 0.9 1;  0.9 1;  0.9 1;  0.9 1;  0.9 1],...
+                     'mara_threshold', 0.9,...
                      'ic_rej_type', 'iclabel',...   %'','iclabel','mara'
                      'dt_i',5,...                                      %segment removal [s]
                      'dt_f',5,...                                     %segment removal [s]

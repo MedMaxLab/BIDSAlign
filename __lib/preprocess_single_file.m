@@ -227,12 +227,14 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                 if verbose
                     [EEG] = iclabel(EEG);
                     [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
-                    rejected_comps = find(EEG.reject.gcompreject > 0);
+                    ics = 1:length(EEG.reject.gcompreject);
+                    rejected_comps = ics(EEG.reject.gcompreject);
                     [EEG] = pop_subcomp(EEG, rejected_comps);
                 else
                     [~, EEG] = evalc("iclabel(EEG);");
                     [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
-                    rejected_comps = find(EEG.reject.gcompreject > 0);
+                    ics = 1:length(EEG.reject.gcompreject);
+                    rejected_comps = ics(EEG.reject.gcompreject);
                     [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
                 end
                 EEG.history = [EEG.history newline 'ICLabel REJECTION.' newline 'Thresholds applied: ' num2str(params_info.iclabel_thresholds) 
@@ -240,9 +242,15 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         
             elseif isequal(params_info.ic_rej_type,'mara')
                 if verbose
-                    [EEG, ~] = MARA(EEG);
+                    [rejected_comps, info] = MARA(EEG);
+                    ics = 1:length(info.posterior_artefactprob);
+                    rejected_comps = ics(info.posterior_artefactprob>params_info.mara_threshold);
+                    [EEG] = pop_subcomp(EEG, rejected_comps);
                 else
-                    [EEG, ~] = evalc("MARA(EEG);");
+                    [~, rejected_comps, info] = evalc("MARA(EEG);");
+                    ics = 1:length(info.posterior_artefactprob);
+                    rejected_comps = ics(info.posterior_artefactprob>params_info.mara_threshold);
+                    [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
                 end
                 EEG.history = [EEG.history newline 'MARA REJECTION.'];
             else
