@@ -212,13 +212,25 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
 
         %% ICA
         if params_info.prep_steps.ICA || params_info.prep_steps.ICrejection
-            if verbose
-                [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica), 'verbose','off');
+
+            if params_info.n_ica ~= 0
+                
+                if verbose
+                    [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica));
+                else
+                    [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica));");
+                end
+                EEG.history = [EEG.history newline 'ICA DECOMPOSITION: ' params_info.ica_type ', ' num2str(n_ica) ...
+                                ' ICs, NON-LINEARITY: ' params_info.non_linearity];
             else
-                [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica), 'verbose','off');");
+                if verbose
+                    [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity);
+                else
+                    [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity);");
+                end
+                EEG.history = [EEG.history newline 'ICA DECOMPOSITION: ' params_info.ica_type ', NON-LINEARITY: ' params_info.non_linearity];
             end
-            EEG.history = [EEG.history newline 'ICA DECOMPOSITION: ' params_info.ica_type ', ' num2str(min(EEG.nbchan,params_info.n_ica)) ...
-                           ' ICs, NON-LINEARITY: ' params_info.non_linearity];
+
         end
 
         %% ICLabel Rejection
@@ -229,6 +241,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                     [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
                     ics = 1:length(EEG.reject.gcompreject);
                     rejected_comps = ics(EEG.reject.gcompreject);
+                    disp(rejected_comps)
                     [EEG] = pop_subcomp(EEG, rejected_comps);
                 else
                     [~, EEG] = evalc("iclabel(EEG);");
@@ -237,9 +250,13 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                     rejected_comps = ics(EEG.reject.gcompreject);
                     [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
                 end
-                EEG.history = [EEG.history newline 'ICLabel REJECTION.' newline 'Thresholds applied: ' num2str(params_info.iclabel_thresholds) 
-                               ' respectively for Brain, Muscle, Eye, Heart, Line Noise, Channel Noise, Other.'];
-        
+                EEG.history = [EEG.history newline 'ICLabel REJECTION.' newline 'Thresholds applied: '];
+
+                labels_art = {'Brain', 'Muscle', 'Eye', 'Heart', 'Line Noise', 'Channel Noise', 'Other'};
+                for i=1:length(labels_art)
+                    EEG.history = [EEG.history labels_art{i} ': ' num2str(params_info.iclabel_thresholds(2,1)) ' - '  num2str(params_info.iclabel_thresholds(2,2)) '; '];
+                end 
+
             elseif isequal(params_info.ic_rej_type,'mara')
                 if verbose
                     [rejected_comps, info] = MARA(EEG);

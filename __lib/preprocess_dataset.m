@@ -61,11 +61,13 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
         %exclude some folders
         dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',path_info.diagnostic_folder_name,'.datalad','code','derivatives'}));
         subj_list = {dfolders.name};
+        Tr = T;
     end
 
     % Select files on the basis of number of subjects
     [vec_subj, subj_list] = get_elements(subj_list, selection_info.sub_i, selection_info.sub_f, ...
                                          selection_info.subjects_totake,'SUBJECTS', verbose);
+    
     %% Check Channel/Electrodes file name 
     obj_info.check_ch0_root = dir([path_info.dataset_path '*_channels.tsv']);
     obj_info.check_el0_root = dir([path_info.dataset_path '*_electrodes.tsv']);
