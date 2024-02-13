@@ -89,7 +89,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     validStringChar= @(x) isstring(x) || ischar(x);
     validstruct = @(x) isstruct(x);
     validBool= @(x) islogical(x);
-    p.addRequired( 'dataset_info_filename', @(x) isfile(x) || istable(x));
+    p.addRequired( 'dataset_info_filename', @(x) istable(x) || isfile(x) );
     
     p.addOptional( 'path_info', defaultPathInfo, validstruct);
     p.addOptional('preprocess_info', defaultProcessInfo, validstruct);
@@ -192,6 +192,15 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
 
     % for path info, fields will be changed if anything 
     % new is given as input to this function. 
+    
+    % Also, paths to the library and
+    % the current one will be always updated to avoid errors, since those
+    % aren't given by the user. No overwrite to the original path is
+    % performed.
+    path_info.current_path = pwd;
+    path_info.lib_path = filePath;
+    path_info.git_path = filePath(1:length(filePath)-6);
+    
     if ~isempty(p.Results.datasets_path)
        path_info =  set_path_info(path_info, 'datasets_path', p.Results.datasets_path);
     end
@@ -418,7 +427,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     % --------------------------------------------------------
     % Check if exist otherwise create mat_preprocessed folder
     if isempty(path_info.output_mat_path)
-        path_info.output_mat_path   = [path_info.output_path '_mat_preprocessed/'];     
+        path_info.output_mat_path   = [path_info.output_path '_mat_preprocessed' filesep];     
         if ~exist(path_info.output_mat_path, 'dir')
            mkdir(path_info.output_mat_path)
         end
@@ -426,7 +435,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
 
     % Check if exist otherwise create csv_marker_files folder
     if isempty(path_info.output_csv_path) 
-        path_info.output_csv_path   = [path_info.output_path '_csv_marker_files/'];     
+        path_info.output_csv_path   = [path_info.output_path '_csv_marker_files' filesep];     
         if ~exist(path_info.output_csv_path, 'dir') && save_info.save_marker 
             mkdir(path_info.output_csv_path)
         end   
@@ -434,7 +443,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
 
     % Check if exist otherwise create set_files folder
     if isempty(path_info.output_set_path) 
-        path_info.output_set_path   = [path_info.output_path '_set_preprocessed/'];     
+        path_info.output_set_path   = [path_info.output_path '_set_preprocessed' filesep];     
         if ~exist(path_info.output_set_path, 'dir') && save_info.save_set 
             mkdir(path_info.output_set_path)
         end   
@@ -505,7 +514,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
             end
 
             % Extract Dataset Code Name
-            out = regexp(obj_info.raw_filepath ,'\','split');
+            out = regexp(obj_info.raw_filepath , filesep, 'split');
             dataset_code = out{end-4};
 
             % Create the data_info struct to store dataset-specific information

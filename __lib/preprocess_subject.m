@@ -30,7 +30,7 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
     [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose);
     
     %% Extract Subject and Session Name
-    out = regexp(obj_info.raw_filepath ,'\','split');
+    out = regexp(obj_info.raw_filepath ,filesep,'split');
     subject_name = out{end-3};
     session_name = out{end-2};
 
@@ -76,7 +76,7 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
         error(['MULTIPLE ELECTRODES FILES PRESENT IN ' subject_folder]);
     end
 
-    subject_session_folder = [subject_folder '/' session_name '/eeg/'];
+    subject_session_folder = [subject_folder filesep session_name filesep 'eeg' filesep];
     cd(subject_session_folder);
     
     obj_info.check_ch2_root = dir('*_channels.tsv');
@@ -92,7 +92,7 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
     obj_info.mat_preprocessed_filename = [path_info.output_mat_path obj_info.preprocessed_filename '.mat'];
     	
 
-    [EEG, ~] = preprocess_single_file([], obj_info, data_info, params_info, path_info, template_info, save_info);
+    [EEG, ~] = preprocess_single_file([], obj_info, data_info, params_info, path_info, template_info, save_info, verbose);
     
     %% Save data to template (and interpolation)
     if save_info.save_data && ~isempty(EEG)

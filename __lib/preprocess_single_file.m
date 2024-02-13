@@ -220,7 +220,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                 else
                     [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica));");
                 end
-                EEG.history = [EEG.history newline 'ICA DECOMPOSITION: ' params_info.ica_type ', ' num2str(n_ica) ...
+                EEG.history = [EEG.history newline 'ICA DECOMPOSITION: ' params_info.ica_type ', ' num2str(params_info.n_ica) ...
                                 ' ICs, NON-LINEARITY: ' params_info.non_linearity];
             else
                 if verbose

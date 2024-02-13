@@ -91,7 +91,10 @@ function path_info = set_path_info(varargin)
         path_info = p.Results.path_info;
         for i = 1:length(param2set)
                 path_info.(param2set{i}) = p.Results.(param2set{i});          
-        end     
+        end
+        path_info.current_path = pwd;
+        path_info.git_path = filePath;
+        path_info.lib_path = filePath(1:length(filePath)-6);
 
     else
         path_info = struct( 'datasets_path', p.Results.datasets_path, ...  
