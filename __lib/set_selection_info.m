@@ -54,21 +54,21 @@ function selection_info = set_selection_info(varargin)
     validStringChar= @(x) isstring(x) || ischar(x);
     validBool= @(x) islogical(x);
     validCell = @(x) iscell(x);
-    validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
+    validEmptyOrScalarInt = @(x) isempty(x) || (isscalar(x) && mod(x,1)==0);
     validStruct = @(x) isstruct(x) ;
     
     p.addOptional('selection_info', defaultSelectionInfo, validStruct);
     
-    p.addParameter('sub_i', defaultSubstart, validScalarInt);
-    p.addParameter('sub_f', defaultSubend, validScalarInt);
-    p.addParameter('ses_i', defaultSesstart, validScalarInt);
-    p.addParameter('ses_f', defaultSesend, validScalarInt);
-    p.addParameter('obj_i', defaultObjstart, validScalarInt);
-    p.addParameter('obj_f', defaultObjend, validScalarInt);
+    p.addParameter('sub_i', defaultSubstart, validEmptyOrScalarInt);
+    p.addParameter('sub_f', defaultSubend, validEmptyOrScalarInt);
+    p.addParameter('ses_i', defaultSesstart, validEmptyOrScalarInt);
+    p.addParameter('ses_f', defaultSesend, validEmptyOrScalarInt);
+    p.addParameter('obj_i', defaultObjstart, validEmptyOrScalarInt);
+    p.addParameter('obj_f', defaultObjend, validEmptyOrScalarInt);
     
     p.addParameter('select_subjects', defaultSelectSubject, validBool);
     p.addParameter('label_name', defaultLabelName, validStringChar);
-    p.addParameter('label_value', defaultLabelValue, validStringChar);
+    p.addParameter('label_value', defaultLabelValue, @(x) isscalar(x) || validStringChar(x) );
     
     p.addParameter('subjects_totake', defaultSubjectsToTake, validCell);
     p.addParameter('session_totake', defaultSessionToTake, validCell);

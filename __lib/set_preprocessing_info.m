@@ -28,6 +28,10 @@ function params_info = set_preprocessing_info(varargin)
     %   - ica_type (char): ICA algorithm type (default: 'fastica').
     %   - non_linearity (char): Non-linearity option for ICA (default: 'tanh').
     %   - n_ica (scalar): Number of components for ICA (default: 20).
+    %   - ic_rej_type (char): IC rejection algorithm. Can be 'mara' or
+    %                                  'iclabel' (default: 'iclabel')
+    %   - mara_thresholds (scalar): scalar with the MARA's rejection
+    %                                              threshold (default: 0.5)
     %   - iclabel_thresholds: 7x2 array with threshold values with limits to include for selection as artifacts
     %   - dt_i (scalar): Start time for segment removal (default: 0 s).
     %   - dt_f (scalar): End time for segment removal (default: 0 s).
@@ -64,6 +68,8 @@ function params_info = set_preprocessing_info(varargin)
     defaultICAtype = 'fastica';
     defaultICAnonLinearity= 'tanh';
     defaultICAnica = 20;
+    defaultICRejType = 'mara';
+    defaultMaraThresh = 0.5;
     defaultIClabel_thresholds = [0 0; 0.9 1; 0.9 1;  0.9 1;  0.9 1;  0.9 1;  0.9 1];
     
     defaultdtstart = 0;
@@ -111,6 +117,8 @@ function params_info = set_preprocessing_info(varargin)
     p.addParameter('ica_type', defaultICAtype, validStringChar);
     p.addParameter('non_linearity', defaultICAnonLinearity, validStringChar);
     p.addParameter('n_ica', defaultICAnica, validScalarInt);
+    p.addParameter('ic_rej_type', defaultICRejType, @(x) strcmpi(x, 'mara') || strcmpi(x, 'iclabel') );
+    p.addParameter('mara_threshold', defaultMaraThresh, validScalar);
     p.addParameter('iclabel_thresholds', defaultIClabel_thresholds, validNumeric72array);
     
     p.addParameter('dt_i', defaultdtstart, validScalar);
@@ -140,6 +148,7 @@ function params_info = set_preprocessing_info(varargin)
         param2set = setdiff( setdiff( p.Parameters, {'setting_name' 'store_settings'}), ...
             [p.UsingDefaults 'params_info']);
         params_info = p.Results.params_info;
+        
         for i = 1:length(param2set)
             if ~any(strcmp(prepsteps,param2set{i}))
                 params_info.(param2set{i}) = p.Results.(param2set{i});
@@ -164,6 +173,8 @@ function params_info = set_preprocessing_info(varargin)
                                          'ica_type',p.Results.ica_type ,...                                       %ICA
                                          'non_linearity',p.Results.non_linearity ,...                          %ICA
                                          'n_ica',p.Results.n_ica ,...                                                 %ICA
+                                         'ic_rej_type', lower(p.Results.ic_rej_type) ,...                               %ICA
+                                         'mara_threshold', p.Results.mara_threshold, ...               %ICA
                                          'iclabel_thresholds', p.Results.iclabel_thresholds, ...         %ICA
                                          'dt_i',p.Results.dt_i ,...                                                      %segment removal [s]
                                          'dt_f',p.Results.dt_f ,...                                                     %segment removal [s]
@@ -178,8 +189,11 @@ function params_info = set_preprocessing_info(varargin)
                                                                  'ICrejection'      , p.Results.ICrejection, ...
                                                                  'ASR'                , p.Results.ASR ) );
     end
-         
+    
+    params_info.ic_rej_type = lower( params_info.ic_rej_type );
+    params_info.standard_ref = upper( params_info.standard_ref);
     check_preprocessing_info(params_info);
+    
     % store settings if asked to do so
     if p.Results.store_settings
         filePath = mfilename('fullpath');

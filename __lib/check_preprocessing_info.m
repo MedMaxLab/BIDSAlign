@@ -19,7 +19,7 @@ function [] = check_preprocessing_info(params_info)
     bool_args = { 'rmchannels', 'rmsegments', 'rmbaseline', ...
                             'resampling', 'filtering',  'rereference','ICA', ...
                             'ICrejection', 'ASR'};
-    channel_list = load('full_channel_list.mat');
+    channel_list = load('full_channel_list.mat').all_channel_list;
 
     validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
     validStringChar= @(x) isstring(x) || ischar(x);
@@ -56,7 +56,7 @@ function [] = check_preprocessing_info(params_info)
     if ~validStringChar(params_info.standard_ref)
         error('standard_ref must be a string or a char array')
     else
-        if  ~ (strcmpi(params_info.standard_ref, 'COMMON') || any(strcmpi(params_info.standard_ref, channel_list )))
+        if  ~ (strcmp(params_info.standard_ref, 'COMMON') || any(strcmpi(params_info.standard_ref, channel_list )))
             error("standard_ref must be 'COMMON' or a valid channel ")
         end
     end
@@ -152,7 +152,23 @@ function [] = check_preprocessing_info(params_info)
         end
     end
     
-    % check IC label arg
+    % check IC rejection arg
+    if ~validStringChar(params_info.ic_rej_type)
+        error("ic_rej_type must be a string or a char array with 'mara' or 'iclabel' ")
+    else
+        if ~any(strcmp(params_info.ic_rej_type, {'mara', 'iclabel'}))
+            error("ic_rej_type args allowed are  'mara', 'iclabel' ")
+        end
+    end
+    
+    if ~isscalar(params_info.mara_threshold)
+        error('mara_threshold must be a scalar value in range [0,1]')
+    else
+        if params_info.mara_threshold < 0 || params_info.mara_threshold > 1
+            error(' mara_threshold must be in range [0, 1]')
+        end
+    end
+    
     if ~isnumeric(params_info.iclabel_thresholds)
         error("iclabel_thresholds must be a numeric array of size 7x2")
     else

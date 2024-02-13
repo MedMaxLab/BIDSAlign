@@ -113,8 +113,9 @@ function [] = check_selection_info(selection_info)
         error('label_name must be a string or char array')
     end
     
-    if ~validStringChar(selection_info.label_value)
-        error('label_value must be a string or char array')
+    if ~(validStringChar(selection_info.label_value) || ...
+            isscalar(x))
+        error('label_value must be a string or char array or a valid scalar')
     end
                               
     if ~isempty(selection_info.subjects_totake) || ~isequal(selection_info.subjects_totake, {{}})
