@@ -30,9 +30,10 @@ function params_info = set_preprocessing_info(varargin)
     %   - n_ica (scalar): Number of components for ICA (default: 20).
     %   - ic_rej_type (char): IC rejection algorithm. Can be 'mara' or
     %                                  'iclabel' (default: 'iclabel')
-    %   - mara_thresholds (scalar): scalar with the MARA's rejection
-    %                                              threshold (default: 0.5)
-    %   - iclabel_thresholds: 7x2 array with threshold values with limits to include for selection as artifacts
+    %   - mara_thresholds (scalar): scalar with the MARA's rejection threshold 
+    %                               (default: 0.5)
+    %   - iclabel_thresholds: 7x2 array with threshold values with limits to include 
+    %                         for selection as artifacts
     %   - dt_i (scalar): Start time for segment removal (default: 0 s).
     %   - dt_f (scalar): End time for segment removal (default: 0 s).
     %   - rmchannels (logical): Flag for channel removal (default: true).
@@ -42,10 +43,12 @@ function params_info = set_preprocessing_info(varargin)
     %   - filtering (logical): Flag for filtering (default: true).
     %   - rereference (logical): Flag for rereferencing (default: true).
     %   - ICA (logical): Flag for performing ICA (default: false).
-    %   - ICrejection (logical): Flag for performing IC rejection via ICLabel (default: false).
+    %   - ICrejection (logical): Flag for performing IC rejection via ICLabel 
+    %                            (default: false).
     %   - ASR (logical): Flag for performing ASR (default: false).
     %   - store_settings (logical): Flag for storing settings (default: false).
-    %   - setting_name (char): Name of the setting if storing settings (default: 'default').
+    %   - setting_name (char): Name of the setting if storing settings 
+    %                          (default: 'default').
     %
     % Author: [Federico Del Pup]
     % Date: [27/01/2024]
@@ -117,7 +120,8 @@ function params_info = set_preprocessing_info(varargin)
     p.addParameter('ica_type', defaultICAtype, validStringChar);
     p.addParameter('non_linearity', defaultICAnonLinearity, validStringChar);
     p.addParameter('n_ica', defaultICAnica, validScalarInt);
-    p.addParameter('ic_rej_type', defaultICRejType, @(x) strcmpi(x, 'mara') || strcmpi(x, 'iclabel') );
+    p.addParameter('ic_rej_type', defaultICRejType, ...
+        @(x) strcmpi(x, 'mara') || strcmpi(x, 'iclabel') );
     p.addParameter('mara_threshold', defaultMaraThresh, validScalar);
     p.addParameter('iclabel_thresholds', defaultIClabel_thresholds, validNumeric72array);
     
@@ -141,12 +145,14 @@ function params_info = set_preprocessing_info(varargin)
     % Create a struct to store the save information                            
     % Set the parameters for preprocessing
     if  ~isempty(fieldnames(p.Results.params_info)) &&  ...
-            isempty( setdiff(fieldnames(p.Results.params_info), [p.Parameters'; 'prep_steps']) )
+            isempty( setdiff(fieldnames(p.Results.params_info),...
+            [p.Parameters'; 'prep_steps']) )
         
-        prepsteps = { 'rmchannels', 'rmsegments'  , 'rmbaseline' , 'resampling','filtering', ...
+        prepsteps = { 'rmchannels', 'rmsegments'  , ...
+            'rmbaseline' , 'resampling','filtering', ...
             'rereference' , 'ICA' , 'ICrejection', 'ASR'   };
-        param2set = setdiff( setdiff( p.Parameters, {'setting_name' 'store_settings'}), ...
-            [p.UsingDefaults 'params_info']);
+        param2set = setdiff( setdiff( p.Parameters, ...
+            {'setting_name' 'store_settings'}), [p.UsingDefaults 'params_info']);
         params_info = p.Results.params_info;
         
         for i = 1:length(param2set)
@@ -158,47 +164,55 @@ function params_info = set_preprocessing_info(varargin)
         end     
         
     else
-        params_info = struct('low_freq', p.Results.low_freq,...                                    %filtering                              
-                                         'high_freq',p.Results.high_freq , ...                                  %filtering
-                                         'sampling_rate', p.Results.sampling_rate , ...                   %resampling
-                                         'standard_ref', p.Results.standard_ref , ...                      %standard ref
-                                         'interpol_method', p.Results.interpol_method ,...             %interpolation
-                                         'flatlineC', p.Results.flatlineC ,...                                       %1° ASR
-                                         'channelC', p.Results.channelC ,...                                   %1° ASR
-                                         'lineC', p.Results.lineC , ...                                                %1° ASR
-                                         'burstC',p.Results.burstC ,...                                           %2° ASR
-                                         'windowC', p.Results.windowC ,...                                   %2° ASR
-                                         'burstR', p.Results.burstR ,...                                          %2° ASR
-                                         'th_reject',p.Results.th_reject ,...                                      %amplitude threshold uV
-                                         'ica_type',p.Results.ica_type ,...                                       %ICA
-                                         'non_linearity',p.Results.non_linearity ,...                          %ICA
-                                         'n_ica',p.Results.n_ica ,...                                                 %ICA
-                                         'ic_rej_type', lower(p.Results.ic_rej_type) ,...                               %ICA
-                                         'mara_threshold', p.Results.mara_threshold, ...               %ICA
-                                         'iclabel_thresholds', p.Results.iclabel_thresholds, ...         %ICA
-                                         'dt_i',p.Results.dt_i ,...                                                      %segment removal [s]
-                                         'dt_f',p.Results.dt_f ,...                                                     %segment removal [s]
-                                         'prep_steps', struct( ...                                                     %preprocessing steps to do
-                                                                'rmchannels'    , p.Results.rmchannels ,...
-                                                                 'rmsegments'  , p.Results.rmsegments ,...
-                                                                 'rmbaseline'     , p.Results.rmbaseline ,...
-                                                                 'resampling'     , p.Results.resampling ,...
-                                                                 'filtering'           , p.Results.filtering,...
-                                                                 'rereference'    , p.Results.rereference,...
-                                                                 'ICA'                 , p.Results.ICA,...
-                                                                 'ICrejection'      , p.Results.ICrejection, ...
-                                                                 'ASR'                , p.Results.ASR ) );
+        params_info = struct('low_freq', p.Results.low_freq,...             % filtering                              
+                             'high_freq',p.Results.high_freq , ...          % filtering
+                             'sampling_rate', p.Results.sampling_rate , ...% resampling
+                             'standard_ref', p.Results.standard_ref , ... % standardref
+                             'interpol_method', p.Results.interpol_method ,... % interp
+                             'flatlineC', p.Results.flatlineC ,...             % 1 ASR
+                             'channelC', p.Results.channelC ,...               % 1 ASR
+                             'lineC', p.Results.lineC , ...                    % 1 ASR
+                             'burstC',p.Results.burstC ,...                    % 2 ASR
+                             'windowC', p.Results.windowC ,...                 % 2 ASR
+                             'burstR', p.Results.burstR ,...                   % 2 ASR
+                             'th_reject',p.Results.th_reject ,... % amplitude threshold
+                             'ica_type',p.Results.ica_type ,...                % ICA
+                             'non_linearity',p.Results.non_linearity ,...      % ICA
+                             'n_ica',p.Results.n_ica ,...                      % ICA
+                             'ic_rej_type', lower(p.Results.ic_rej_type) ,...  % ICA
+                             'mara_threshold', p.Results.mara_threshold, ...   % ICA
+                             'iclabel_thresholds', p.Results.iclabel_thresholds,...%ICA
+                             'dt_i',p.Results.dt_i ,...           % segment removal [s]
+                             'dt_f',p.Results.dt_f ,...           % segment removal [s]
+                             'prep_steps', struct( ...      % preprocessing steps to do
+                                        'rmchannels'  , p.Results.rmchannels ,...
+                                        'rmsegments'  , p.Results.rmsegments ,...
+                                        'rmbaseline'  , p.Results.rmbaseline ,...
+                                        'resampling'  , p.Results.resampling ,...
+                                        'filtering'   , p.Results.filtering,...
+                                        'rereference' , p.Results.rereference,...
+                                        'ICA'         , p.Results.ICA,...
+                                        'ICrejection' , p.Results.ICrejection, ...
+                                        'ASR'         , p.Results.ASR ) );
     end
     
+    % additional conversion for chars with upper or lower
     params_info.ic_rej_type = lower( params_info.ic_rej_type );
     params_info.standard_ref = upper( params_info.standard_ref);
+    params_info.ica_type = lower( params_info.ica_type);
+    params_info.non_linearity = lower(params_info.non_linearity);
+    params_info.interpol_method = lower(params_info.interpol_method);
+
+    % run check to assess if everything is ok
     check_preprocessing_info(params_info);
     
     % store settings if asked to do so
     if p.Results.store_settings
         filePath = mfilename('fullpath');
-        if not( isfolder( [filePath(1:length(filePath)-22)  filesep 'default_settings' filesep p.Results.setting_name]) )
-            mkdir( [filePath(1:length(filePath)-22)  filesep 'default_settings' filesep] , p.Results.setting_name)
+        if not( isfolder( [filePath(1:length(filePath)-22) ...
+                filesep 'default_settings' filesep p.Results.setting_name]) )
+            mkdir( [filePath(1:length(filePath)-22) ...
+                filesep 'default_settings' filesep] , p.Results.setting_name)
         end
         save( [ filePath(1:length(filePath)-22)  filesep 'default_settings' filesep ...
             p.Results.setting_name filesep 'preprocessing_info.mat'], 'params_info');

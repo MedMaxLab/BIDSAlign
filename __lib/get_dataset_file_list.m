@@ -9,7 +9,7 @@ function filelist = get_dataset_file_list(dataset_path, dataset_code, fileformat
             d = dir([dataset_path dataset_code filesep '**' filesep '*' fileformat]);
     end
 
-    filelist = d( boolean(1-[d(:).isdir]) );
+    filelist = d( logical(1-[d(:).isdir]) );
 
 
 end
