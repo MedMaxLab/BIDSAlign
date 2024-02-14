@@ -54,7 +54,6 @@ Temporary Items
 __lib/default_settings/test_dev_/
 __lib/BIDSAlign_debugging.m
 __lib/GUI/
-__lib/BIDSAlign_GUI.mlapp
 
 # Windows default autosave extension
 *.asv
