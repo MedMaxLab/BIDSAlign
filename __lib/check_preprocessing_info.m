@@ -132,8 +132,8 @@ function [] = check_preprocessing_info(params_info)
     if ~validStringChar(params_info.ica_type)
         error('ica_type must be a string or a char array')
     else
-        if ~any(strcmp(params_info.ica_type, {'runica', 'binica', 'jader', 'fastica'}))
-            error("ica_type args allowed are 'runica', 'binica', 'jader', 'fastica' ")
+        if ~any(strcmp(params_info.ica_type, {'runica', 'fastica'}))
+            error("ica_type args allowed are 'runica', or 'fastica' ")
         end
     end
     
