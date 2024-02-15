@@ -211,7 +211,6 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info, verbose);
 
 
-
         %% 1˚ ASR channel correction
         nchan_preASR = EEG.nbchan;
         if params_info.prep_steps.ASR
