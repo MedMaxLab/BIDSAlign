@@ -44,7 +44,7 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
             %Table III: G) common reref + if required interpolate channel T and/or channel S 
             if verbose
                 disp('Rereference case: G');
-                EEG = pop_reref( EEG, [],'keepref','on');      
+                [EEG] = pop_reref(EEG, [],'keepref','on');      
             else
                 [~,EEG] = evalc("pop_reref( EEG, [],'keepref','on');");
             end

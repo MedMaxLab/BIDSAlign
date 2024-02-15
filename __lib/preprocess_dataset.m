@@ -46,7 +46,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     if selection_info.select_subjects && isempty(T)
         error('UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE LOADED');
 
-    elseif selection_info.select_subjects && ~isempty(T)
+    elseif selection_info.select_subjects && ~isempty(T) && ~isempty(selection_info.label_name) && ~isempty(selection_info.label_value)
 
         idx_column = linspace(1,width(T),width(T));
         I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name));
@@ -65,8 +65,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
     end
 
     % Select files on the basis of number of subjects
-    [vec_subj, subj_list] = get_elements(subj_list, selection_info.sub_i, selection_info.sub_f, ...
-                                         selection_info.subjects_totake,'SUBJECTS', verbose);
+    if selection_info.select_subjects
+        [vec_subj, subj_list] = get_elements(subj_list, selection_info.sub_i, selection_info.sub_f, ...
+                                             selection_info.subjects_totake,'SUBJECTS', verbose);
+    else
+        vec_subj = 1:1:length(subj_list);
+    end
     
     %% Check Channel/Electrodes file name 
     obj_info.check_ch0_root = dir([path_info.dataset_path '*_channels.tsv']);
@@ -126,9 +130,14 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
         dfolders  = d([d(:).isdir]);
         sess_list = dfolders(~ismember({dfolders(:).name},{'.','..'}));
 
-        % Select files on the basis of number of sessions
-        [vec_sess, sess_list] = get_elements(sess_list, selection_info.ses_i, selection_info.ses_f, ...
-                                             selection_info.session_totake, 'SESSIONS', verbose);
+        if selection_info.select_subjects
+            % Select files on the basis of number of sessions
+            [vec_sess, sess_list] = get_elements(sess_list, selection_info.ses_i, selection_info.ses_f, ...
+                                                 selection_info.session_totake, 'SESSIONS', verbose);
+
+        else
+            vec_sess = 1:1:length(sess_list);
+        end
 
         %% Preprocess all sessions for a subject
         for k = vec_sess
@@ -148,9 +157,13 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
             obj_info.raw_filepath  = pwd;
             obj_list      = dir(['*' data_info.eeg_file_extension]);
 
-            % Select files on the basis of number of sessions
-            [vec_obj, obj_list] = get_elements(obj_list, selection_info.obj_i, selection_info.obj_f, ...
-                                               selection_info.task_totake, 'OBJECTS', verbose);
+            if selection_info.select_subjects
+                % Select files on the basis of number of sessions
+                [vec_obj, obj_list] = get_elements(obj_list, selection_info.obj_i, selection_info.obj_f, ...
+                                                   selection_info.task_totake, 'OBJECTS', verbose);
+            else
+                vec_obj = 1:1:length(obj_list);
+            end
 
             %% Preprocess all files of a session -----------------------
             for i=vec_obj

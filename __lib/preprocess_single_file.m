@@ -210,11 +210,46 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
 
         [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info, verbose);
 
+
+
+        %% 1˚ ASR channel correction
+        nchan_preASR = EEG.nbchan;
+        if params_info.prep_steps.ASR
+            if verbose
+                fprintf(' \t\t\t\t\t\t\t\t --- SOFT ASR APPLIED ---\n');
+            end
+            [EEG,~,~] = clean_artifacts(EEG, 'ChannelCriterion', params_info.channelC, ...
+                                             'LineNoiseCriterion', params_info.lineC, ...
+                                             'BurstCriterion', 'off', ...                  %default
+                                             'WindowCriterion', 'off', ...                 %default
+                                             'Highpass','off', ...
+                                             'FlatlineCriterion', params_info.flatlineC,...
+                                             'NumSamples', 50,...                          %default
+                                             'ChannelCriterionMaxBadTime', 0.2,...         %default 
+                                             'BurstCriterionRefMaxBadChns', 0.075 ,...     %default
+                                             'BurstCriterionRefTolerances', [-inf 5.5],... %default
+                                             'Distance', 'euclidian',...                   %default
+                                             'WindowCriterionTolerances','off',...         %default
+                                             'BurstRejection','off',...                    %default
+                                             'NoLocsChannelCriterion', 0.45,...            %default
+                                             'NoLocsChannelCriterionExcluded', 0.1,...     %default
+                                             'MaxMem', 4096, ...                           %default
+                                             'availableRAM_GB', NaN);                      %default);
+
+            EEG.history = [EEG.history newline '1° ASR CHANNELS CORRECTION: FlatLineCriterion ' num2str(params_info.flatlineC) ...
+                           ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
+        end
+
+        %% Rereference the data
+        if params_info.prep_steps.rereference
+            [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
+        end
+
         %% ICA
         if params_info.prep_steps.ICA || params_info.prep_steps.ICrejection
-
+           
             if params_info.n_ica ~= 0
-                
+
                 if verbose
                     [EEG, ~] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity, 'lastEig', min(EEG.nbchan,params_info.n_ica));
                 else
@@ -275,33 +310,9 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
             end
         end
 
-        nchan_preASR = EEG.nbchan;
-        %% ASR 
+        
+        %% 2˚ ASR windows removal
         if params_info.prep_steps.ASR
-            if verbose
-                fprintf(' \t\t\t\t\t\t\t\t --- SOFT ASR APPLIED ---\n');
-            end
-            [EEG,~,~] = clean_artifacts(EEG, 'ChannelCriterion', params_info.channelC, ...
-                                             'LineNoiseCriterion', params_info.lineC, ...
-                                             'BurstCriterion', 'off', ...                  %default
-                                             'WindowCriterion', 'off', ...                 %default
-                                             'Highpass','off', ...
-                                             'FlatlineCriterion', params_info.flatlineC,...
-                                             'NumSamples', 50,...                          %default
-                                             'ChannelCriterionMaxBadTime', 0.2,...         %default 
-                                             'BurstCriterionRefMaxBadChns', 0.075 ,...     %default
-                                             'BurstCriterionRefTolerances', [-inf 5.5],... %default
-                                             'Distance', 'euclidian',...                   %default
-                                             'WindowCriterionTolerances','off',...         %default
-                                             'BurstRejection','off',...                    %default
-                                             'NoLocsChannelCriterion', 0.45,...            %default
-                                             'NoLocsChannelCriterionExcluded', 0.1,...     %default
-                                             'MaxMem', 4096, ...                           %default
-                                             'availableRAM_GB', NaN);                      %default);
-
-            EEG.history = [EEG.history newline '1° ASR CHANNELS CORRECTION: FlatLineCriterion ' num2str(params_info.flatlineC) ...
-                           ', ChannelCriterion ' num2str(params_info.channelC) ', LineNoiseCriterion ' num2str(params_info.lineC)];
-
             if max(abs(EEG.data),[],'all') > params_info.th_reject 
                 if verbose
                     fprintf(' \t\t\t\t\t\t\t\t --- REMOVE BURST ASR APPLIED ---\n');
@@ -336,7 +347,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
                 warning(['EEG FILE STILL GREATER THAN ' num2str(params_info.th_reject/1000) ' mV']);
             end
         end
-        
+
         %% Interpolate if some channels are missing
         if nchan_preASR>EEG.nbchan
             if verbose
@@ -347,10 +358,6 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
             EEG.history = [EEG.history newline 'INTERPOLATION OF REMOVED CHANNELS BY ASR - method: ' params_info.interpol_method];
         end
 
-        %% Rereference the data
-        if params_info.prep_steps.rereference
-            [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
-        end
 
         %% Save the .set file 
         if save_info.save_set
