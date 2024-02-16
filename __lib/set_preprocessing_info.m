@@ -206,11 +206,6 @@ function params_info = set_preprocessing_info(varargin)
     params_info.non_linearity = lower(params_info.non_linearity);
     params_info.interpol_method = lower(params_info.interpol_method);
 
-    % force decomposition if rejection is true
-    if params_info.prep_steps.ICrejection && ~params_info.prep_steps.ICA
-        params_info.prep_steps.ICA = true;
-    end
-
     % run check to assess if everything is ok
     check_preprocessing_info(params_info);
     
