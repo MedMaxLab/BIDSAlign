@@ -59,7 +59,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params
         dfolders = d([d(:).isdir]);
 
         %exclude some folders
-        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',path_info.diagnostic_folder_name,'.datalad','code','derivatives'}));
+        dfolders = dfolders(~ismember({dfolders(:).name},{'.','..',path_info.diagnostic_folder_name,'.datalad','code','derivatives','stimuli'}));
         subj_list = {dfolders.name};
         Tr = T;
     end

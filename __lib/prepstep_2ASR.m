@@ -1,4 +1,21 @@
 function [EEG] = prepstep_2ASR(EEG, params_info, verbose)
+% FUNCTION: prepstep_2ASR
+%
+% Description: Applies Artifact Subspace Reconstruction (ASR) for EEG artifact correction with window removal.
+%
+% Syntax:
+%   [EEG] = prepstep_2ASR(EEG, params_info, verbose)
+%
+% Input:
+%   - EEG (struct): EEG data structure.
+%   - params_info (struct): Struct containing preprocessing parameters.
+%   - verbose (logical): Verbosity flag indicating whether to display information during processing.
+%
+% Output:
+%   - EEG (struct): Processed EEG data structure.
+%
+% Author: [Andrea Zanola]
+% Date: [16/02/2024]
 
     if params_info.prep_steps.ASR
         if max(abs(EEG.data),[],'all') > params_info.th_reject 

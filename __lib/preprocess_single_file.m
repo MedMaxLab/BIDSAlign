@@ -96,14 +96,12 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         %% Remove Channels
         [EEG] = prepstep_removechannels(EEG, data_info, params_info, verbose);
 
-
         %% Import or generate channel location  
         %It is important to remove the channels first, because the
         %following function eventually uses create_chan_loc.m; here
         %conversion files are used, but non-physiological channels are not
         %present.
         [EEG, L, channel_location_file_extension, B] = load_channel_location(EEG, data_info, obj_info, L, template_info, verbose);
-
 
         %% Remove initial and final part of the recording
         [EEG] = prepstep_removesegments(EEG, params_info, verbose);
@@ -114,13 +112,22 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         %% Resampling 
         [EEG] = prepstep_resampling(EEG, data_info, params_info, verbose);
 
-        %% Filter the data 
+        %% Filtering
         [EEG] = prepstep_filtering(EEG, params_info, verbose);
 
-        %% ICA
+
+        %% 1˚ ASR channel correction
+        nchan_preASR = EEG.nbchan;
+        [EEG] = prepstep_1ASR(EEG, params_info, verbose);
+
+        %% 2˚ ASR windows removal
+        [EEG] = prepstep_2ASR(EEG, params_info, verbose);
+
+        %% ICA and ICAREJ
+        % ICA DECOMP
         [EEG] = prepstep_ICA(EEG, params_info, verbose);
 
-        %% ICLabel Rejection
+        % ICA REJ
         if isfield(EEG,'reject')
             if isfield(EEG.reject,'gcompreject')
                 EEG.reject.gcompreject = [];
@@ -128,45 +135,28 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         end
         [EEG] = prepstep_ICArejection(EEG, params_info, verbose);
 
-
-        %% 1˚ ASR channel correction
-        nchan_preASR = EEG.nbchan;
-        [EEG] = prepstep_1ASR(EEG, params_info, verbose);
-
-        %% Interpolate if some channels are missing
-        [EEG] = prepstep_interpolation(EEG, params_info, B, nchan_preASR, verbose);
-
-        %% Rereference the data
+                %% Rereferecing
         [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
 
-        %% 2˚ ASR windows removal (ASR)
-        [EEG] = prepstep_2ASR(EEG, params_info, verbose);
-        
+
+        %% Interpolation
+        [EEG] = prepstep_interpolation(EEG, params_info, B, nchan_preASR, verbose);
+
+
+
+
+
+
         %% Warning if file after aggressive ASR, still have values over threshold
         if max(abs(EEG.data),[],'all') > params_info.th_reject 
             if verbose
-                warning(['EEG FILE STILL GREATER THAN ' num2str(params_info.th_reject/1000) ' mV']);
+                warning(['EEG FILE STILL GREATER THAN ' num2str(params_info.th_reject) ' uV']);
             end
         end
 
         %% FINAL ICA DECOMPOSITION
-        if verbose
-            if isequal(params_info.ica_type,'fastica')
-                [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity);
-            elseif isequal(params_info.ica_type,'runica')
-                [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type);
-            end
-            [EEG] = iclabel(EEG);
-        else
-            if isequal(params_info.ica_type,'fastica')
-                [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type, 'g', params_info.non_linearity);");
-            elseif isequal(params_info.ica_type,'runica')
-                [~,EEG] = evalc("pop_runica(EEG, 'icatype', params_info.ica_type);");
-            end
-            [~,EEG] = evalc("iclabel(EEG);");
-        end
-        EEG.history = [EEG.history newline 'FINAL ICA DECOMPOSITION: ' params_info.ica_type ', NON-LINEARITY: ' params_info.non_linearity];
-
+        [EEG] = prepstep_ICA(EEG, params_info, verbose);
+        [EEG] = iclabel(EEG);
 
         %% Save the .set file 
         if save_info.save_set

@@ -1,4 +1,22 @@
 function [EEG] = prepstep_resampling(EEG, data_info, params_info, verbose)
+% FUNCTION: prepstep_resampling
+%
+% Description: Resamples EEG data to the specified sampling rate if necessary.
+%
+% Syntax:
+%   [EEG] = prepstep_resampling(EEG, data_info, params_info, verbose)
+%
+% Input:
+%   - EEG (struct): EEG data structure.
+%   - data_info (struct): Struct containing information about the data, including the original sampling rate.
+%   - params_info (struct): Struct containing preprocessing parameters, including the target sampling rate.
+%   - verbose (logical): Verbosity flag indicating whether to display information during processing.
+%
+% Output:
+%   - EEG (struct): Processed EEG data structure.
+%
+% Author: [Andrea Zanola]
+% Date: [16/02/2024]
 
     if params_info.prep_steps.resampling
         if params_info.sampling_rate ~= data_info.samp_rate && mod(EEG.srate, 1) == 0
