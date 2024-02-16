@@ -23,7 +23,7 @@ function [EEG] = prepstep_ICA(EEG, params_info, verbose)
         verb = 'off';
     end
 
-    if params_info.prep_steps.ICA && params_info.prep_steps.ICrejection
+    if params_info.prep_steps.ICrejection
        
         switch params_info.ica_type
             case 'fastica'
@@ -59,7 +59,6 @@ function [EEG] = prepstep_ICA(EEG, params_info, verbose)
             [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type,'verbose',verb);
             EEG.history = [EEG.history newline 'FINAL ICA DECOMPOSITION: ' params_info.ica_type];
         end
-    
     end
 
 end

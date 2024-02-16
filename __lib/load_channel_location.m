@@ -46,6 +46,9 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
                 B = C(3:end); %first 2 labels are REF and GND           %CHECK THIS PART !!!
             else
                 B = readlocs(obj_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','native');
+                % if ~isfield(B,'theta')
+                %     B = readlocs(obj_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','eeglab');
+                % end
             end
 
             % Keep in consideration if some channels have strange name from
@@ -72,16 +75,33 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             matching_labels = ismember(listE, listB);
             
             % Filter EEG.chanlocs using the logical index array
-            B =  B(matching_labels);
-            EEG.chanlocs = B;
+            B = B(matching_labels);
+
             if ~isempty(data_info.nose_direction)
                 if verbose
-                    EEG = pop_chanedit(EEG, 'nosedir', data_info.nose_direction);
+                    B = pop_chanedit(B, 'nosedir', data_info.nose_direction);
                 else
-                    [~,EEG] = evalc("pop_chanedit(EEG, 'nosedir', data_info.nose_direction);");
+                    [~,B] = evalc("pop_chanedit(B, 'nosedir', data_info.nose_direction);");
                 end
+                EEG.history = [EEG.history newline 'CHANGED NOSE DIRECTION OF CHANLOC'];
             end
-            EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' obj_info.electrodes_filename];
+
+            if ~isfield(B,'theta')
+                if verbose
+                    B = pop_chanedit(B,'convert','chancenter');
+                else
+                    [~,B] = evalc("pop_chanedit(B,'convert','chancenter');");
+                end
+            EEG.history = [EEG.history newline 'CENTERED XYZ COORDINATES OF CHANLOC'];
+            end
+
+            if ~isfield(EEG.chanlocs,'theta')
+                error('THETA COORDINATES NOT PRESENT');
+            else
+                EEG.chanlocs = B;
+                EEG.history = [EEG.history newline 'LOAD CHANNEL LOCATION FROM: ' obj_info.electrodes_filename];
+            end
+
             
         else
             %Fig 4. 3)

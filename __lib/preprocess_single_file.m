@@ -115,14 +115,6 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         %% Filtering
         [EEG] = prepstep_filtering(EEG, params_info, verbose);
 
-
-        %% 1˚ ASR channel correction
-        nchan_preASR = EEG.nbchan;
-        [EEG] = prepstep_1ASR(EEG, params_info, verbose);
-
-        %% 2˚ ASR windows removal
-        [EEG] = prepstep_2ASR(EEG, params_info, verbose);
-
         %% ICA and ICAREJ
         % ICA DECOMP
         [EEG] = prepstep_ICA(EEG, params_info, verbose);
@@ -135,17 +127,18 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         end
         [EEG] = prepstep_ICArejection(EEG, params_info, verbose);
 
-                %% Rereferecing
-        [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
+        %% 1˚ ASR channel correction
+        nchan_preASR = EEG.nbchan;
+        [EEG] = prepstep_1ASR(EEG, params_info, verbose);
 
+        %% 2˚ ASR windows removal
+        [EEG] = prepstep_2ASR(EEG, params_info, verbose);
 
         %% Interpolation
         [EEG] = prepstep_interpolation(EEG, params_info, B, nchan_preASR, verbose);
-
-
-
-
-
+        
+        %% Rereferecing
+        [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
 
         %% Warning if file after aggressive ASR, still have values over threshold
         if max(abs(EEG.data),[],'all') > params_info.th_reject 
@@ -156,7 +149,13 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
 
         %% FINAL ICA DECOMPOSITION
         [EEG] = prepstep_ICA(EEG, params_info, verbose);
-        [EEG] = iclabel(EEG);
+        if params_info.prep_steps.ICA
+            if verbose
+                [EEG] = iclabel(EEG);
+            else
+                [~, EEG] = evalc("iclabel(EEG);");
+            end
+        end
 
         %% Save the .set file 
         if save_info.save_set
