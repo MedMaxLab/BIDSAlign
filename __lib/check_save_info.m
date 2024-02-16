@@ -41,5 +41,9 @@ function [] = check_save_info(save_info)
     else
         error("save_data_as must be a char or string vector with 'matrix' or 'tensor'")
     end
+
+    if ~ischar(save_info.set_label)
+        error('set_label must be a char array')
+    end
     
 end

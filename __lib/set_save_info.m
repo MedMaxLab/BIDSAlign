@@ -7,7 +7,8 @@ function save_info = set_save_info(varargin)
     %   save_info = set_save_info(varargin)
     %
     % Input:
-    %   - varargin (optional): A list of parameter-value pairs for customizing the save information.
+    %   - varargin (optional): A list of parameter-value pairs for customizing 
+    %                          the save information.
     %
     % Output:
     %   - save_info: A struct containing the save information.
@@ -15,11 +16,16 @@ function save_info = set_save_info(varargin)
     % Parameters:
     %   - save_data (logical): A flag indicating whether to save data (default: true).
     %   - save_data_as (char): File format for saving data (default: 'matrix').
-    %   - save_set (logical): A flag indicating whether to save dataset (default: false).
-    %   - save_struct (logical): A flag indicating whether to save data as a struct (default: false).
-    %   - save_marker (logical): A flag indicating whether to save event markers (default: false).
-    %   - store_settings (logical): A flag indicating whether to store the settings (default: false).
-    %   - setting_name (char): Name of the setting if storing settings (default: 'default').
+    %   - save_set (logical): A flag indicating whether to save the eeglab dataset,
+    %                         thus files in .set format (default: false).
+    %   - save_struct (logical): A flag indicating whether to save data 
+    %                            as a struct or not (default: false).
+    %   - save_marker (logical): A flag indicating whether to save event 
+    %                            markers or not (default: false).
+    %   - store_settings (logical): A flag indicating whether to store 
+    %                               the settings or not (default: false).
+    %   - setting_name (char): Name of the setting if storing settings 
+    %                          (default: 'default').
     %
     % Author: [Federico Del Pup]
     % Date: [27/01/2024]
@@ -30,6 +36,7 @@ function save_info = set_save_info(varargin)
     defaultSaveSet = false;
     defaultSaveStruct = false;
     defaultSaveMarker = false;
+    defaultSetLabel = '';
     
     defaultStoreSettings= false;
     defaultSettingName = 'default';
@@ -47,6 +54,7 @@ function save_info = set_save_info(varargin)
     p.addParameter('save_set', defaultSaveSet, validBool);
     p.addParameter('save_struct', defaultSaveStruct, validBool);
     p.addParameter('save_marker', defaultSaveMarker, validBool);
+    p.addParameter('set_label', defaultSetLabel, validStringChar);
     p.addParameter('store_settings', defaultStoreSettings, validBool);
     p.addParameter('setting_name', defaultSettingName, validStringChar);
     parse(p, varargin{:});
@@ -58,23 +66,32 @@ function save_info = set_save_info(varargin)
     param2set = setdiff( p.Parameters(1:end-2), [p.UsingDefaults 'save_info']);
     save_info = p.Results.save_info;
     for i = 1:length(param2set)
-            save_info.(param2set{i}) = p.Results.(param2set{i});
+        save_info.(param2set{i}) = p.Results.(param2set{i});
     end     
 
     else
         save_info = struct('save_data',p.Results.save_data, ...
-                                      'save_data_as', p.Results.save_data_as, ...
-                                      'save_set', p.Results.save_set,...
-                                      'save_struct',p.Results.save_struct, ...
-                                      'save_marker',p.Results.save_marker);
+                           'save_data_as', p.Results.save_data_as, ...
+                           'save_set', p.Results.save_set,...
+                           'save_struct',p.Results.save_struct, ...
+                           'save_marker',p.Results.save_marker, ...
+                           'set_label', p.Results.set_label ...
+                           );
     end
     
+    if save_info.save_struct && ~save_info.save_data
+        save_info.save_data = true;
+    end
+
     check_save_info(save_info);
+
     % store settings if asked to do so
     if p.Results.store_settings
         filePath = mfilename('fullpath');
-        if not( isfolder( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep p.Results.setting_name]) )
-            mkdir( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep] , p.Results.setting_name)
+        if not( isfolder( [filePath(1:length(filePath)-13) ...
+                filesep 'default_settings' filesep p.Results.setting_name]) )
+            mkdir( [filePath(1:length(filePath)-13)  ...
+                filesep 'default_settings' filesep] , p.Results.setting_name)
         end
         save( [ filePath(1:length(filePath)-13)  filesep 'default_settings' filesep ...
             p.Results.setting_name filesep 'save_info.mat'], 'save_info');

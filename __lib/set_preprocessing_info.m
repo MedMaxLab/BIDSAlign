@@ -1,13 +1,15 @@
 function params_info = set_preprocessing_info(varargin)
     % FUNCTION: set_preprocessing_info
     %
-    % Description: Sets or updates the preprocessing parameters for the EEG processing pipeline.
+    % Description: Sets or updates the preprocessing parameters for the 
+    %              EEG processing pipeline.
     %
     % Syntax:
     %   params_info = set_preprocessing_info(varargin)
     %
     % Input:
-    %   - varargin (optional): A list of parameter-value pairs for customizing the preprocessing parameters.
+    %   - varargin (optional): A list of parameter-value pairs for customizing 
+    %                          the preprocessing parameters.
     %
     % Output:
     %   - params_info: A struct containing the preprocessing parameters.
@@ -123,7 +125,8 @@ function params_info = set_preprocessing_info(varargin)
     p.addParameter('ic_rej_type', defaultICRejType, ...
         @(x) strcmpi(x, 'mara') || strcmpi(x, 'iclabel') );
     p.addParameter('mara_threshold', defaultMaraThresh, validScalar);
-    p.addParameter('iclabel_thresholds', defaultIClabel_thresholds, validNumeric72array);
+    p.addParameter('iclabel_thresholds', defaultIClabel_thresholds, ...
+        validNumeric72array);
     
     p.addParameter('dt_i', defaultdtstart, validScalar);
     p.addParameter('dt_f', defaultdtend, validScalar);
@@ -202,6 +205,11 @@ function params_info = set_preprocessing_info(varargin)
     params_info.ica_type = lower( params_info.ica_type);
     params_info.non_linearity = lower(params_info.non_linearity);
     params_info.interpol_method = lower(params_info.interpol_method);
+
+    % force decomposition if rejection is true
+    if params_info.prep_steps.ICrejection && ~params_info.prep_steps.ICA
+        params_info.prep_steps.ICA = true;
+    end
 
     % run check to assess if everything is ok
     check_preprocessing_info(params_info);
