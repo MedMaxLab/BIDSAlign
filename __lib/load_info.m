@@ -148,7 +148,7 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
 
     %% Check if folder already exist otherwise create set_preprocessed folder
     if save_info.save_set
-        path_info.set_folder = [path_info.output_set_path data_info.dataset_code '/'];
+        path_info.set_folder = [path_info.output_set_path data_info.dataset_code save_info.set_label '/'];
         if ~exist(path_info.set_folder, 'dir')
             mkdir(path_info.set_folder)
         end
