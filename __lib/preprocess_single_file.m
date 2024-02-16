@@ -117,16 +117,6 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
         %% Filter the data 
         [EEG] = prepstep_filtering(EEG, params_info, verbose);
 
-        %% 1˚ ASR channel correction
-        nchan_preASR = EEG.nbchan;
-        [EEG] = prepstep_1ASR(EEG, params_info, verbose);
-
-        %% Interpolate if some channels are missing
-        [EEG] = prepstep_interpolation(EEG, params_info, B, nchan_preASR, verbose);
-
-        %% Rereference the data
-        [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
-
         %% ICA
         [EEG] = prepstep_ICA(EEG, params_info, verbose);
 
@@ -137,6 +127,17 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
             end
         end
         [EEG] = prepstep_ICArejection(EEG, params_info, verbose);
+
+
+        %% 1˚ ASR channel correction
+        nchan_preASR = EEG.nbchan;
+        [EEG] = prepstep_1ASR(EEG, params_info, verbose);
+
+        %% Interpolate if some channels are missing
+        [EEG] = prepstep_interpolation(EEG, params_info, B, nchan_preASR, verbose);
+
+        %% Rereference the data
+        [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose);
 
         %% 2˚ ASR windows removal (ASR)
         [EEG] = prepstep_2ASR(EEG, params_info, verbose);
