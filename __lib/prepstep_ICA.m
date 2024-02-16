@@ -1,21 +1,21 @@
 function [EEG] = prepstep_ICA(EEG, params_info, verbose)
-% FUNCTION: prepstep_ICA
-%
-% Description: Applies Independent Component Analysis (ICA) decomposition to EEG data.
-%
-% Syntax:
-%   [EEG] = prepstep_ICA(EEG, params_info, verbose)
-%
-% Input:
-%   - EEG (struct): EEG data structure.
-%   - params_info (struct): Struct containing preprocessing parameters.
-%   - verbose (logical): Verbosity flag indicating whether to display information during processing.
-%
-% Output:
-%   - EEG (struct): Processed EEG data structure.
-%
-% Author: [Andrea Zanola]
-% Date: [16/02/2024]
+    % FUNCTION: prepstep_ICA
+    %
+    % Description: Applies Independent Component Analysis (ICA) decomposition to EEG data.
+    %
+    % Syntax:
+    %   [EEG] = prepstep_ICA(EEG, params_info, verbose)
+    %
+    % Input:
+    %   - EEG (struct): EEG data structure.
+    %   - params_info (struct): Struct containing preprocessing parameters.
+    %   - verbose (logical): Verbosity flag indicating whether to display information during processing.
+    %
+    % Output:
+    %   - EEG (struct): Processed EEG data structure.
+    %
+    % Author: [Andrea Zanola]
+    % Date: [16/02/2024]
 
     if verbose
         verb = 'on';

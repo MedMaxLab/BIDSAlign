@@ -1,19 +1,19 @@
 function [EEG] = prepstep_1ASR(EEG, params_info, verbose)
-% Description: Applies Artifact Subspace Reconstruction (ASR) for EEG artifact correction.
-%
-% Syntax:
-%   [EEG] = prepstep_1ASR(EEG, params_info, verbose)
-%
-% Input:
-%   - EEG (struct): EEG data structure.
-%   - params_info (struct): Struct containing preprocessing parameters.
-%   - verbose (logical): Verbosity flag indicating whether to display information during processing.
-%
-% Output:
-%   - EEG (struct): Processed EEG data structure.
-%
-% Author: [Andrea Zanola]
-% Date: [16/02/2024]
+    % Description: Applies Artifact Subspace Reconstruction (ASR) for EEG artifact correction.
+    %
+    % Syntax:
+    %   [EEG] = prepstep_1ASR(EEG, params_info, verbose)
+    %
+    % Input:
+    %   - EEG (struct): EEG data structure.
+    %   - params_info (struct): Struct containing preprocessing parameters.
+    %   - verbose (logical): Verbosity flag indicating whether to display information during processing.
+    %
+    % Output:
+    %   - EEG (struct): Processed EEG data structure.
+    %
+    % Author: [Andrea Zanola]
+    % Date: [16/02/2024]
 
     if params_info.prep_steps.ASR
         if verbose

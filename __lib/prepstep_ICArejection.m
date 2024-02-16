@@ -1,21 +1,21 @@
 function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
-% FUNCTION: prepstep_ICArejection
-%
-% Description: Applies Independent Component Analysis (ICA) rejection based on specified method and thresholds.
-%
-% Syntax:
-%   [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
-%
-% Input:
-%   - EEG (struct): EEG data structure.
-%   - params_info (struct): Struct containing preprocessing parameters.
-%   - verbose (logical): Verbosity flag indicating whether to display information during processing.
-%
-% Output:
-%   - EEG (struct): Processed EEG data structure.
-%
-% Author: [Andrea Zanola]
-% Date: [16/02/2024]
+    % FUNCTION: prepstep_ICArejection
+    %
+    % Description: Applies Independent Component Analysis (ICA) rejection based on specified method and thresholds.
+    %
+    % Syntax:
+    %   [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
+    %
+    % Input:
+    %   - EEG (struct): EEG data structure.
+    %   - params_info (struct): Struct containing preprocessing parameters.
+    %   - verbose (logical): Verbosity flag indicating whether to display information during processing.
+    %
+    % Output:
+    %   - EEG (struct): Processed EEG data structure.
+    %
+    % Author: [Andrea Zanola]
+    % Date: [16/02/2024]
 
     if params_info.prep_steps.ICrejection && ~isempty(params_info.ic_rej_type)
         if isequal(params_info.ic_rej_type,'iclabel')
