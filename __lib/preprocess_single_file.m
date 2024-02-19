@@ -44,21 +44,21 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, p
     end
 
     %% Trye to Import Event
-    try
-        if verbose
-            [EEG] = pop_importevent(EEG,'event', obj_info.event_filename);
-        else
-            [~, EEG] = evalc("pop_importevent(EEG,'event', obj_info.event_filename);");
+    if isempty(EEG.event) && ~isempty(obj_info.event_filename)
+        try
+            if verbose
+                [EEG] = pop_importevent(EEG,'event', obj_info.event_filename,'timeunit',1/EEG.srate);
+            else
+                [~, EEG] = evalc("pop_importevent(EEG,'event', obj_info.event_filename,'timeunit',1/EEG.srate);");
+            end
+        catch
+            if verbose
+                warning('EVENT FILE PRESENT BUT NOT IMPORTED DUE TO ERROR.');
+            end
         end
-    catch
-        if isempty(obj_info.event_filename)
-            if verbose
-                disp('No Event file loaded.');
-            end
-        else
-            if verbose
-                warning('EVENT NOT IMPORTED DUE TO ERROR');
-            end
+    elseif isempty(obj_info.event_filename)
+        if verbose
+            disp('NO EVENTFILE PRESENT.');
         end
     end
 
