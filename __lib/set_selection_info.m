@@ -8,7 +8,8 @@ function selection_info = set_selection_info(varargin)
     %   selection_info = set_selection_info(varargin)
     %
     % Input:
-    %   - varargin (optional): A list of parameter-value pairs for customizing the selection information.
+    %   - varargin (optional): A list of parameter-value pairs 
+    %                          for customizing the selection information.
     %
     % Output:
     %   - selection_info: A struct containing the selection information.
@@ -90,8 +91,9 @@ function selection_info = set_selection_info(varargin)
      if  ~isempty(fieldnames(p.Results.selection_info)) &&  ...
             isempty( setdiff(fieldnames(p.Results.selection_info), p.Parameters' ))
         
-        param2set = setdiff( setdiff( p.Parameters, {'setting_name' 'store_settings'}), ...
-            [p.UsingDefaults 'selection_info']);
+        param2set = setdiff( ...
+                     setdiff( p.Parameters, {'setting_name' 'store_settings'}), ...
+                     [p.UsingDefaults 'selection_info']);
         selection_info = p.Results.selection_info;
         for i = 1:length(param2set)
                 selection_info.(param2set{i}) = p.Results.(param2set{i});

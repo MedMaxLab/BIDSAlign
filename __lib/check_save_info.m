@@ -1,7 +1,8 @@
 function [] = check_save_info(save_info)
     % FUNCTION: check_save_info
     %
-    % Description: Validates the parameters provided in the save_info structure for data saving.
+    % Description: Validates the parameters provided
+    %              in the save_info structure for data saving.
     %
     % Syntax:
     %   check_save_info(save_info)
@@ -35,8 +36,10 @@ function [] = check_save_info(save_info)
     end
 
     if validStringChar(save_info.save_data_as)
-        if isempty(save_info.save_data_as) || ~any(strcmp(save_info.save_data_as, {'matrix', 'tensor'}))
-            error("save_data_as must be a char or string vector with 'matrix' or 'tensor'")
+        if isempty(save_info.save_data_as) || ...
+                ~any(strcmp(save_info.save_data_as, {'matrix', 'tensor'}))
+            error("save_data_as must be a " + ...
+                "char or string vector with 'matrix' or 'tensor'")
         end
     else
         error("save_data_as must be a char or string vector with 'matrix' or 'tensor'")

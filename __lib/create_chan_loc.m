@@ -2,7 +2,8 @@
 function [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
     % FUNCTION: create_chan_loc
     %
-    % Description: Creates channel locations based on a standard template and a list of channels.
+    % Description: Creates channel locations based on a 
+    %              standard template and a list of channels.
     %
     % Syntax:
     %   [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
@@ -17,8 +18,9 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
     %   - C: Structure containing channel locations.
     %
     % Notes:
-    %   - This function creates channel locations by matching the given list of channels
-    %     with a standard template, ensuring compatibility and consistency across datasets.
+    %   - This function creates channel locations by matching the given 
+    %     list of channels with a standard template, ensuring compatibility 
+    %     and consistency across datasets.
     %
     % Author: [Andrea Zanola]
     % Date: [04/10/2023]
@@ -35,7 +37,8 @@ function [C] = create_chan_loc(EEG, data_info, list_ref, template_info)
         Z = EEG.chanlocs;
         [NchanZ,listZ] = list_chan(Z);
     else
-        if isequal(data_info.channel_system, data_info.channel_systems{4}) || isequal(data_info.channel_system, data_info.channel_systems{5})
+        if isequal(data_info.channel_system, data_info.channel_systems{4}) || ...
+                isequal(data_info.channel_system, data_info.channel_systems{5})
             NchanZ = length(list_ref);
             listZ = strings(NchanZ,1);
             for i = 1:NchanZ

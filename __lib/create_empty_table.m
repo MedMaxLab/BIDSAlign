@@ -1,7 +1,8 @@
 function empty_table = create_empty_table( datasets_number, data_info, save_path) 
     % FUNCTION: create_empty_table
     %
-    % Description: Creates an empty table with specified format for storing dataset information.
+    % Description: Creates an empty table with specified format
+    %              for storing dataset information.
     %
     % Syntax:
     %   empty_table = create_empty_table(datasets_number, data_info, save_path)
@@ -63,12 +64,16 @@ function empty_table = create_empty_table( datasets_number, data_info, save_path
         end
         for i = 1:10
             if i == 1 || i==10
-                if ~isnumeric(data_info{1,i}) || isnan(data_info{1,i}) || isinf(data_info{1,i})
-                    error("wrong data type used in the given_data info. See help for more info")
+                if ~isnumeric(data_info{1,i}) || ...
+                        isnan(data_info{1,i}) || ...
+                        isinf(data_info{1,i})
+                    error("wrong data type used in the given_data info. " + ...
+                        " See help for more info")
                 end
             else
                 if ~ischar(data_info{1,i})
-                    error("wrong data type used in the given data_info. See help for more info")
+                    error("wrong data type used in the given data_info." + ...
+                        " See help for more info")
                 end
             end
         end   
@@ -81,13 +86,15 @@ function empty_table = create_empty_table( datasets_number, data_info, save_path
         % Otherwise, create an empty table and fill the partial
         % information
         if N == datasets_number
-            empty_table = cell2table(data_info,'VariableNames', variable_names_types(:,1));
+            empty_table = cell2table(data_info, ...
+                'VariableNames', variable_names_types(:,1));
         else
             % create empty table with the specified format 
             warning('off', 'MATLAB:table:PreallocateCharWarning')
-            empty_table = table('Size',[datasets_number,size(variable_names_types,1)],... 
-              'VariableNames', variable_names_types(:,1),...
-              'VariableTypes', variable_names_types(:,2));
+            empty_table = table( ...
+                'Size', [datasets_number,size(variable_names_types,1)], ... 
+                'VariableNames', variable_names_types(:,1), ...
+                'VariableTypes', variable_names_types(:,2));
             warning ('on', 'MATLAB:table:PreallocateCharWarning')
             for i = 1:N
                 for k = 1:M
@@ -111,11 +118,11 @@ function empty_table = create_empty_table( datasets_number, data_info, save_path
         % beacuse it is a filename, or a path ending with the 
         % file name, try to save the table using the save_path string
         if isfolder(save_path)
-            tablename = [save_path '/' 'dataset_info.csv'];
+            tablename = [save_path filesep 'dataset_info.csv'];
             file_exist = isfile(tablename);
             cnt =1;
             while file_exist
-                tablename = [save_path '/' 'dataset_info_' char(string(cnt)) '.csv'];
+                tablename = [save_path filesep 'dataset_info_' char(string(cnt)) '.csv'];
                 file_exist = isfile(tablename);
                 cnt = cnt + 1; 
             end     

@@ -1,7 +1,8 @@
 function [] = check_preprocessing_info(params_info)
     % FUNCTION: check_preprocessing_info
     %
-    % Description: Validates the parameters provided in the params_info structure for preprocessing.
+    % Description: Validates the parameters provided in the 
+    %              params_info structure for preprocessing.
     %
     % Syntax:
     %   check_preprocessing_info(params_info)
@@ -66,8 +67,10 @@ function [] = check_preprocessing_info(params_info)
     if ~validStringChar(params_info.interpol_method)
         error('interpol_method must be a string or a char array')
     else
-        if ~any(strcmp(params_info.interpol_method, {'invdist' 'spherical' 'spacetime'}))
-            error("interpol_method args allowed are 'invdist', 'spherical', 'spacetime' ")
+        if ~any(strcmp(params_info.interpol_method, ...
+                {'invdist' 'spherical' 'spacetime'}))
+            error("interpol_method args allowed are " + ...
+                " 'invdist', 'spherical', 'spacetime' ")
         end
     end
     
@@ -176,7 +179,8 @@ function [] = check_preprocessing_info(params_info)
         if ~isequal(size(params_info.iclabel_thresholds), [7 2])
             error('Size of ICLabel threshold array must be 7x2')
         else
-            if max(params_info.iclabel_thresholds, [], 'all') > 1 && min(params_info.iclabel_thresholds, [], 'all')< 0
+            if max(params_info.iclabel_thresholds, [], 'all') > 1 && ...
+                    min(params_info.iclabel_thresholds, [], 'all')< 0
                 error('values of iclabel_thresholds must be in [0,1]')
             end       
         end

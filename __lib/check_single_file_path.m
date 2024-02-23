@@ -1,4 +1,5 @@
-function [raw_filepath, dataset_name, path_info] = check_single_file_path(path_info, dataset_info, dataset_name )
+function [raw_filepath, dataset_name, path_info] = check_single_file_path(path_info, ...
+    dataset_info, dataset_name )
 
     raw_filepath = path_info.raw_filepath;
     

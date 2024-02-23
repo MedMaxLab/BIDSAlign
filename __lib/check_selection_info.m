@@ -1,13 +1,15 @@
 function [] = check_selection_info(selection_info, raise_allempty)
     % FUNCTION: check_selection_info
     %
-    % Description: Validates the parameters provided in the selection_info structure for dataset selection.
+    % Description: Validates the parameters provided in the selection_info
+    %              structure for dataset selection.
     %
     % Syntax:
     %   check_selection_info(selection_info)
     %
     % Input:
-    %   - selection_info: Structure containing information about dataset selection options.
+    %   - selection_info: Structure containing information about
+    %                     dataset selection options.
     %
     % Output: 
     %   - None. It throws an error if any parameter is invalid.
@@ -142,19 +144,22 @@ function [] = check_selection_info(selection_info, raise_allempty)
         error('label_value must be a string or char array or a valid scalar')
     end
                               
-    if ~isempty(selection_info.subjects_totake) || ~isequal(selection_info.subjects_totake, {{}})
+    if ~isempty(selection_info.subjects_totake) || ...
+            ~isequal(selection_info.subjects_totake, {{}})
         if ~iscellstr( selection_info.subjects_totake)
             error('subjects_totake must be a cell array with char vectors')
         end
     end
     
-    if ~isempty(selection_info.session_totake) || ~isequal(selection_info.session_totake, {{}})
+    if ~isempty(selection_info.session_totake) || ...
+            ~isequal(selection_info.session_totake, {{}})
         if ~iscellstr( selection_info.session_totake)
             error('session_totake must be a cell array with char vectors')
         end
     end
     
-    if ~isempty(selection_info.task_totake) || ~isequal(selection_info.task_totake, {{}})
+    if ~isempty(selection_info.task_totake) || ...
+            ~isequal(selection_info.task_totake, {{}})
         if ~iscellstr( selection_info.task_totake)
             error('task_totake must be a cell array with char vectors')
         end

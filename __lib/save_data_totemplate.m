@@ -1,11 +1,14 @@
 
-function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info, verbose)
+function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, ...
+    save_info, path_info, data_info, params_info, subj_info, verbose)
     % FUNCTION: save_data_totemplate
     %
     % Description: Saves preprocessed EEG data based on a specified template.
     %
     % Syntax:
-    %   [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info, verbose)
+    %   [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, ...
+    %                             save_info, path_info, data_info, ...
+    %                             params_info, subj_info, verbose)
     %
     % Input:
     %   - EEG: EEG data structure.
@@ -24,7 +27,8 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     %
     % Notes:
     %   - This function saves preprocessed EEG data based on a specified template.
-    %   - It handles missing channels, interpolates if necessary, and saves data in the requested format.
+    %   - It handles missing channels, interpolates if necessary, 
+    %     and saves data in the requested format.
     %
     % Author: [Andrea Zanola]
     % Date: [25/01/2024]
@@ -52,7 +56,8 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
    
     %% Extract Channels Name 
     B = EEG.chanlocs;
-    [listB] = list_chan_systems(B,data_info.channel_system,template_info,data_info.channel_systems);
+    [listB] = list_chan_systems(B,data_info.channel_system, ...
+        template_info,data_info.channel_systems);
 
     %% Check number of missing channels and save who 
     pad_interpol_channels = false(chans_DATA_MATRIX,1);
@@ -60,7 +65,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
 
     for t=1:chans_DATA_MATRIX
         chan_name = template_info.template_matrix(t);
-        if isempty(find(listB == chan_name,1)) %chan from template not present in the chanloc file
+        if isempty(find(listB == chan_name,1)) % chan from template not in chanloc file
             number_miss_ch = number_miss_ch+1;
             pad_interpol_channels(t) = true;   %classified as interpolated
         end
@@ -68,10 +73,12 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
 
     %% Interpolation Step 
     if number_miss_ch ~= 0 
-        %if there are missing channels respect the template => interpolate
-        L1 = create_chan_loc(EEG, data_info, template_info.template_matrix, template_info);
+        % if there are missing channels respect the template => interpolate
+        L1 = create_chan_loc(EEG, data_info, ...
+            template_info.template_matrix, template_info);
         
-        %with pop_interp channel_location, coordinates are mixed. But chanlocs is not used anymore.
+        % with pop_interp channel_location, coordinates are mixed. 
+        % But chanlocs is not used anymore.
         if verbose
             EEG1 = pop_interp(EEG, L1, params_info.interpol_method); 
         else
@@ -83,7 +90,8 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
        
     %% Update Channels Name 
     B = EEG1.chanlocs;
-    [listB] = list_chan_systems(B,data_info.channel_system,template_info,data_info.channel_systems);
+    [listB] = list_chan_systems(B,data_info.channel_system, ...
+        template_info,data_info.channel_systems);
 
     %% Set the standard ref channel as a vector of zeros 
     %Here if Cz is not present, is also interpolated, so then Cz should be 0.
@@ -119,7 +127,8 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
             for u=1:data_tensor_size(2)
                 K = template_info.template_tensor(t,u);
                 if sum(template_info.template_matrix(:,1)==K)==1
-                    DATA_TENSOR(t,u,:) = DATA_MATRIX(template_info.template_matrix(:,1)==K,:);
+                    DATA_TENSOR(t,u,:) =  ...
+                        DATA_MATRIX( template_info.template_matrix(:,1)==K , : );
                 end
             end
         end
@@ -150,16 +159,21 @@ function [listB] = list_chan_systems(B,channel_system,template_info,channel_syst
     NchanB = length(B);
     listB = strings(1,NchanB);
     %10-20, 10-10, 10-5 channel systems
-    if  isequal(channel_system,channel_systems{1}) || isequal(channel_system,channel_systems{2}) || isequal(channel_system,channel_systems{3})
+    if  isequal(channel_system,channel_systems{1}) || ...
+            isequal(channel_system,channel_systems{2}) || ...
+            isequal(channel_system,channel_systems{3})
         for t = 1:NchanB
             listB(t) = B(t).labels;
         end
 
     %GSN129, GSN257 channel systems
-    elseif isequal(channel_system, channel_systems{4}) || isequal(channel_system, channel_systems{5})
+    elseif isequal(channel_system, channel_systems{4}) || ...
+            isequal(channel_system, channel_systems{5})
         for t = 1:NchanB
             mask = template_info.conversion(:,2) == B(t).labels;
-            if any(mask) %in this way we neglect channels that are not present in the conversion file
+            if any(mask) 
+                % in this way we neglect channels 
+                % that are not present in the conversion file
                 listB(t) = template_info.conversion(mask,1);
             end
         end

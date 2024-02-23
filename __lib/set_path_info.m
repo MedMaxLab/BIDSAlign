@@ -16,14 +16,19 @@ function path_info = set_path_info(varargin)
     % Parameters:
     %   - datasets_path (char): Path to the datasets (BIDS-formatted).
     %   - output_path (char): Path to the output directory.
-    %   - output_mat_path (char): Path to the directory for saving preprocessed EEG data in MAT format.
-    %   - output_csv_path (char): Path to the directory for saving preprocessed EEG data in CSV format.
-    %   - output_set_path (char): Path to the directory for saving preprocessed EEG data in SET format (EEGLAB).
+    %   - output_mat_path (char): Path to the directory for saving preprocessed
+    %                             EEG data in MAT format.
+    %   - output_csv_path (char): Path to the directory for saving preprocessed 
+    %                             EEG data in CSV format.
+    %   - output_set_path (char): Path to the directory for saving preprocessed 
+    %                             EEG data in SET format (EEGLAB).
     %   - eeglab_path (char): Path to the EEGLAB toolbox.
     %   - raw_filepath (char): Path to the raw EEG data file.
     %   - diagnostic_folder_name (char): Name of the diagnostic folder.
-    %   - store_settings (logical): A flag indicating whether to store the settings (default: false).
-    %   - setting_name (char): Name of the setting if storing settings (default: 'default').
+    %   - store_settings (logical): A flag indicating whether to 
+    %                               store the settings (default: false).
+    %   - setting_name (char): Name of the setting if storing settings 
+    %                          (default: 'default').
     %   - root_data_path: for know to avoid error during function transition
     %   - current_path: current path, it will be used to call the final cd 
     %   - raw_filepath: path to the single eeg file to preprocess
@@ -105,7 +110,7 @@ function path_info = set_path_info(varargin)
                            'output_set_path', p.Results.output_set_path, ...
                            'eeglab_path', p.Results.eeglab_path, ...
                            'current_path', pwd, ... 
-                           'diagnostic_folder_name', p.Results.diagnostic_folder_name, ... 
+                           'diagnostic_folder_name',p.Results.diagnostic_folder_name,... 
                            'raw_filepath', p.Results.raw_filepath, ... 
                            'lib_path', filePath, ...  
                            'git_path', filePath(1:length(filePath)-6) ...
@@ -125,7 +130,8 @@ function path_info = set_path_info(varargin)
     % preprocess
     if isempty(path_info.datasets_path)
         if ~p.Results.silence_warn
-            warning("dataset_path not given. Remember to set it or give it in input to the 'process_all' function")
+            warning("dataset_path not given. Remember to set it " + ... 
+                "or give it in input to the 'process_all' function")
         end
     else
         if path_info.datasets_path(end) ~= filesep
@@ -150,8 +156,10 @@ function path_info = set_path_info(varargin)
      % store settings if asked to do so
      if p.Results.store_settings
          filePath = mfilename('fullpath');
-         if not( isfolder( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep p.Results.setting_name]) )
-             mkdir( [filePath(1:length(filePath)-13)  filesep 'default_settings' filesep] , p.Results.setting_name)
+         if not( isfolder( [filePath(1:length(filePath)-13)  ...
+                 filesep 'default_settings' filesep p.Results.setting_name]) )
+             mkdir( [filePath(1:length(filePath)-13)  ...
+                 filesep 'default_settings' filesep] , p.Results.setting_name)
          end
          save( [ filePath(1:length(filePath)-13)  filesep 'default_settings' filesep ...
              p.Results.setting_name filesep 'path_info.mat'], 'path_info');

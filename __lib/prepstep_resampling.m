@@ -8,9 +8,12 @@ function [EEG] = prepstep_resampling(EEG, data_info, params_info, verbose)
     %
     % Input:
     %   - EEG (struct): EEG data structure.
-    %   - data_info (struct): Struct containing information about the data, including the original sampling rate.
-    %   - params_info (struct): Struct containing preprocessing parameters, including the target sampling rate.
-    %   - verbose (logical): Verbosity flag indicating whether to display information during processing.
+    %   - data_info (struct): Struct containing information about the data, 
+    %                         including the original sampling rate.
+    %   - params_info (struct): Struct containing preprocessing parameters, 
+    %                           including the target sampling rate.
+    %   - verbose (logical): Verbosity flag indicating whether 
+    %                        to display information during processing.
     %
     % Output:
     %   - EEG (struct): Processed EEG data structure.
@@ -25,7 +28,8 @@ function [EEG] = prepstep_resampling(EEG, data_info, params_info, verbose)
             else
                 [~, EEG] = evalc("pop_resample( EEG, params_info.sampling_rate);");
             end
-             EEG.history = [EEG.history newline 'RESAMPLING TO: '  num2str(params_info.sampling_rate) 'Hz'];
+             EEG.history = [EEG.history newline 'RESAMPLING TO: ' ...
+                 num2str(params_info.sampling_rate) 'Hz'];
              
         elseif params_info.sampling_rate ~= data_info.samp_rate 
             %This is useful when the sampling rate in the file is
@@ -37,7 +41,8 @@ function [EEG] = prepstep_resampling(EEG, data_info, params_info, verbose)
              else
                 [~,EEG] = evalc("pop_resample( EEG, params_info.sampling_rate);");
              end
-             EEG.history = [EEG.history newline 'RESAMPLING TO: '  num2str(params_info.sampling_rate) 'Hz'];
+             EEG.history = [EEG.history newline 'RESAMPLING TO: ' ...
+                 num2str(params_info.sampling_rate) 'Hz'];
         end
     end
 end

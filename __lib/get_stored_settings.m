@@ -8,7 +8,8 @@ function [current_setting_names] = get_stored_settings( include_default )
     %   current_setting_names = get_stored_settings()
     %
     % Output: 
-    %   - current_setting_names: Cell array containing the names of stored settings folders.
+    %   - current_setting_names: Cell array containing the
+    %                            names of stored settings folders.
     %
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]

@@ -2,7 +2,7 @@
 function create_dataset_architecture(path, def_sess_name, def_eeg_name)
     % FUNCTION: create_dataset_architecture
     %
-    % Description: Organizes EEG dataset files into a BIDS-compliant directory structure.
+    % Description: Organizes EEG dataset files into a BIDS-compliant directory structure
     %
     % Syntax:
     %   create_dataset_architecture(path)
@@ -41,13 +41,17 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
                 subj_name_file = a{:};
                 a = C(2);
                 sess_name_file = a{:};
-                folder_name = [subj_name_file '/' sess_name_file '/' def_eeg_name '/'];
+                folder_name = [subj_name_file filesep ...
+                    sess_name_file filesep ...
+                    def_eeg_name filesep];
             else
                 [ ~ , name , ~] = fileparts(Files(i).name);
                 subj_name_file = name;
-                folder_name    = [subj_name_file '/' def_sess_name '/' def_eeg_name '/'];
+                folder_name    = [subj_name_file filesep ...
+                    def_sess_name filesep ...
+                    def_eeg_name filesep];
             end
-            if ~exist(folder_name)
+            if ~exist(folder_name, 'dir')
                 mkdir(folder_name);
             end
             movefile(Files(i).name, folder_name);
@@ -58,7 +62,7 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
     % missing parts.
     else
         for i=1:length(subFolders)
-            subject_folder_name = [path '/' subFolders(i).name];
+            subject_folder_name = [path filesep subFolders(i).name];
             cd(subject_folder_name)    %Check if session folders are present
         
             files = dir(pwd);
@@ -69,16 +73,19 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
             if isempty(sessFolders)
                 %2) This case is when there is the subject folder, but not
                 %session folder
-                mkdir([subject_folder_name '/' def_sess_name '/' def_eeg_name])
-                movefile([subject_folder_name '/*'],[subject_folder_name '/' def_sess_name '/' def_eeg_name]) %If no session folders present, assume 1 session.
+                mkdir([subject_folder_name filesep def_sess_name filesep def_eeg_name])
+                %If no session folders present, assume 1 session.
+                movefile( [subject_folder_name filesep '*'], ...
+                    [subject_folder_name filesep def_sess_name filesep def_eeg_name]) 
                 cd(path);
     
             elseif length(sessFolders)==1 && isequal(sessFolders(1).name,def_eeg_name)
                 %3) This case is when there is also the session folder, but
                 %is the eeg folder
-                session_folder_name = [pwd '/' sessFolders(1).name];   
-                mkdir([subject_folder_name '/' def_sess_name '/' def_eeg_name])
-                movefile([session_folder_name '/*'],[subject_folder_name '/' def_sess_name '/' def_eeg_name])
+                session_folder_name = [pwd filesep sessFolders(1).name];   
+                mkdir([subject_folder_name filesep def_sess_name filesep def_eeg_name])
+                movefile([session_folder_name filesep '*'], ...
+                    [subject_folder_name filesep def_sess_name filesep def_eeg_name])
                 rmdir(def_eeg_name);
                 cd(path);
     
@@ -86,7 +93,7 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
 
                 for j =1:length(sessFolders)
                     if ~isequal(sessFolders(j).name, def_eeg_name)
-                        cd([subject_folder_name '/' sessFolders(j).name]);
+                        cd([subject_folder_name filesep sessFolders(j).name]);
     
                         filesE = dir(pwd);
                         dirFlagsE = [filesE.isdir];
@@ -100,9 +107,13 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
                             %folders, but not eeg folders.
                             mkdir(def_eeg_name);
                             for k=1:length(FilesE)
-                                movefile(FilesE(k).name,[subject_folder_name '/' sessFolders(j).name '/' def_eeg_name]);
+                                movefile(FilesE(k).name, ...
+                                    [subject_folder_name filesep ...
+                                    sessFolders(j).name filesep ...
+                                    def_eeg_name]);
                             end
-                        elseif length(eegFolders)==1 && ~isequal(eegFolders.name,def_eeg_name)
+                        elseif length(eegFolders)==1 && ...
+                                ~isequal(eegFolders.name,def_eeg_name)
                             %5) This case is when there is the session
                             %folder, and a folder that has a different name
                             %respect 'eeg'.

@@ -8,7 +8,8 @@ function [] = check_path_info(path_info, must_give_datasets_path)
     %
     % Input:
     %   - path_info: Structure containing paths for different components.
-    %   - must_give_datasets_path: Boolean indicating whether datasets_path is required (default: false).
+    %   - must_give_datasets_path: Boolean indicating whether 
+    %                              datasets_path is required (default: false).
     %
     % Output: 
     %   - None. It throws an error if any path is invalid.

@@ -2,9 +2,10 @@
 function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
     % FUNCTION: search_eeglab_path
     %
-    % Description: Searches for the path to the EEGLAB toolbox in your current search path list and adds it to the MATLAB search path.
-    % In case it is not found, this function will try to search and add automatically the path 
-    % by looking at the toolbox folder and in your current working
+    % Description: Searches for the path to the EEGLAB toolbox 
+    % in your current search path list and adds it to the MATLAB search path.
+    % In case it is not found, this function will try to search and add automatically 
+    % the path by looking at the toolbox folder and in your current working
     % directory. Note that by deafult the function will look if the eeglab.m file
     % exist in your current search path.
     % If nothing is found, a warning is generated and the user is asked to add the path
@@ -49,7 +50,8 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
             return
         catch
             if verbose
-                disp("eeglab not present in your current search path. Trying to add it automatically")
+                disp(['eeglab not present in your current search path.' ...
+                    ' Trying to add it automatically'])
             end
         end
     else 
@@ -57,7 +59,8 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
             return
         else
             if verbose
-                disp("eeglab not present in your current search path. Trying to add it automatically")
+                disp(['eeglab not present in your current search path.' ...
+                    'Trying to add it automatically'])
             end
         end
     end
@@ -140,7 +143,7 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
         ith_path = strfind(folder_names{i},'eeglab');
         if not(isempty(ith_path))
             if verbose
-                disp('Found a folder with eeglab in its name in the following path in MATLAB')
+                disp('Found a folder with eeglab in its name in the MATLAB path list')
                 disp(folder_names{i})
                 disp('Adding it to the current path list')
             end

@@ -2,7 +2,8 @@
 function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     % FUNCTION: extract_filenames
     %
-    % Description: Extracts filenames related to EEG data, including channels, electrodes, and event files.
+    % Description: Extracts filenames related to EEG data, 
+    %              including channels, electrodes, and event files.
     %
     % Syntax:
     %   [obj_info] = extract_filenames(obj_info, path_info, data_info)
@@ -16,7 +17,8 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     %   - obj_info: Updated structure with filenames extracted.
     %
     % Notes:
-    %   - This function checks for the presence of channel, electrodes, and event files at different levels
+    %   - This function checks for the presence of channel, electrodes,
+    %     and event files at different levels
     %     (dataset, subject, session) and assigns filenames accordingly.
     %
     % Author: [Andrea Zanola]
@@ -30,22 +32,28 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     if length(obj_info.check_ch0_root)==1
         %case when _channels.tsv is in the dataset folder (equal for all
         %subjects)
-        obj_info.channels_filename = [obj_info.check_ch0_root.folder '/' obj_info.check_ch0_root.name];
+        obj_info.channels_filename = [obj_info.check_ch0_root.folder filesep ...
+            obj_info.check_ch0_root.name];
 
     elseif isempty(obj_info.check_ch0_root) && length(obj_info.check_ch1_root)==1
         %case when _channels.tsv is in the subject folder (equal for all
         %sessions)
-        obj_info.channels_filename = [obj_info.check_ch1_root.folder '/' obj_info.check_ch1_root.name];
+        obj_info.channels_filename = [obj_info.check_ch1_root.folder filesep ...
+            obj_info.check_ch1_root.name];
 
     elseif isempty(obj_info.check_ch1_root) && length(obj_info.check_ch2_root)==1
         %case when _channels.tsv is in the session folder (equal for all
         %objects)
-        obj_info.channels_filename = [obj_info.check_ch2_root.folder '/' obj_info.check_ch2_root.name];
+        obj_info.channels_filename = [obj_info.check_ch2_root.folder filesep ...
+            obj_info.check_ch2_root.name];
 
     elseif length(obj_info.check_ch2_root)>1
         %case when there is a _channels.tsv for each object
         % the operation -4 is because eeg files names terminate with "_eeg"
-        obj_info.channels_filename = [obj_info.raw_filepath '/' obj_info.raw_filename(1:length(obj_info.raw_filename)-length(data_info.eeg_file_extension)-4) '_channels.tsv'];
+        obj_info.channels_filename = [obj_info.raw_filepath filesep ...
+            obj_info.raw_filename( 1:length(obj_info.raw_filename) - ...
+                                   length(data_info.eeg_file_extension)-4) ...
+            '_channels.tsv'];
     
     elseif isempty(obj_info.check_ch2_root)
         obj_info.channels_filename = [];
@@ -62,19 +70,26 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
         if isequal(obj_info.channel_location_filename,'loaded')
             obj_info.electrodes_filename = [];
         else
-            obj_info.electrodes_filename = [path_info.dataset_path obj_info.channel_location_filename];
+            obj_info.electrodes_filename = [path_info.dataset_path  ...
+                obj_info.channel_location_filename];
         end
     elseif length(obj_info.check_el0_root)==1
-        obj_info.electrodes_filename = [obj_info.check_el0_root.folder '/' obj_info.check_el0_root.name];
+        obj_info.electrodes_filename = [obj_info.check_el0_root.folder filesep ...
+            obj_info.check_el0_root.name];
 
     elseif isempty(obj_info.check_el0_root) && length(obj_info.check_el1_root)==1
-        obj_info.electrodes_filename  = [obj_info.check_el1_root.folder '/' obj_info.check_el1_root.name];
+        obj_info.electrodes_filename  = [obj_info.check_el1_root.folder filesep ...
+            obj_info.check_el1_root.name];
 
     elseif isempty(obj_info.check_el1_root) && length(obj_info.check_el2_root)==1
-        obj_info.electrodes_filename  = [obj_info.check_el2_root.folder '/' obj_info.check_el2_root.name];
+        obj_info.electrodes_filename  = [obj_info.check_el2_root.folder filesep ...
+            obj_info.check_el2_root.name];
 
     elseif isempty(obj_info.check_el1_root) && length(obj_info.check_el2_root)>1
-        obj_info.electrodes_filename  = [obj.raw_filepath '/' obj.raw_filename(1:length(obj.raw_filename)-length(data_info.eeg_file_extension)-4) '_electrodes.tsv'];
+        obj_info.electrodes_filename  = [obj.raw_filepath filesep ...
+            obj.raw_filename(1:length(obj.raw_filename) - ...
+                             length(data_info.eeg_file_extension)-4) ...
+            '_electrodes.tsv'];
 
     elseif isempty(obj_info.check_el2_root)
         obj_info.electrodes_filename = [];

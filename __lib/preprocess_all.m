@@ -391,7 +391,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
                             rows=  strcmp( dataset_name , dataset_info.dataset_name);
                             code_and_format = dataset_info{rows, ...
                                 ["dataset_code", "eeg_file_extension"]};
-                            filelist = get_dataset_file_list(path_info.datasets_path, ...
+                            filelist = get_dataset_file_list(path_info.datasets_path,...
                                 code_and_format{1}, code_and_format{2});
                             allfilepaths = cell(length(filelist),1);
 
@@ -470,7 +470,8 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
 
     % Check if exist otherwise create set_files folder
     if isempty(path_info.output_set_path) 
-        path_info.output_set_path   = [path_info.output_path '_set_preprocessed' filesep];     
+        path_info.output_set_path   = [path_info.output_path ...
+            '_set_preprocessed' filesep];     
         if ~exist(path_info.output_set_path, 'dir') && save_info.save_set 
             mkdir(path_info.output_set_path)
         end   

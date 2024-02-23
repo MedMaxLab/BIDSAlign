@@ -63,10 +63,12 @@ function [] = check_loaded_table( dataset_info)
         if i==1 || i==10
             empty_rows = sum( isnan( dataset_info.(variable_names_types(i,1)) ) );
         else
-            empty_rows = sum(cellfun(@isempty, dataset_info.(variable_names_types(i,1)) ));
+            empty_rows = sum(cellfun(@isempty, ...
+                dataset_info.(variable_names_types(i,1)) ));
         end
         if empty_rows ~= 0
-            error(['found empty values in '  variable_names_types(i,1) '. This column must be filled completely'])
+            error(['found empty values in '  variable_names_types(i,1) ...
+                '. This column must be filled completely'])
         end
     end
     
@@ -80,7 +82,7 @@ function [] = check_loaded_table( dataset_info)
         matching_rows = strcmp(dataset_info.dataset_code, dataset_info.dataset_code{i});
         c = sum(matching_rows);
         if c ~= 1
-            error('found multiple datasets with the same folder pointer (dataset_code)');
+            error('found multiple datasets with the same folder name (dataset_code)');
         end
     end
 

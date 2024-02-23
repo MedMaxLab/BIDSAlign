@@ -5,7 +5,7 @@ function dataset_name = dataset_name_from_raw(raw_filepath, datasets_path)
     if strcmp(raw_split, raw_filepath)
         error('dataset path is not included in raw_filepath.')
     end
-    raw_split = strsplit(raw_split, '/');
+    raw_split = strsplit(raw_split, filesep);
     dataset_name = raw_split{1};
 
 end

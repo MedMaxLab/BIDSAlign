@@ -16,7 +16,8 @@ function [] = remove_settings( setting_to_remove)
     %check if cell array is of char vectors
     if iscell(setting_to_remove)
         if ~iscellstr(setting_to_remove)
-            error('if given as cell array, setting_to_remove must be a cell array of char vector')
+            error(['if given as cell array, ' ...
+                'setting_to_remove must be a cell array of char vector'])
         end
     end
 
@@ -37,16 +38,18 @@ function [] = remove_settings( setting_to_remove)
     % check that any of the given names actually exist in 
     if ~any(ismember(setting_to_remove, current_setting_names))
         allowed_names = join(current_setting_names, ', ');
-        error(['no valid setting name given as input (default cannot be deleted with this function).' ...
+        error(['no valid setting name given as input' ...
+            ' (default cannot be deleted with this function).' ...
             'Please use any of the following: ', allowed_names{1}])
     end
     
     % if there is only a setting to remove try to do it
     if ischar(setting_to_remove)
         if strcmp(setting_to_remove, 'default')
-            error(['cannot delete default setting. It can cause a strange behaviour. ', ...
-                'If you want to reset parameters inside the default setting, please use the ', ...
-                ' reset_default_settings() function']);
+            error(['cannot delete default setting. ' ...
+                'It can cause a strange behaviour. ' ...
+                'If you want to reset parameters inside the default setting, ' ...
+                'please use the reset_default_settings() function']);
         end
         rmdir([filePath '/default_settings/' setting_to_remove], 's');
     end

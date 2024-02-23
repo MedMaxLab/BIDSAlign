@@ -21,7 +21,8 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
     %   - .vhdr: EEG data is loaded using 'pop_loadbv' from EEGLAB.
     %   - .edf or .bdf: EEG data is loaded using 'pop_biosig' from EEGLAB.
     %
-    % Note: Make sure EEGLAB is installed and configured properly in your MATLAB environment.
+    % Note: Make sure EEGLAB is installed and configured properly 
+    %       in your MATLAB environment.
     
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
@@ -38,17 +39,19 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
         catch
             EEG = [];
             if verbose
-                warning(['CORRUPTED OR UNREADABLE .SET FILE: ' raw_filepath raw_filename]);
+                warning(['CORRUPTED OR UNREADABLE .SET FILE: ' ...
+                    raw_filepath raw_filename]);
             end
         end
 
     elseif isequal(eeg_file_extension,'.vhdr')
         try
-            EEG = pop_loadbv(raw_filepath, raw_filename,  [1:-1], [1:-1]);
+            EEG = pop_loadbv(raw_filepath, raw_filename,  1:-1, 1:-1);
         catch
             EEG = [];
             if verbose
-                warning(['CORRUPTED OR UNREADABLE .VHDR FILE: ' raw_filepath raw_filename]);
+                warning(['CORRUPTED OR UNREADABLE .VHDR FILE: ' ...
+                    raw_filepath raw_filename]);
             end
         end
     elseif isequal(eeg_file_extension,'.edf') || isequal(eeg_file_extension,'.bdf')
@@ -57,7 +60,8 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
         catch
             EEG = [];
             if verbose
-                warning(['CORRUPTED OR UNREADABLE .EDF or .BDF FILE: ' raw_filepath raw_filename]);
+                warning(['CORRUPTED OR UNREADABLE .EDF or .BDF FILE: ' ...
+                    raw_filepath raw_filename]);
             end
         end
     else

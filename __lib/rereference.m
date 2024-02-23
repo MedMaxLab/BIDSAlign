@@ -1,11 +1,13 @@
 
-function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose)
+function [EEG] = rereference(EEG, data_info, params_info, ...
+    channel_location_file_extension, B, verbose)
     % FUNCTION: rereference
     % 
     % Description: Rereferences EEG data based on specified parameters.
     %
     % Syntax:
-    %   [EEG] = rereference(EEG, data_info, params_info, channel_location_file_extension, B, verbose)
+    %   [EEG] = rereference(EEG, data_info, params_info, 
+    %                       channel_location_file_extension, B, verbose)
     %
     % Input:
     %   - EEG: EEG data structure.
@@ -31,10 +33,10 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
         dataset_reference  = data_info.channel_reference; %Current EEG Ref
         standard_reference = params_info.standard_ref;    %Desired New Ref
     
-        %% Create list of available channels --------------------------------
+        % Create list of available channels
         [~,listB] = list_chan(B);
     
-        %% Reref the data to average reference ------------------------------
+        % Reref the data to average reference 
         if isequal(upper(standard_reference),'COMMON')
             if isequal(upper(dataset_reference),'COMMON')
                 if verbose
@@ -42,26 +44,30 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
                 end
                 %Table III: H) nothing to do                                                            
             else
-                %Table III: G) common reref + if required interpolate channel T and/or channel S 
+                %Table III: G) common reref + if required interpolate 
+                %                             channel T and/or channel S 
                 if verbose
                     disp('Rereference case: G');
                     [EEG] = pop_reref(EEG, [],'keepref','on');      
                 else
                     [~,EEG] = evalc("pop_reref( EEG, [],'keepref','on');");
                 end
-                EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' standard_reference];
+                EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' ...
+                    standard_reference];
             end
         else
             %% Check if ref. is in the channel location -------------------------
             if isequal(channel_location_file_extension,'.bvef')
-                A = find(listB=="REF");                                        %A is the index of the dataset channel reference
-                if  isequal(dataset_reference,standard_reference)              %check if they are equal
-                    C = find(listB=="REF");                                    %C is the index of the standard channel reference
+                % A is the index of the dataset channel reference
+                A = find(listB=="REF"); %#ok                         
+                if  isequal(dataset_reference,standard_reference) %check if are equal
+                    % C is the index of the standard channel referenc
+                    C = find(listB=="REF");                                    
                 else
                     C = find(listB==standard_reference);
                 end
             else
-                A = find(listB==dataset_reference);
+                A = find(listB==dataset_reference); %#ok
                 C = find(listB==standard_reference);
             end
     
@@ -85,7 +91,8 @@ function [EEG] = rereference(EEG, data_info, params_info, channel_location_file_
                     EEG = pop_reref( EEG, C,'keepref','on');
                 else
                     [~,EEG] = evalc("pop_reref( EEG, C,'keepref','on');");
-                EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' standard_reference '(keepref: on)'];
+                EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' ...
+                    standard_reference '(keepref: on)'];
                 end
     
             end

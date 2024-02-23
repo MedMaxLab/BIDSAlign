@@ -1,11 +1,13 @@
 
-function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose)
+function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, ...
+    params_info, path_info, obj_info, verbose)
     % FUNCTION: preprocess_subject
     %
     % Description: Preprocesses EEG data for a single subject.
     %
     % Syntax:
-    %   [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose)
+    %   [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info,
+    %                                           path_info, obj_info, verbose)
     %
     % Input:
     %   - data_info: Dataset information.
@@ -27,7 +29,8 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
         verbose =  false;
     end
     %% Load Dataset Informations
-    [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose);
+    [data_info, path_info, template_info, T] = load_info(data_info, path_info, ...
+        params_info, save_info, verbose);
     
     %% Extract Subject and Session Name
     out = regexp(obj_info.raw_filepath ,filesep,'split');
@@ -88,18 +91,26 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_in
 
     %% Set filenames
     obj_info.preprocessed_filename     = [obj_info.raw_filename '_prep'];
-    obj_info.set_preprocessed_filename = [obj_info.preprocessed_filename data_info.eeg_file_extension];
-    obj_info.mat_preprocessed_filename = [path_info.output_mat_path obj_info.preprocessed_filename '.mat'];
+    
+    obj_info.set_preprocessed_filename = [obj_info.preprocessed_filename ...
+        data_info.eeg_file_extension];
+    
+    obj_info.mat_preprocessed_filename = [path_info.output_mat_path ...
+        obj_info.preprocessed_filename '.mat'];
     	
 
-    [EEG, ~] = preprocess_single_file([], obj_info, data_info, params_info, path_info, template_info, save_info, verbose);
+    [EEG, ~] = preprocess_single_file([], obj_info, data_info, params_info, ...
+        path_info, template_info, save_info, verbose);
     
     %% Save data to template (and interpolation)
     if save_info.save_data && ~isempty(EEG)
-        [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, save_info, path_info, data_info, params_info, subj_info);
+        [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info, ...
+            save_info, path_info, data_info, params_info, subj_info);
 
         if ~isempty(EEG.event) && save_info.save_marker
-            eeg_eventtable(EEG,'exportFile',[path_info.output_csv_path obj_info.preprocessed_filename '.csv'],'dispTable',false);
+            eeg_eventtable(EEG,'exportFile', ...
+                [path_info.output_csv_path obj_info.preprocessed_filename '.csv'], ...
+                'dispTable',false);
         end
     else
         DATA_STRUCT = [];

@@ -1,5 +1,6 @@
 
-function [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose)
+function [data_info, path_info, template_info, T] = load_info(data_info, path_info, ...
+    params_info, save_info, verbose)
     % FUNCTION: load_info
     %
     % Description: Loads information related to EEG dataset, paths, preprocessing parameters, 
@@ -37,7 +38,8 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
         error('ERROR: NEGATIVE OR NON-INTEGER SAMPLING RATE');
     end
     %filter frequencies
-    if params_info.low_freq>params_info.high_freq || params_info.low_freq<0 || params_info.high_freq<0
+    if params_info.low_freq>params_info.high_freq || ...
+            params_info.low_freq<0 || params_info.high_freq<0
         error('ERROR: CHECK THE FREQUENCIES FOR THE FILTER');
     end
     
@@ -63,12 +65,14 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     template_tensor = upper(template_tensor.tensor_channel_template);
     
     % Load the conversion files based on the channel system
-    conversion_folder         = [path_info.lib_path '/template/template_channel_conversion/'];
+    conversion_folder         = [path_info.lib_path  filesep 'template' filesep ...
+        'template_channel_conversion' filesep];
     conv_GSN129_1010_filename = 'conv_GSN129_1010.mat';
     conv_GSN257_1010_filename = 'conv_GSN257_1010.mat';
     
     % Load standard channel location file from templates
-    channel_location_folder = [path_info.lib_path '/template/template_channel_location/'];
+    channel_location_folder = [path_info.lib_path filesep 'template' filesep ...
+        'template_channel_location' filesep];
     
     if isequal(data_info.channel_system,data_info.channel_systems{4})
         conversion = load([conversion_folder  conv_GSN129_1010_filename]);
@@ -76,7 +80,8 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
         if length(conversion(:,1)) < length(template_matrix)
             error('ERROR: CONVERSION FILE SHORTER THAN TEMPLATE FILE')
         end
-        standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
+        standard_chanloc = [channel_location_folder 'chanloc_template_' ...
+            data_info.channel_system '.sfp'];
     
     elseif isequal(data_info.channel_system,data_info.channel_systems{5})
         conversion = load([conversion_folder  conv_GSN257_1010_filename]);
@@ -84,9 +89,12 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
         if length(conversion(:,1)) < length(template_matrix)
             error('ERROR: CONVERSION FILE SHORTER THAN TEMPLATE FILE')
         end
-        standard_chanloc = [channel_location_folder 'chanloc_template_' data_info.channel_system '.sfp'];
+        standard_chanloc = [channel_location_folder 'chanloc_template_' ...
+            data_info.channel_system '.sfp'];
     
-    elseif isequal(data_info.channel_system,data_info.channel_systems{1}) || isequal(data_info.channel_system, data_info.channel_systems{2}) || isequal(data_info.channel_system,data_info.channel_systems{3})
+    elseif isequal(data_info.channel_system,data_info.channel_systems{1}) || ...
+            isequal(data_info.channel_system, data_info.channel_systems{2}) || ...
+            isequal(data_info.channel_system,data_info.channel_systems{3})
         conversion = 'nan';
         standard_chanloc = [channel_location_folder 'chanloc_template_' '10_5' '.sfp'];
 
@@ -110,7 +118,8 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     elseif ~isempty(dir([path_info.dataset_path 'participants.*']))
         T = [];
         if verbose
-            warning('PARTICIPANT FILE FOUND BUT UNABLE TO IMPORT THE ASSOCIATED FILE FORMAT. PLEASE CONVERT IT IN .TSV/.CSV'); 
+            warning([ 'PARTICIPANT FILE FOUND BUT UNABLE TO IMPORT' ...
+                ' THE ASSOCIATED FILE FORMAT. PLEASE CONVERT IT IN .TSV/.CSV']); 
         end
     else
         T = [];
@@ -120,7 +129,9 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     end
 
     %% Import diagnostic test
-    path_info.diagnostic_folder_path = [path_info.dataset_path path_info.diagnostic_folder_name];
+    path_info.diagnostic_folder_path = [path_info.dataset_path ...
+        path_info.diagnostic_folder_name];
+    
     S = dir(fullfile(path_info.diagnostic_folder_path,'*'));
     N = setdiff({S([S.isdir]).name},{'.','..'}); % list of subfolders of _test
 
@@ -148,7 +159,8 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
 
     %% Check if folder already exist otherwise create set_preprocessed folder
     if save_info.save_set
-        path_info.set_folder = [path_info.output_set_path data_info.dataset_code save_info.set_label '/'];
+        path_info.set_folder = [path_info.output_set_path ...
+            data_info.dataset_code save_info.set_label filesep];
         if ~exist(path_info.set_folder, 'dir')
             mkdir(path_info.set_folder)
         end
