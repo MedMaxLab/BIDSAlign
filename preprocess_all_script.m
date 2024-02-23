@@ -28,7 +28,7 @@ setting_name          = 'test_dev_';        % test_dev_ is a set ignored by GIT
 
 %% Select Modality (preprocess all, single dataset or single file)
 single_file  = false;             % preprocess a single file
-dataset_name = 'UC_SD';           % Set the name of the current dataset
+dataset_name = '';           % Set the name of the current dataset
 raw_filename = '';                % file name or full path to give for single file mode
 
 %% Set selection parameters
