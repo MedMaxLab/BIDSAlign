@@ -1,5 +1,5 @@
 
-function create_dataset_architecture(path)
+function create_dataset_architecture(path, def_sess_name, def_eeg_name)
     % FUNCTION: create_dataset_architecture
     %
     % Description: Organizes EEG dataset files into a BIDS-compliant directory structure.
@@ -16,8 +16,8 @@ function create_dataset_architecture(path)
     % Examples:
     %   create_dataset_architecture('/path/to/dataset')
 
-    def_sess_name = 'sess-01';
-    def_eeg_name = 'eeg';
+    %def_sess_name = 'sess-01';
+    %def_eeg_name = 'eeg';
     
     cd(path);
     files = dir(pwd);

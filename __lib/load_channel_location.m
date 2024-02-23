@@ -42,11 +42,19 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             %channel_location_file_extension = channel_location_filepath(I+1:end);
     
             if isequal(channel_location_file_extension,'.bvef')
-                C = loadbvef(obj_info.electrodes_filename);
+                if verbose
+                    C = loadbvef(obj_info.electrodes_filename);
+                else
+                    [~,C] = evalc("loadbvef(obj_info.electrodes_filename);");
+                end
                 B = C(3:end); %first 2 labels are REF and GND           %CHECK THIS PART !!!
             else
-                B = readlocs(obj_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','native');
-                % if ~isfield(B,'theta')
+                if verbose
+                    B = readlocs(obj_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','native');
+                else
+                    [~,B] = evalc("readlocs(obj_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','native');");
+                end
+                    % if ~isfield(B,'theta')
                 %     B = readlocs(obj_info.electrodes_filename,'filetype',channel_location_file_extension(2:end),'importmode','eeglab');
                 % end
             end
@@ -78,10 +86,16 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             B = B(matching_labels);
 
             if ~isempty(data_info.nose_direction)
-                if verbose
-                    B = pop_chanedit(B, 'nosedir', data_info.nose_direction);
+                if isequal(data_info.nose_direction(2),'Y')
+                    transformation = ['TMP = X; X = ' data_info.nose_direction '; Y = ' data_info.nose_direction(1) 'TMP'];
                 else
-                    [~,B] = evalc("pop_chanedit(B, 'nosedir', data_info.nose_direction);");
+                    transformation = ['TMP = X; X=' data_info.nose_direction(1) 'TMP'];
+                end
+                if verbose
+                    B = pop_chanedit(B, 'transform', transformation);
+
+                else
+                    [~,B] = evalc("pop_chanedit(B, 'transform', transformation);");
                 end
                 EEG.history = [EEG.history newline 'CHANGED NOSE DIRECTION OF CHANLOC'];
             end
