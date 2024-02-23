@@ -85,6 +85,8 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             % Filter EEG.chanlocs using the logical index array
             B = B(matching_labels);
 
+            % Rotate axis on the basis of nosedirection (allow values
+            % +X,-X,+Y,-Y
             if ~isempty(data_info.nose_direction)
                 if isequal(data_info.nose_direction(2),'Y')
                     transformation = ['TMP = X; X = ' data_info.nose_direction '; Y = ' data_info.nose_direction(1) 'TMP'];
@@ -100,6 +102,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
                 EEG.history = [EEG.history newline 'CHANGED NOSE DIRECTION OF CHANLOC'];
             end
 
+            % If automatic conversion failed, try with centering
             if ~isfield(B,'theta')
                 if verbose
                     B = pop_chanedit(B,'convert','chancenter');
@@ -109,6 +112,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
             EEG.history = [EEG.history newline 'CENTERED XYZ COORDINATES OF CHANLOC'];
             end
 
+            % theta coordinates are needed for spherical interpolation.
             if ~isfield(EEG.chanlocs,'theta')
                 error('THETA COORDINATES NOT PRESENT');
             else
