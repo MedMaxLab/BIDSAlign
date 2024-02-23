@@ -367,7 +367,8 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
 
                 % first check if the given raw_filename brings to a valid 
                 % file in the datasets path               
-                path_file_struct = dir([path_info.datasets_path '**/' raw_filename]);
+                path_file_struct = dir([path_info.datasets_path '**' ...
+                    filesep raw_filename]);
                 if isempty(path_file_struct)
                     error("cannot find current raw file. Please check that " + ...
                         "dataset path and raw_filename are correct." + ...
@@ -424,7 +425,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
                         end
 
                     else
-                        path_info.raw_filepath = [path_file_struct.folder 
+                        path_info.raw_filepath = [path_file_struct.folder ... 
                             filesep path_file_struct.name];
                     end
                     % now that path_info.raw_filepath is set correctly 
@@ -445,6 +446,8 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     %                        INITIALIZE OBJECT INFO STRUCT
     % -------------------------------------------------------------------------------
     obj_info.raw_filename = raw_filename;
+    raw_filepath_split = strsplit( raw_filepath, filesep);
+    raw_filepath = [strjoin(raw_filepath_split(1:end-1), filesep) filesep];
     obj_info.raw_filepath = raw_filepath;
     
     % -------------------------------------------------------------------------------
