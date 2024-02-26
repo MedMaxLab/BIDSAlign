@@ -27,8 +27,7 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
                 ics = 1:length(EEG.reject.gcompreject);
                 rejected_comps = ics(EEG.reject.gcompreject);
                 [EEG] = pop_subcomp(EEG, rejected_comps);
-
-
+                
             else
                 [~, EEG] = evalc("iclabel(EEG);"); %#ok
                 [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
