@@ -19,7 +19,7 @@ As you can see, BIDSAlign comes with a GUI created to facilitate the preprocessi
 
 ## GUI Tab
 
-This tab simply present the BIDSAlign GUI. Nothing can be set here. However, you can see the overall GUI's structure. In particular:
+This tab simply presents the BIDSAlign GUI. Nothing can be set here. However, you can see the overall GUI's structure. In particular:
 
 - <span style="color:orange"> orange highilithed components </span> can be used to navigate through the GUI. Just click on the button or tabs.
 - <span style="color:#cc99ff"> Mauve highilithed lamp </span> will always tell you if everything set on the current tab is ok or should be added or changed. Remember that a preprocessing run can be launched only if all the lamps are highlighted in green. This does not guarantee that the preprocessing will go smoothly, but at least it makes sure that common mistakes are avoided.

@@ -1,0 +1,55 @@
+<html><head><style>body {
+   color: black;
+}
+</style></head><body><p><img src="logo4gui.png"
+    alt="Picture"
+    width="300"
+/></p>
+<h2 id="selection-info">Selection info</h2>
+<p>Selection info is a struct variable that stores all the parameters to be used by BIDSAlign during the file selection phase. Selection can be performed with three different modalities: label-based selection, name-based selection, slice-based selection. </p>
+<p>1) <strong>label-based selection</strong> is a type of selection which search for all the subjects with a specific condition reported in one of the columns of the <code>participant.tsv</code> file. It can be used, for example, to select only subject with a specific pathology (or the control group).
+2) <strong>name-based selection</strong> is a type of selection which search for all the subjects, sessions, or objects, with a specific substring included in the level folder name. It is performed <strong>after the label-based selection</strong>. For example, the string &#39;ses1&#39; can be used to select only the first session from all the subjects in a dataset.
+3) <strong>slice-based selection</strong> is a type of selection performed which iterate over a slice of the extracted EEG file names to preprocess at the subject-, session-, or object-level. It is performed <strong>after the label- and name-based selections</strong>. For example, a slice of 2-5 at the subject level will select the remaining subjects with index from 2 to 5 in the list extracted after the first two selections. Index here means the position in the array with all the remaining subject-, session- or objects- names </p>
+<p>In particular, the following selection parameters can be set (defaults are all empty):</p>
+<ol>
+<li><p>selection performed:</p>
+</li>
+<li><p><strong>Perform Selection (logical)</strong>: whether to perform any type of selection or not. Default is false. </p>
+</li>
+<li><p>label-based selection</p>
+</li>
+<li><p><strong>Label Name (char)</strong>: the column name of the participant file to look for the desired value.</p>
+</li>
+<li><p><strong>Label Value (char)</strong>: the column value that a subject should have to be selected. Currently, only string values are supported.</p>
+</li>
+<li><p>name-based selection</p>
+</li>
+<li><p><strong>Subjects to Take (cell array)</strong>: a name part that a folder at the subject level must include in its name to be selected. Search is performed by looking at the output of the Matlab&#39;s <code>contain</code> function. Must be a cell array. Multiple parts can be included. In such a case, at least one of the given parts must be included in the subject&#39;s folder name.</p>
+</li>
+<li><strong>Sessions to Take (cell array)</strong>: a name part that a folder at the session level must include in its name to be selected. Search is performed by looking at the output of the Matlab&#39;s <code>contain</code> function. Must be a cell array. Multiple parts can be included. In such a case, at least one of the given parts must be included in the session&#39;s folder name.</li>
+<li><p><strong>Objects to Take (cell array)</strong>: a name part that a folder at the task/object level must include in its name to be selected. Search is performed by looking at the output of the Matlab&#39;s <code>contain</code> function. Must be a cell array. Multiple parts can be included. In such a case, at least one of the given parts must be included in the file name.</p>
+</li>
+<li><p>slice-based selection</p>
+</li>
+<li><p><strong>Subject Initial (scalar)</strong>: slice&#39;s starting index for subject selection. Must be a positive scalar integer. If left empty and sub_f is given, sub_i is set to 1 automatically.</p>
+</li>
+<li><strong>Subject Final (scalar)</strong>: slice&#39;s ending index for subject selection. Must be a positive scalar integer. If left empty and sub_i is given, sub_f is set to the length of the subject&#39;s name list automatically.</li>
+<li><strong>Session Initial (scalar)</strong>: slice&#39;s starting index for session selection. Must be a positive scalar integer. If left empty and ses_f is given, ses_i is set to 1 automatically.</li>
+<li><strong>Session Final (scalar)</strong>: slice&#39;s ending index for session selection. Must be a positive scalar integer. If left empty and ses_i is given, ses_f is set to the length of the session&#39;s name list automatically.</li>
+<li><strong>Object Initial (scalar)</strong>: slice&#39;s starting index for object selection. Must be a positive scalar integer. If left empty and obj_f is given, obj_i is set to 1 automatically.</li>
+<li><strong>Object Final (scalar)</strong>: slice&#39;s ending index for object selection. Must be a positive scalar integer. If left empty and obj_f is given, obj_i is set to the length of the object&#39;s name list automatically.</li>
+</ol>
+<h2 id="gui-tab">GUI Tab</h2>
+<p><img src="SelectionTab.png"
+    alt="Picture"
+    width="500"
+    style="display: block; margin: 0 auto" 
+/></p>
+<p>In this tab, you can set up most of the preprocessing_info&#39;s struct fields. In particular, just note that:</p>
+<ul>
+<li>In <strong>slice-based</strong> edit fields, the value 0 will be overwritten internally as an empty value. It can be considered as the same as 1 for Initial and &#39;end&#39; for the Final.</li>
+<li>In <strong>label-based</strong> edit fields, input are kept as char arrays. Support for numeric values will be added in the future.</li>
+<li>In <strong>name-based</strong> edit fields, every name part must be inputed in a new line. DO NOT input more parts in the same line by separating things with a space or a command, as this will BREAK the selection</li>
+<li>The <strong>perform Selection</strong> can be put to &#39;On&#39; even if no selection criteria have been configured. However, this will change the current status to bad and the lamp will become red.</li>
+</ul>
+</body></html>

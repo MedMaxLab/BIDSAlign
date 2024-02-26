@@ -1,0 +1,92 @@
+<html><head><style>body {
+   color: black;
+}
+</style></head><body><p><img src="logo4gui.png"
+    alt="Picture"
+    width="300"
+/></p>
+<h2 id="dataset-table">Dataset Table</h2>
+<p>The dataset table is a table file having the necessary information to locate EEG files and coordinate some preprocessing steps. It must have the following format.</p>
+<table>
+<thead>
+<tr>
+<th>dataset_number_reference</th>
+<th>dataset_name</th>
+<th>dataset_code</th>
+<th>channel_location_filename</th>
+<th>nose_direction</th>
+<th>channel_system</th>
+<th>channel_reference</th>
+<th>channel_to_remove</th>
+<th>eeg_file_extension</th>
+<th>samp_rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>HBN_EO_EC</td>
+<td>ds004186</td>
+<td>loaded</td>
+<td>+Y</td>
+<td>GSN129</td>
+<td>CZ</td>
+<td>Fp1, Fpz</td>
+<td>.set</td>
+<td>500</td>
+</tr>
+<tr>
+<td>This number will be used as first index in the .mat file names</td>
+<td>Use this custom label for single dataset mode</td>
+<td>The dataset folder name</td>
+<td>name of a custom channel location file different from the usual &quot;_electrode.tsv&quot; file</td>
+<td>noise direction (+/- X/Y/Z)</td>
+<td>10_5/10/20 or GSN129/257</td>
+<td>Channel reference name</td>
+<td>List of channels to directly remove from all the dataset&#39;s files</td>
+<td>EEG file extension (don&#39;t forget the &quot;.&quot;)</td>
+<td>Sampling rate in [Hz]</td>
+</tr>
+</tbody>
+</table>
+<p>Suggested file format are .tsv, .csv, or any other file which can be correctly loaded with the following command. </p>
+<pre><code>dataset_info = readtable(dataset_info_filename, ...
+    'format','<span class="hljs-built_in">%f</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%f</span>','filetype','text')<span class="hljs-comment">;</span>
+</code></pre><p>See how all columns have string values except for the first and last, which have numeric values. If you don&#39;t know if your file is correct written, You can copy-paste our example file and modify it. There is also the function <code>check_loaded_table</code> which can check if the table is formatted in the right way.</p>
+<p>Going even further, here is a detailed description of the expected values each column should have:</p>
+<ol>
+<li><strong>dataset_number_reference (required)</strong>: integer value specifying the dataset ID. It is simply an integer you must choose to allow BIDSAlign creating the proper name for the .mat preprocessed files. Remember that .mat files have the name &quot;{dataset<em>id}\</em>{subject<em>id}\</em>{session<em>id}\</em>{object_id}.mat&quot;, with each ID is a number retrieved automatically from the BIDS structure, except for dataset_id which is exactly the dataset_number_reference.</li>
+<li><strong>dataset_name (required)</strong>: string specifying a custom acronym for the dataset. It can be any name, as long as multiple datasets do not have the same one. This information is used when you have a table with information of multiple datasets, but you want to preprocess only a single one. This can be done by giving the dataset_name as selector.</li>
+<li><strong>dataset_code (required)</strong>: The folder name where the dataset is stored. For example, if you download data from OpenNeuro, the dataset is stored inside a folder with name &quot;dsxxxxxx&quot; (x are numbers), which is exactly the dataset_code. </li>
+<li><strong>channel_location_filename (optional)</strong>: the name of a custom file which stores the dataset&#39;s EEG channel location. Usually, this information is stored in <em>_electrodes.tsv</em> files that are mandatory for datasets stored in BIDS format. BIDSAlign is designed to automatically find such files. However, you can set the file name in case of particular needs. If the channel location is stored directly inside the EEG files, add the value &quot;loaded&quot; to this column. </li>
+<li><strong>nose_direction (optional)</strong>: the nose direction. It can be any combination of +/- X/Y/Z (e.g., +Y). This information can generally be found in the README or in the channel_coordinates json files. </li>
+<li><strong>channel_system (required)</strong>: The channel system name. It can be any between 10_5, 10_10, 10_20, GSN129, GSN257.</li>
+<li><strong>channel_reference (required)</strong>: the channel reference. It can be any channel or &quot;COMMON&quot; if the reference is common average </li>
+<li><strong>channel_to_remove (optional)</strong>: a list of channels to remove. It can be used if a dataset is known to have the same bad channels across all records. BIDSAlign will automatically remove them at the beginning of the preprocessing.</li>
+<li><strong>eeg_file_extension</strong>: the file extension used to store EEG files (e.g., .edf, .bdf, .set). It will be used by BIDSAlign to locate the specific file inside the &#39;eeg&#39; folders. Currently, supported file extensions are: .vhdr, .set and other extension which can be loaded with the Biosig plug-in with the command <code>pop_biosig( &#39;filename&#39; )</code> </li>
+<li><strong>samp_rate</strong>: The sampling rate reported in Hz (samples per second).</li>
+</ol>
+<h2 id="gui-tab">GUI Tab</h2>
+<p><img src="TableTabEmpty.png"
+    alt="Picture"
+    width="500"
+    style="display: block; margin: 0 auto" 
+/></p>
+<p>In this tab, you can load, modify, and save the table file with the datasets&#39; information. In particular, looking at the figure above, the following actions can be performed with the numbered buttons:</p>
+<ol>
+<li>the <strong>select file</strong> button will open a file selector where you can select a table file to open with the command reported in the previous section.</li>
+<li>the <strong>Dataset Number</strong> edit field is used to select a number of datasets. Buttons 3 (create) will perform actions based on the number given here. Basically, you need to edit this field when you want to create a new empty table with a specific number of rows, or you want to delete or add some rows of the preloaded table.</li>
+<li>the <strong>Create</strong> button will perform two different actions. If nothing is loaded, then a new empty table with a number of rows equals to the dataset number is created. If a table was already loaded, a new table with number of rows equal to the given dataset number, but values are assigned by looking at those already available from the loaded table. For example, if you have loaded a table with 10 rows, and you click the create button with dataset number set to 5, a new table with only the first five rows of the previously loaded table will be created.</li>
+<li>the <strong>Empty</strong> button is used to completely delete the current table and generate a fresh one. Simply use it to reset everything.</li>
+<li>the <strong>Save</strong> button will open a new window where you can interactively choose name and path for the current table to save.</li>
+<li><p>the <strong>table editor</strong> can be used to modify specific cells of the table. Keep in mind that if a table is in a bad status (red lamp), you can modify everything freely. If the table is in a good status (green lamp), cells modifications that bring the table to a bad status are not allowed.</p>
+<p> <strong><em>NOTE</em></strong>: If you change some relevant information such as values inside the dataset_name, dataset_code, eeg_file_extension columns, the list of single datasets and single files in the run tab may change, resetting previous selections (if you have selected a dataset and then changed its name, it is obvious that BIDSAlign must forget the previous name). Be sure to select again the proper dataset or file if this happens.</p>
+</li>
+</ol>
+<p>If everything is done correctly, something similar should appear in the tab, depending on the number of dataset set.</p>
+<p><img src="TableTabFull.png"
+    alt="Picture"
+    width="500"
+    style="display: block; margin: 0 auto" 
+/></p>
+</body></html>

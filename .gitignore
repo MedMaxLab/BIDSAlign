@@ -53,7 +53,6 @@ Temporary Items
 # specific files or folder to ignore for dev things
 __lib/default_settings/test_dev_/
 __lib/BIDSAlign_debugging.m
-__lib/GUI/
 
 # Windows default autosave extension
 *.asv

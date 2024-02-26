@@ -162,8 +162,8 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
         end
 
         %% FINAL ICA DECOMPOSITION
-        [EEG] = prepstep_ICA(EEG, params_info, verbose);
         if params_info.prep_steps.ICA
+            [EEG] = prepstep_ICA(EEG, params_info, verbose);
             if verbose
                 [EEG] = iclabel(EEG);
             else
