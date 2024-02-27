@@ -135,7 +135,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     single_file = p.Results.single_file;
     dataset_name = [p.Results.single_dataset_name];
     raw_filename = p.Results.single_file_name;
-    raw_filepath = [];
+    raw_filepath = '';
     
     % -------------------------------------------------------------------------------
     %                       GET STRUCTS WITH PREPRO SETTINGS
