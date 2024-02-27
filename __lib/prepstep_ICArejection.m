@@ -67,6 +67,9 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
             warning([ 'CHECK params_info.ic_rej_type: ' ...
                 'METHOD NOT ALREADY IMPLEMENTED OR MISPELLED']);
         end
+    else
+           warning([ 'CHECK params_info.ic_rej_type: ' ...
+                'METHOD DECLARED IS EMPTY.']); 
     end
 
 end

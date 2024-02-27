@@ -1,4 +1,5 @@
-function [EEG] = prepstep_ICA(EEG, params_info, verbose)
+
+function [EEG] = prepstep_ICA(EEG, params_info, ica_case, verbose)
     % FUNCTION: prepstep_ICA
     %
     % Description: Applies Independent Component Analysis (ICA) 
@@ -10,6 +11,7 @@ function [EEG] = prepstep_ICA(EEG, params_info, verbose)
     % Input:
     %   - EEG (struct): EEG data structure.
     %   - params_info (struct): Struct containing preprocessing parameters.
+    %   - ica_case (integer): Indicates which step should be performed.
     %   - verbose (logical): Verbosity flag indicating whether 
     %                        to display information during processing.
     %
@@ -25,7 +27,7 @@ function [EEG] = prepstep_ICA(EEG, params_info, verbose)
         verb = 'off';
     end
 
-    if params_info.prep_steps.ICrejection
+    if params_info.prep_steps.ICrejection && ica_case
        
         switch params_info.ica_type
             case 'fastica'
@@ -63,7 +65,7 @@ function [EEG] = prepstep_ICA(EEG, params_info, verbose)
                 error('ICA TYPE NOT IMPLEMENTED');
         end
 
-    elseif params_info.prep_steps.ICA
+    elseif params_info.prep_steps.ICA && ~ica_case
 
         switch params_info.ica_type
             case 'fastica'
