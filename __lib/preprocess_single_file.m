@@ -129,7 +129,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
 
         %% ICA and ICAREJ
         % ICA DECOMP
-        [EEG] = prepstep_ICA(EEG, params_info, verbose, true);
+        [EEG] = prepstep_ICA(EEG, params_info, true, verbose);
 
         % ICA REJ
         if isfield(EEG,'reject')
@@ -162,7 +162,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
         end
 
         %% FINAL ICA DECOMPOSITION
-        [EEG] = prepstep_ICA(EEG, params_info, verbose, false);
+        [EEG] = prepstep_ICA(EEG, params_info, false, verbose);
         if verbose
             [EEG] = iclabel(EEG);
         else
