@@ -1,5 +1,5 @@
 
-function [EEG] = rereference(EEG, data_info, params_info, ...
+function [EEG] = rereference(EEG, data_info, params_info, obj_info, ...
     channel_location_file_extension, B, verbose)
     % FUNCTION: rereference
     % 
@@ -13,6 +13,7 @@ function [EEG] = rereference(EEG, data_info, params_info, ...
     %   - EEG: EEG data structure.
     %   - data_info: Structure containing information about the EEG dataset.
     %   - params_info: Structure containing preprocessing parameters.
+    %   - obj_info: Structure containing information about the EEG data file.
     %   - channel_location_file_extension: File extension for channel location file.
     %   - B: List of available channels.
     %   - verbose: (Optional) Boolean setting the verbosity level.
@@ -25,12 +26,73 @@ function [EEG] = rereference(EEG, data_info, params_info, ...
     %
     % Author: [Andrea Zanola, Federico Del Pup]
     % Date: [25/01/2024]
+
     if params_info.prep_steps.rereference
-        if nargin < 6
+        if nargin < 7
             verbose = false;
         end
     
-        dataset_reference  = data_info.channel_reference; %Current EEG Ref
+        %% Check what is present in JSON reference
+        json_reference = [];
+
+        if ~isempty(obj_info.EEGReference)
+            a = load('full_channel_list.mat');
+            all_channel_list = a.all_channel_list;
+            c = 0;
+            for i=1:length(all_channel_list)
+                chan = upper(all_channel_list{i});
+                if contains(upper(obj_info.EEGReference), chan) 
+                    if c==0
+                        json_reference = [json_reference chan];
+                    else
+                        if ~contains(json_reference, chan)
+                            json_reference = [json_reference '-' chan];
+                        end
+                    end
+                    c = c+1;
+                end
+            end
+        end
+
+        %% Check what is present in EEG reference
+        if isfield(EEG,'reference')
+            loaded_reference = EEG.reference;
+        else
+            loaded_reference = [];
+        end
+         
+        if verbose
+            if ~isempty(json_reference) && ~isempty(loaded_reference)
+                if ~isequal(json_reference,loaded_reference)
+                    warning('JSON reference differs from loaded reference.');
+                end
+            end
+            if ~isempty(json_reference) && ~isempty(data_info.channel_reference)
+                if ~isequal(json_reference,data_info.channel_reference)
+                    warning('DATASET_INFO reference differs from JSON reference.');
+                end
+            end
+            if ~isempty(loaded_reference) && ~isempty(data_info.channel_reference)
+                if ~isequal(loaded_reference, data_info.channel_reference)
+                    warning('DATASET_INFO reference differs from loaded reference.');
+                end
+            end
+        end
+
+        %% Set current EEG Ref
+        if isempty(loaded_reference) && ~isempty(json_reference) && ~isempty(data_info.channel_reference)
+            dataset_reference = json_reference; %json priority
+
+        elseif isempty(loaded_reference) && isempty(json_reference) && ~isempty(data_info.channel_reference)
+            dataset_reference = data_info.channel_reference;
+
+        elseif isempty(loaded_reference) && ~isempty(json_reference) && isempty(data_info.channel_reference)
+            dataset_reference = json_reference;
+
+        else
+            dataset_reference = loaded_reference;
+        end
+
         standard_reference = params_info.standard_ref;    %Desired New Ref
     
         % Create list of available channels

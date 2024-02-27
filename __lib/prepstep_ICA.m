@@ -6,7 +6,7 @@ function [EEG] = prepstep_ICA(EEG, params_info, ica_case, verbose)
     %              decomposition to EEG data.
     %
     % Syntax:
-    %   [EEG] = prepstep_ICA(EEG, params_info, verbose)
+    %   [EEG] = prepstep_ICA(EEG, params_info, ica_case, verbose)
     %
     % Input:
     %   - EEG (struct): EEG data structure.
@@ -81,6 +81,12 @@ function [EEG] = prepstep_ICA(EEG, params_info, ica_case, verbose)
             [EEG] = pop_runica(EEG, 'icatype', params_info.ica_type,'verbose',verb);
             EEG.history = [EEG.history newline ...
                 'FINAL ICA DECOMPOSITION: ' params_info.ica_type];
+        end
+
+        if verbose
+            [EEG] = iclabel(EEG);
+        else
+            [~, EEG] = evalc("iclabel(EEG);");
         end
     end
 

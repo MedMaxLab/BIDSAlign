@@ -122,7 +122,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
         [EEG] = prepstep_removebaseline(EEG, params_info, verbose);
 
         %% Resampling 
-        [EEG] = prepstep_resampling(EEG, data_info, params_info, verbose);
+        [EEG] = prepstep_resampling(EEG, data_info, params_info, obj_info, verbose);
 
         %% Filtering
         [EEG] = prepstep_filtering(EEG, params_info, verbose);
@@ -150,7 +150,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
         [EEG] = prepstep_interpolation(EEG, params_info, B, nchan_preASR, verbose);
         
         %% Rereferecing
-        [EEG] = rereference(EEG, data_info, params_info, ...
+        [EEG] = rereference(EEG, data_info, params_info, obj_info, ...
             channel_location_file_extension, B, verbose);
 
         %% Warning if file after aggressive ASR, still have values over threshold
@@ -163,16 +163,12 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
 
         %% FINAL ICA DECOMPOSITION
         [EEG] = prepstep_ICA(EEG, params_info, false, verbose);
-        if verbose
-            [EEG] = iclabel(EEG);
-        else
-            [~, EEG] = evalc("iclabel(EEG);");
-        end
 
         %% Save the .set file 
         if save_info.save_set
             EEG.history = [EEG.history newline 'SAVE .SET FILE: ' ...
                 path_info.set_folder obj_info.set_preprocessed_filename]; 
+            
             if verbose
                 pop_saveset( EEG, 'filename', obj_info.set_preprocessed_filename, ...
                     'filepath', path_info.set_folder);
