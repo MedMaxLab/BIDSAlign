@@ -41,7 +41,11 @@ function [B] = rename_channels(B, data_info, EEG_history, EEG)
     listB = string(B_labels);
 
     %% Uniform the Nomenclature -----------------------------------------
+
+    %Here specify the old or bad names to convert.
     old_names = ["TP9 LEFT EAR", "TP10 RIGHT EAR", "T6", "T5", "T4", "T3"];
+
+    %Here specify the new name in upper-case.
     new_names = {'TP9', 'TP10', 'P8', 'P7', 'T8', 'T7'};
 
     % For 10-20, 10-10, 10-5 systems

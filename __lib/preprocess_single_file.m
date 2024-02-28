@@ -46,6 +46,9 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
         [ ~, EEG] = evalc(cmd2run);
     end
 
+    %% Overwrite Reference
+    [EEG] = get_reference(EEG, data_info, obj_info, verbose);
+
     %% Trye to Import Event
     if isempty(EEG.event) && ~isempty(obj_info.event_filename)
         try
@@ -68,6 +71,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
         end
     end
 
+    %% Start Preprocessing Steps if EEG is loaded
     if ~isempty(EEG)
         EEG.history = ['--- PREVIOUS HISTORY ---' EEG.history newline ...
             '--- PREPROCESSED WITH BIDS-ALIGN ---'];
@@ -82,7 +86,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
             error('IMPOSSIBLE TO LOAD CHANNEL LOCATION');
         end
     
-        %% Rename the labels of the channels accorgind to the channels filename
+        %% Rename the labels of the channels according to the channels filename
         if ~isempty(obj_info.channels_filename) && ...
                 ~isequal(obj_info.channel_location_filename, 'loaded')
             T = readtable(obj_info.channels_filename,'FileType','text');

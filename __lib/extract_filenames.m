@@ -108,8 +108,14 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     end
 
     %% Extract information from json file
-    l = strfind(obj_info.raw_filename,'.');
-    jsonFileName = [obj_info.raw_filename(1:l) 'json'];
+    a = dir('*_eeg.json');
+    if length(a)>1
+        l = strfind(obj_info.raw_filename,'.');
+        jsonFileName = [obj_info.raw_filename(1:l) 'json'];
+    else
+        jsonFileName = a.name;
+    end
+
     obj_info.EEGReference       = [];
     obj_info.SamplingFrequency  = [];
     obj_info.PowerLineFrequency = [];
