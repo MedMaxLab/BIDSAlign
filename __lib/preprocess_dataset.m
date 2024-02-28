@@ -151,6 +151,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
         end
 
         %% Preprocess all sessions for a subject
+        counts(2) = 0;
         for k = vec_sess
             counts(2)=counts(2)+1;
             if verbose
@@ -181,6 +182,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
             end
 
             %% Preprocess all files of a session -----------------------
+            counts(3) = 0;
             for i=vec_obj
                 counts(3)=counts(3)+1;
                 if verbose
