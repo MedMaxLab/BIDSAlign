@@ -9,6 +9,8 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
     %
     % Input:
     %   - path (char): The path to the main directory containing EEG dataset files.
+    %   - def_sess_name (char): Default name of sessions folder if absent.
+    %   - def_eeg_name (char): Default name of eeg folder if absent.
     %
     % Author: [Andrea Zanola]
     % Date: [27/01/2024]
