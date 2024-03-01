@@ -107,6 +107,18 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
                                        'conversion',conversion,...
                                        'standard_chanloc',standard_chanloc); 
     
+
+    %% Rename DATA INFO REFERENCE FOR GSN Systems
+    if isequal(data_info.channel_system,'GSN129')
+        if isequal(upper(data_info.channel_reference),'CZ')
+            data_info.channel_reference = 'E129';
+        end
+    elseif isequal(data_info.channel_system,'GSN257')
+        if isequal(upper(data_info.channel_reference),'CZ')
+            data_info.channel_reference = 'E257';
+        end
+    end
+
     %% Import participant file
     % Read the participant file
     if isfile([path_info.dataset_path 'participants.csv'])
@@ -165,4 +177,5 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
             mkdir(path_info.set_folder)
         end
     end
+
 end

@@ -19,57 +19,85 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
     % Author: [Andrea Zanola]
     % Date: [16/02/2024]
 
-    if params_info.prep_steps.ICrejection && ~isempty(params_info.ic_rej_type)
+    if params_info.prep_steps.ICrejection 
         if isequal(params_info.ic_rej_type,'iclabel')
-            if verbose
-                [EEG] = iclabel(EEG);
-                [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
-                ics = 1:length(EEG.reject.gcompreject);
-                rejected_comps = ics(EEG.reject.gcompreject);
-                [EEG] = pop_subcomp(EEG, rejected_comps);
-                
-            else
-                [~, EEG] = evalc("iclabel(EEG);"); %#ok
-                [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
-                ics = 1:length(EEG.reject.gcompreject);
-                rejected_comps = ics(EEG.reject.gcompreject); %#ok
-                [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);"); 
-                %pop_subcomp put EEG.reject = []
-
+            try
+                if verbose
+                    [EEG] = iclabel(EEG);
+                    [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
+                    ics = 1:length(EEG.reject.gcompreject);
+                    rejected_comps = ics(EEG.reject.gcompreject);
+                    if length(rejected_comps) == length(ics)
+                        warning('ALL COMPONENTS HAVE BEEN REJECTED. IC rejection skipped.')
+                    else
+                        [EEG] = pop_subcomp(EEG, rejected_comps);
+                    end
+                    
+                else
+                    [~, EEG] = evalc("iclabel(EEG);"); %#ok
+                    [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
+                    ics = 1:length(EEG.reject.gcompreject);
+                    rejected_comps = ics(EEG.reject.gcompreject); %#ok
+                    if length(rejected_comps) == length(ics)
+                        [~] = evalc("warning('ALL COMPONENTS HAVE BEEN REJECTED. IC rejection skipped.');");
+                    else
+                        [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);"); 
+                    end
+    
+                end
+                EEG.history = [EEG.history newline 'ICLabel REJECTION.' ...
+                    newline 'Thresholds applied: '];
+    
+                labels_art = {'Brain', 'Muscle', 'Eye', 'Heart', ...
+                    'Line Noise', 'Channel Noise', 'Other'};
+                for i=1:length(labels_art)
+                    EEG.history = [EEG.history labels_art{i} ': ' ...
+                        num2str(params_info.iclabel_thresholds(i,1)) ' - ' ...
+                        num2str(params_info.iclabel_thresholds(i,2)) '; '];
+                end 
+            catch
+                if verbose
+                    warning('IClabel rejection failed. Preprocessing step skipped.');
+                else
+                    [~] = evalc("warning('IClabel rejection failed. Preprocessing step skipped.');");
+                end 
             end
-            EEG.history = [EEG.history newline 'ICLabel REJECTION.' ...
-                newline 'Thresholds applied: '];
-
-            labels_art = {'Brain', 'Muscle', 'Eye', 'Heart', ...
-                'Line Noise', 'Channel Noise', 'Other'};
-            for i=1:length(labels_art)
-                EEG.history = [EEG.history labels_art{i} ': ' ...
-                    num2str(params_info.iclabel_thresholds(i,1)) ' - ' ...
-                    num2str(params_info.iclabel_thresholds(i,2)) '; '];
-            end 
 
         elseif isequal(params_info.ic_rej_type,'mara')
-            if verbose
-                [rejected_comps, info] = MARA(EEG); %#ok
-                ics = 1:length(info.posterior_artefactprob);
-                rejected_comps = ics( info.posterior_artefactprob > ...
-                    params_info.mara_threshold);
-                [EEG] = pop_subcomp(EEG, rejected_comps);
-            else
-                [~, rejected_comps, info] = evalc("MARA(EEG);"); %#ok
-                ics = 1:length(info.posterior_artefactprob);
-                rejected_comps = ics( info.posterior_artefactprob > ...
-                    params_info.mara_threshold); %#ok
-                [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
+            try
+                if verbose
+                    [rejected_comps, info] = MARA(EEG); %#ok
+                    ics = 1:length(info.posterior_artefactprob);
+                    rejected_comps = ics( info.posterior_artefactprob > ...
+                        params_info.mara_threshold);
+                    if length(rejected_comps) == length(ics)
+                        warning('ALL COMPONENTS HAVE BEEN REJECTED. IC rejection skipped.')
+                    else
+                        [EEG] = pop_subcomp(EEG, rejected_comps);
+                    end
+                else
+                    [~, rejected_comps, info] = evalc("MARA(EEG);"); %#ok
+                    ics = 1:length(info.posterior_artefactprob);
+                    rejected_comps = ics( info.posterior_artefactprob > ...
+                        params_info.mara_threshold); %#ok
+                    if length(rejected_comps) == length(ics)
+                        [~] = evalc("warning('ALL COMPONENTS HAVE BEEN REJECTED. IC rejection skipped.');");
+                    else
+                        [~, EEG] = evalc("pop_subcomp(EEG, rejected_comps);");
+                    end
+                end
+                EEG.history = [EEG.history newline 'MARA REJECTION.'];
+            catch
+                if verbose
+                    warning('MARA rejection failed. Preprocessing step skipped.');
+                else
+                    [~] = evalc("warning('MARA rejection failed. Preprocessing step skipped.');");
+                end 
             end
-            EEG.history = [EEG.history newline 'MARA REJECTION.'];
         else
             warning([ 'CHECK params_info.ic_rej_type: ' ...
-                'METHOD NOT ALREADY IMPLEMENTED OR MISPELLED']);
+                'METHOD NOT ALREADY IMPLEMENTED, MISPELLED or EMPTY']);
         end
-    else
-           warning([ 'CHECK params_info.ic_rej_type: ' ...
-                'METHOD DECLARED IS EMPTY.']); 
     end
 
 end

@@ -48,7 +48,17 @@ function [EEG] = get_reference(EEG, data_info, obj_info, verbose)
     else
         loaded_reference = [];
     end
-     
+    
+    if isequal(data_info.channel_system,'GSN129')
+        if isequal(upper(json_reference),'CZ')
+            json_reference = 'E129';
+        end
+    elseif isequal(data_info.channel_system,'GSN257')
+        if isequal(upper(json_reference),'CZ')
+            json_reference = 'E257';
+        end
+    end
+
     if verbose
         if ~isempty(json_reference) && ~isempty(loaded_reference)
             if ~isequal(json_reference,loaded_reference)

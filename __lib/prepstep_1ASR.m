@@ -20,7 +20,7 @@ function [EEG] = prepstep_1ASR(EEG, params_info, verbose)
     if params_info.prep_steps.ASR
         if verbose
             fprintf(' \t\t\t\t\t\t\t\t --- SOFT ASR APPLIED ---\n');
-            [EEG,~,~] = clean_artifacts(EEG, ...
+            [EEG,~,~,~] = clean_artifacts(EEG, ...
                          'ChannelCriterion', params_info.channelC, ...
                          'LineNoiseCriterion', params_info.lineC, ...
                          'BurstCriterion', 'off', ...                    %default
@@ -57,7 +57,7 @@ function [EEG] = prepstep_1ASR(EEG, params_info, verbose)
                           " 'NoLocsChannelCriterionExcluded', 0.1, " + ...     %default
                           " 'MaxMem', 4096, " + ...                            %default
                           " 'availableRAM_GB', NaN); ";                        %default
-                [~, EEG, ~, ~] = evalc(cmd2run);
+                [~, EEG, ~, ~,~] = evalc(cmd2run);
 
         end
 
