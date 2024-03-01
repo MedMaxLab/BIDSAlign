@@ -51,7 +51,7 @@ function [EEG] = prepstep_resampling(EEG, data_info, params_info, obj_info, verb
                     EEG.srate = obj_info.SamplingFrequency;
                     EEG.xmax = EEG.pnts/obj_info.SamplingFrequency;
                 end
-                warning('EEG srate in the file, differs from EEG srate in json file.')
+                warning('EEG srate in struct, differs from EEG srate in json file.')
             end
 
             if params_info.sampling_rate ~= obj_info.SamplingFrequency
