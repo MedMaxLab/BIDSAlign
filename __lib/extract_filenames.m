@@ -112,8 +112,10 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     if length(a)>1
         l = strfind(obj_info.raw_filename,'.');
         jsonFileName = [obj_info.raw_filename(1:l) 'json'];
-    else
+    elseif length(a)==1
         jsonFileName = a.name;
+    else
+        jsonFileName = [];
     end
 
     obj_info.EEGReference       = [];
@@ -121,23 +123,24 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     obj_info.PowerLineFrequency = [];
     obj_info.SoftwareFilters    = [];
 
-    if isfile(jsonFileName)
-        obj_info.eegjson_filename = jsonFileName;
-        jsonStr = fileread(jsonFileName);
-        jsonData = jsondecode(jsonStr);
-
-        if ~isequal(jsonData.EEGReference,'n/a')
-            obj_info.EEGReference       = jsonData.EEGReference;
-        end
-        if ~isequal(jsonData.SamplingFrequency,'n/a') && mod(jsonData.SamplingFrequency, 1) == 0
-            obj_info.SamplingFrequency  = jsonData.SamplingFrequency;
-        end
-        if ~isequal(jsonData.PowerLineFrequency,'n/a')
-            obj_info.PowerLineFrequency = jsonData.PowerLineFrequency;
-        end
-        if ~isequal(jsonData.SoftwareFilters,'n/a')
-            obj_info.SoftwareFilters    = jsonData.SoftwareFilters;
+    if ~isempty(jsonFileName)
+        if isfile(jsonFileName)
+            obj_info.eegjson_filename = jsonFileName;
+            jsonStr = fileread(jsonFileName);
+            jsonData = jsondecode(jsonStr);
+    
+            if ~isequal(jsonData.EEGReference,'n/a')
+                obj_info.EEGReference       = jsonData.EEGReference;
+            end
+            if ~isequal(jsonData.SamplingFrequency,'n/a') && mod(jsonData.SamplingFrequency, 1) == 0
+                obj_info.SamplingFrequency  = jsonData.SamplingFrequency;
+            end
+            if ~isequal(jsonData.PowerLineFrequency,'n/a')
+                obj_info.PowerLineFrequency = jsonData.PowerLineFrequency;
+            end
+            if ~isequal(jsonData.SoftwareFilters,'n/a')
+                obj_info.SoftwareFilters    = jsonData.SoftwareFilters;
+            end
         end
     end
-
 end
