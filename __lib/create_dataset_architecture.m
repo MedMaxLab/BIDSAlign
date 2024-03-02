@@ -26,7 +26,7 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
     dirFlags = [files.isdir];
     subFolders = files(dirFlags);
     subFolders = subFolders(3:end);
-    untouchable_folders = {'code','stimuli','derivatives'};
+    untouchable_folders = {'.','..','code','stimuli','derivatives','sourcedata','.datalad'};
     code_to_exclude = [];
     for i=1:length(subFolders)
         for j=1:length(untouchable_folders)

@@ -18,14 +18,14 @@ clc
 modality = 'local';                          % or local
 use_parpool = false;                         % use parpool if available
 dataset_info_filename = 'DATASET_INFO.tsv';  % Set the name of the dataset info file 
-verbose = false;                             % Set the verbosity level
+verbose = true;                             % Set the verbosity level
 current_path = pwd;
 solve_nogui = false;
 setting_name = 'test_dev_';
 
 %% Select Modality (preprocess all, single dataset or single file)
 single_file  = false;               % preprocess a single file
-dataset_name = ['Nencki-Sym'];  % Set the name of the current dataset
+dataset_name = ['HDEEG1'];  % Set the name of the current dataset
 
 raw_filename = [];                % file name to give in case of single file
 raw_filepath = [];                 % path to file in case of single file preprocessing
@@ -45,8 +45,8 @@ selection_info = struct('sub_i',[],...
                         'label_name',[],...
                         'label_value',[],...
                         'subjects_totake',{{}},...
-                        'session_totake',{{}},...
-                        'task_totake', {{'task-rest'}});
+                        'session_totake',{{'spelling'}},...
+                        'task_totake', {{}});
 
 % Create a struct to store the save information
 % save_info tells which data must be saved (or not)
@@ -56,7 +56,7 @@ save_info = struct('save_data',false, ...
                    'save_set', true,...
                    'save_struct',false, ...
                    'save_marker',false,...
-                   'set_label', 'REST_PIPEF');
+                   'set_label', 'SPELLING_0ASR');
 
 % Set the parameters for preprocessing
 % params_info tells which operations and configuration
@@ -88,8 +88,8 @@ params_info = struct('low_freq',1,...                          %filtering
                                          'resampling' , true,...
                                          'filtering'  , true,...
                                          'ICA'        , false,...
-                                         'ICrejection', true,... 
-                                         'ASR'        , true,...
+                                         'ICrejection', false,... 
+                                         'ASR'        , false,...
                                          'rereference', true));
 
 %% Set Paths
@@ -355,3 +355,23 @@ else
 end
 cd(current_path)
 
+%% Visualization of the processed group or the single file
+save_img = '/Users/andreazanola/Documents/EEG_Datasets_prep/_png_group_comp/';
+
+folder  = path_info.output_set_path;
+git_path = path_info.git_path;
+
+dataset = data_info.dataset_code;
+a = strsplit(save_info.set_label,'_');
+group_hill = a(1);
+groups_to_plot = a(2);
+channel_system = data_info.channel_system;
+
+filename = [];
+exclude_subj = {};
+iaf_correction = false;
+
+if ~isempty(dataset_name)
+    groups_visualization(folder, filename, save_img, git_path, dataset, group_hill,...
+                        groups_to_plot, iaf_correction, exclude_subj, channel_system, verbose);
+end
