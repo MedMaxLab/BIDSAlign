@@ -24,15 +24,28 @@ function [ar, ind_f_iaf] = band_content(m,paf_v,paf,ind_f,F,i)
     % Date: [26/02/2024]
     %
 
-    ar = zeros(length(paf_v),1);
+    s = size(m);
+
+    if length(s)==3
+        [numberSubjects,~, numberChannels] = size(m);
+        ar = zeros(numberSubjects, numberChannels);
+    elseif length(s)==2
+        [numberSubjects,~] = size(m);
+        ar = zeros(numberSubjects,1);
+    end
+
     if paf
-        ind_f_iaf = zeros(length(paf_v),length(ind_f));
-        for k=1:length(paf_v)
+        ind_f_iaf = zeros(numberSubjects,length(ind_f));
+        for k=1:numberSubjects
             if isnan(paf_v(k))
-                if ~isempty(m)
+                if ~isempty(m) && length(s)==2
                     mr = m(k,ind_f(i):ind_f(i+1))';
                     dF = F(ind_f(i):ind_f(i+1));
                     ar(k) = trapz(dF,mr)/(dF(end)-dF(1));
+                elseif ~isempty(m) && length(s)==3
+                    mr = squeeze(m(k,ind_f(i):ind_f(i+1),:));
+                    dF = F(ind_f(i):ind_f(i+1));
+                    ar(k,:) = (trapz(dF,mr)/(dF(end)-dF(1)))';    
                 end
                 ind_f_iaf(k,:) = ind_f;
             else
@@ -51,22 +64,33 @@ function [ar, ind_f_iaf] = band_content(m,paf_v,paf,ind_f,F,i)
 
                 ind_f_iaf(k,:) = ind_f_individual; 
 
-                if ~isempty(m)
+                if ~isempty(m) && length(s)==2
                     mr = m(k,ind_f_individual(i):ind_f_individual(i+1))';
                     dF = F(ind_f_individual(i):ind_f_individual(i+1));
                     ar(k) = trapz(dF,mr)/(dF(end)-dF(1));
+                elseif ~isempty(m) && length(s)==3
+                    mr = squeeze(m(k,ind_f_individual(i):ind_f_individual(i+1),:));
+                    dF = F(ind_f_individual(i):ind_f_individual(i+1));
+                    ar(k,:) = (trapz(dF,mr)/(dF(end)-dF(1)))';
                 end
             end
 
         end
 
     else
-    ind_f_iaf = repmat(ind_f,length(paf_v),1);
-        if ~isempty(m)
+        ind_f_iaf = repmat(ind_f,numberSubjects,1);
+        if ~isempty(m)  && length(s)==2
             mr = m(:,ind_f(i):ind_f(i+1))';
             dF = F(ind_f(i):ind_f(i+1));
             ar = trapz(dF,mr)/(dF(end)-dF(1)); 
             ar = ar';
+        elseif ~isempty(m)  && length(s)==3
+            for k=1:numberSubjects
+                mr = squeeze(m(k,ind_f(i):ind_f(i+1),:));
+                dF = F(ind_f(i):ind_f(i+1));
+                ar(k,:) = (trapz(dF,mr)/(dF(end)-dF(1))); 
+            end
         end
+        %ar = ar';
     end
 end

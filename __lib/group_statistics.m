@@ -26,11 +26,11 @@ function [H_FDR, P_FDR, T_FDR, string_topoplot] = group_statistics(TEST_A, TEST_
     %
     % See also: ttest2, bramila_ttest2_np
 
-    [channelNumbers,numberOfSubjectsA] = size(TEST_A);
-    [~,numberOfSubjectsB] = size(TEST_B);
+    [numberOfSubjectsA,channelNumbers] = size(TEST_A);
+    [numberOfSubjectsB,~] = size(TEST_B);
 
     if test_parametric
-        [h,p,~,stats] = ttest2(TEST_A',TEST_B','Alpha',pth,'Tail','both');
+        [h,p,~,stats] = ttest2(TEST_A,TEST_B,'Alpha',pth,'Tail','both','Dim',1);
         if FDR_correction
             H_FDR = zeros(channelNumbers,1);
             P_FDR = mafdr(p,'BHFDR','true');
@@ -45,7 +45,7 @@ function [H_FDR, P_FDR, T_FDR, string_topoplot] = group_statistics(TEST_A, TEST_
         end
     else 
         group_code = [ones(1,numberOfSubjectsA) 2*ones(1,numberOfSubjectsB)];
-        statsAvsB = bramila_ttest2_np([TEST_A TEST_B],group_code,nperms);
+        statsAvsB = bramila_ttest2_np([TEST_A' TEST_B'],group_code,nperms);
 
         H_FDR = zeros(channelNumbers,1);
         if FDR_correction

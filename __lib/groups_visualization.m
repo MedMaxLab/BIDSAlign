@@ -39,11 +39,12 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %% Optional Input Variables
     freq_vec = [0.1,4,8,13,30,45];
     pth = 0.05;
-    norm_cbar_topo = 'minmax';
-    norm_data = false;
+    norm_cbar_topo = [];
+    norm_data = true;
     test_parametric = false;
     FDR_correction = true;
-    nperms = 10;
+    nperms = 20000;
+    rng(12345);
 
     chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
@@ -258,7 +259,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         for j=1:length(groups)
             for k=j+1:length(groups)
     
-                [H_FDR, P_FDR, ~, ~] = group_statistics(transpose(eval(['ar' num2str(j)])),transpose(eval(['ar' num2str(k)])), pth, test_parametric, FDR_correction, nperms);
+                [H_FDR, P_FDR, ~, ~] = group_statistics(eval(['ar' num2str(j)]),eval(['ar' num2str(k)]), pth, test_parametric, FDR_correction, nperms);
                 
                 if H_FDR
                     if verbose
@@ -308,8 +309,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         for j=1:length(groups)
             for k=j+1:length(groups)
         
-                %[h,p,~,~] = ttest2( eval(['paf_mean_' groups{j}]), eval(['paf_mean_' groups{k}]),"Alpha",pth);
-                [ H_FDR, P_FDR, ~, ~] = group_statistics(transpose(eval(['paf_mean_' groups{j}])), transpose(eval(['paf_mean_' groups{k}])), pth, test_parametric, FDR_correction, nperms);
+                [ H_FDR, P_FDR, ~, ~] = group_statistics(eval(['paf_mean_' groups{j}]), eval(['paf_mean_' groups{k}]), pth, test_parametric, FDR_correction, nperms);
 
                 if H_FDR
                     if verbose
@@ -362,88 +362,45 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         tiledlayout(1,length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
     end
 
-    %% Extract Max-Min for Topoplot-Colormap
+    % Extract Max-Min for Topoplot-Colormap
     minPSD = (10^20)*ones(1,length(ind_f)-1);
-    maxPSD = (-10^20)*ones(1,length(ind_f)-1);  
+    maxPSD = (-10^20)*ones(1,length(ind_f)-1); 
+
     for j=1:length(groups)
         for i=1:length(ind_f)-1
-            [~, ind_f_iafA] = band_content([],eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
-    
-            mA = eval(['Pxx_' groups{j}]);
-            channelNumbers = length(EEG.chanlocs);
-            [numberOfSubjectsA, ~] = size(ind_f_iafA);
-    
-            TEST_A = zeros(channelNumbers,numberOfSubjectsA);
-            for k=1:numberOfSubjectsA
-                TEST_A(:,k) = mean(squeeze(mA(k,ind_f_iafA(k,i):ind_f_iafA(k,i+1),:)),1)';
-            end
-    
-            mr = mean(TEST_A,2);
-            minPSD(i) = min([minPSD(i),min(mr)]);
-            maxPSD(i) = max([maxPSD(i),max(mr)]);
+            [TEST, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);    
+            mA = mean(TEST,1);
+            minPSD(i) = min([minPSD(i),min(mA)]);
+            maxPSD(i) = max([maxPSD(i),max(mA)]);
         end
     end
 
-    c=1;
+    % Plot Topography
     for j=1:length(groups)
-        [c] = plot_topography(eval(['paf_mean_' groups{j}]), paf, ind_f, groups, eval(['Pxx_' groups{j}]), EEG.chanlocs, band_name, F, pipelines, j, c, minPSD, maxPSD, norm_cbar_topo, cmap, verbose);
+        for i=1:length(ind_f)-1
+            [TEST_A, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
+            mA = mean(TEST_A,1);
+            plot_topography(ind_f, groups, mA, EEG.chanlocs, band_name, F, pipelines, j, minPSD(i), maxPSD(i), norm_cbar_topo, cmap, i, false, '', verbose);
+        end
     end
 
     %% Permutation t-test
-    if verbose
-        verb = 'on';
-    else
-        verb = 'off';
-    end
-
     if length(groups)==2
         for i=1:length(ind_f)-1
-    
-            [~, ind_f_iafA] = band_content([],eval(['paf_mean_' groups{1}]),paf,ind_f,F,i);
-            [~, ind_f_iafB] = band_content([],eval(['paf_mean_' groups{2}]),paf,ind_f,F,i);
 
-            channelNumbers = length(EEG.chanlocs);
-            [numberOfSubjectsA, ~] = size(ind_f_iafA);
-            [numberOfSubjectsB, ~] = size(ind_f_iafB);
-
-            mA = eval(['Pxx_' groups{1}]);
-            TEST_A = zeros(channelNumbers,numberOfSubjectsA);
-            for k=1:numberOfSubjectsA
-                TEST_A(:,k) = mean(squeeze(mA(k,ind_f_iafA(k,i):ind_f_iafA(k,i+1),:)),1)';
-            end
-
-            mB = eval(['Pxx_' groups{2}]);
-            TEST_B = zeros(channelNumbers,numberOfSubjectsB);
-            for k=1:numberOfSubjectsB
-                TEST_B(:,k) = mean(squeeze(mB(k,ind_f_iafB(k,i):ind_f_iafB(k,i+1),:)),1)';
-            end
+            [TEST_A, ~] = band_content(eval(['Pxx_' groups{1}]),eval(['paf_mean_' groups{1}]),paf,ind_f,F,i);
+            [TEST_B, ~] = band_content(eval(['Pxx_' groups{2}]),eval(['paf_mean_' groups{2}]),paf,ind_f,F,i);
             
             [ ~, ~, T_FDR, string_topoplot] = group_statistics(TEST_A, TEST_B, pth, test_parametric, FDR_correction, nperms);
 
-            max_val = max([abs(min(T_FDR)),abs(max(T_FDR))]);
+            maxPSD = max([abs(min(T_FDR)),abs(max(T_FDR))]);
+            if maxPSD == 0
+                maxPSD = 1;
+            end
+            minPSD = -maxPSD;
 
-            nexttile;
-            if channelNumbers > 20
-                electrode_mode = 'on';
-            else
-                electrode_mode = 'labels';
-            end
-            topoplot(T_FDR,EEG.chanlocs,'electrodes',electrode_mode, 'maplimits',[-max_val,max_val],'colormap',cmap,'shading','interp','verbose',verb); hold on;
-  
+            plot_topography(ind_f, groups, T_FDR, EEG.chanlocs, band_name, F, pipelines, j, minPSD, maxPSD, norm_cbar_topo, cmap, i, true, string_topoplot, verbose);
 
-            if length(groups)>1 && length(pipelines)==1
-                title([groups{1} ' vs ' groups{2} ' | ' string_topoplot ' FDR corrected'],'FontSize',14);
-            elseif length(groups)==1 && length(pipelines)>1
-                title([pipelines{1} ' vs ' pipelines{2} ' | ' string_topoplot ' FDR corrected'],'FontSize',14);
-            end
-            
-            cbar = colorbar;
-            cbar.Label.String = 't statistic';
-            cbar.FontSize = 10;
-            if max_val ~=0
-                cbar.Ticks = linspace(-max_val,max_val,7);
-            end
-            c = c+1;
         end
     end
 
