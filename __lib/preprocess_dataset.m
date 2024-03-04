@@ -138,6 +138,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
         d         = dir(pwd);
         dfolders  = d([d(:).isdir]);
         sess_list = dfolders(~ismember({dfolders(:).name},{'.','..'}));
+        all_sess_list = {sess_list(1:end).name};
 
         if selection_info.select_subjects
             % Select files on the basis of number of sessions
@@ -159,6 +160,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
                     '/' num2str(length(vec_sess)) ' ---\n']);
             end
             session_name           = sess_list(k).name;
+            kk = find(strcmp(all_sess_list, session_name));
+
             subject_session_folder = [subject_folder filesep ...
                 session_name filesep 'eeg' filesep];
             cd(subject_session_folder);
@@ -169,7 +172,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
 
             %% Extract selected objects
             obj_info.raw_filepath  = pwd;
-            obj_list      = dir(['*' data_info.eeg_file_extension]);
+            obj_list     = dir(['*' data_info.eeg_file_extension]);
+            all_obj_list = {obj_list(1:end).name};
 
             if selection_info.select_subjects
                 % Select files on the basis of number of sessions
@@ -190,10 +194,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
                         '/' num2str(length(vec_obj)) ' ---\n']);
                 end
                 obj_info.raw_filename              = obj_list(i).name;
-                
+                ii = find(strcmp(all_obj_list, obj_list(i).name));
+
                 obj_info.preprocessed_filename     =  ...
                     [int2str(data_info.dataset_number_reference) '_' ...
-                    int2str(jj) '_' int2str(k) '_' int2str(i)];
+                    int2str(jj) '_' int2str(kk) '_' int2str(ii)];
                 
                 obj_info.set_preprocessed_filename = ...
                     [obj_info.preprocessed_filename data_info.eeg_file_extension];

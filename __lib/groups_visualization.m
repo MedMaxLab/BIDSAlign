@@ -39,8 +39,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %% Optional Input Variables
     freq_vec = [0.1,4,8,13,30,45];
     pth = 0.05;
-    norm_cbar_topo = []; %o 'minmax'
-    norm_data = true;
+    norm_cbar_topo = 'minmax';
+    norm_data = false;
     test_parametric = false;
     FDR_correction = true;
     nperms = 10;
@@ -132,30 +132,32 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
     %% PSD
     FigH1 = figure('Position', get(0, 'Screensize')); 
+    fn = fieldnames(chgroups);
 
     % Find Channel corrispondance in differet Channel systems
-    filenameconvfile = [git_path '__lib/template/template_channel_conversion/conv_' channel_system '_1010.mat'];
-    if isfile(filenameconvfile)
-        a = load(filenameconvfile);
-        evalc(['a=a.conv' channel_system]);
-    else
-        error(['CONVERSION FILE NOT FOUND:' filenameconvfile]);
-    end
-
-
-    fn = fieldnames(chgroups);
-    if ~isempty(a)
-        for j=1:length(fn)
-            for i=1:length(chgroups.(fn{j}))
-                d = find(a(:,1)==chgroups.(fn{j})(i));
-                if ~isempty(d)
-                    chgroups.(fn{j})(i) = a(d,2);
-                else
-                    chgroups.(fn{j})(i) = [];
+    if isequal(channel_system,'GSN129') || isequal(channel_system,'GSN257')
+        filenameconvfile = [git_path '__lib/template/template_channel_conversion/conv_' channel_system '_1010.mat'];
+        if isfile(filenameconvfile)
+            a = load(filenameconvfile);
+            evalc(['a=a.conv' channel_system]);
+        else
+            error(['CONVERSION FILE NOT FOUND:' filenameconvfile]);
+        end
+    
+        if ~isempty(a)
+            for j=1:length(fn)
+                for i=1:length(chgroups.(fn{j}))
+                    d = find(a(:,1)==chgroups.(fn{j})(i));
+                    if ~isempty(d)
+                        chgroups.(fn{j})(i) = a(d,2);
+                    else
+                        chgroups.(fn{j})(i) = [];
+                    end
                 end
             end
         end
     end
+
 
     tiledlayout(ceil(sqrt(length(fn))),ceil(sqrt(length(fn))), 'Padding', 'none', 'TileSpacing', 'compact');
 
@@ -347,22 +349,17 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     if length(groups)>1 && length(pipelines)==1
         if length(groups)==2
             tiledlayout(length(groups)+1,length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
-            %subplot(length(groups)+1,length(ind_f)-1,c);
         else
             tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
-            %subplot(length(groups),length(ind_f)-1,c);
         end
     elseif length(groups)==1 && length(pipelines)>1
         if length(pipelines)==2
             tiledlayout(length(pipelines)+1,length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
-            %subplot(length(pipelines)+1,length(ind_f)-1,c);
         else
             tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
-            %subplot(length(pipelines),length(ind_f)-1,c);
         end
     elseif length(groups)==1 && length(pipelines)==1
         tiledlayout(1,length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
-        %subplot(1,length(ind_f)-1,c);
     end
 
     %% Extract Max-Min for Topoplot-Colormap
@@ -464,14 +461,16 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     if ~isempty(filename)
 
         fn = fieldnames(tchgroups);
-        if ~isempty(a)
-            for j=1:length(fn)
-                d = find(a(:,1)==tchgroups.(fn{j}));
-                if ~isempty(d)
-                    tchgroups.(fn{j}) = a(d,2);
-                else
-                    tchgroups.(fn{j}) = [];
-                    error([convertStringsToChars(tchgroups.(fn{j})) ' IS MISSING INSIDE THE CONVERSION FILE.']);
+        if isequal(channel_system,'GSN129') || isequal(channel_system,'GSN257')
+            if ~isempty(a)
+                for j=1:length(fn)
+                    d = find(a(:,1)==tchgroups.(fn{j}));
+                    if ~isempty(d)
+                        tchgroups.(fn{j}) = a(d,2);
+                    else
+                        tchgroups.(fn{j}) = [];
+                        error([convertStringsToChars(tchgroups.(fn{j})) ' IS MISSING INSIDE THE CONVERSION FILE.']);
+                    end
                 end
             end
         end

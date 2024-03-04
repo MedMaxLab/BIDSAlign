@@ -56,6 +56,8 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
         if c
             [~,EEG] = evalc("pop_loadset(path_file);");
 
+            
+
             dataN = EEG.data;
             if norm
                 dataN = normalize(dataN,2);
@@ -66,6 +68,7 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
             catch
                 error(['ERROR IN: ' a(i).name]);
             end
+
             Pxx_group(t,:,:) = Pxx(2:Lf+1,:);
             F = F(2:Lf+1);
 

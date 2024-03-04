@@ -79,19 +79,20 @@ function [c] = plot_topography(paf_mean, paf, ind_f, groups, mA, chanloc, band_n
 
         mr = mean(TEST_A,2);
         nexttile;
-        if isempty(norm)
-            if channelNumbers>20
-                topoplot(mr,chanloc,'maplimits',[minPSD(i) maxPSD(i)],'colormap',cmap,'verbose',verb);
-            else
-                topoplot(mr,chanloc,'electrodes','labels','maplimits',[minPSD(i) maxPSD(i)],'colormap', cmap,'verbose',verb);
-            end
-        elseif isequal(norm, 'minmax')
-            if length(chanloc)>20
-                topoplot(mr,chanloc,'maplimits','minmax','colormap',cmap,'verbose',verb);
-            else
-                topoplot(mr,chanloc,'electrodes','labels','maplimits','minmax','colormap',cmap,'verbose',verb);
-            end
+
+        if channelNumbers > 20
+            electrode_mode = 'on';
+        else
+            electrode_mode = 'labels';
         end
+
+        if isempty(norm)
+            range = [minPSD(i) maxPSD(i)];
+        else
+            range = 'minmax';
+        end
+
+        topoplot(mr,chanloc,'electrodes',electrode_mode,'maplimits',range,'colormap',cmap,'verbose',verb);
 
         if length(groups)>1 && length(pipelines)==1
             title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | ' groups{j}],'FontSize',14);
