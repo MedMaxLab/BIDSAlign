@@ -37,14 +37,21 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     end
 
     %% Optional Input Variables
+    
     freq_vec = [0.1,4,8,13,30,45];
     pth = 0.05;
     norm_cbar_topo = [];
     norm_data = true;
     test_parametric = false;
     FDR_correction = true;
-    nperms = 20000;
-    rng(12345);
+    nperms = 200;
+
+    % ERP
+    event_name = {'S  6'};
+    epoch_lims = [-0.5 1.5];
+    smooth = 5;
+    channels = ["FZ","PZ"];
+
 
     chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
@@ -60,7 +67,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     tchgroups.g2 = ["AFZ"];
     tchgroups.g3 = ["F6"];
     tchgroups.g4 = ["T7"];
-    tchgroups.g5 = ["FCZ"];
+    tchgroups.g5 = ["CZ"];
     tchgroups.g6 = ["T8"];
     tchgroups.g7 = ["P5"];
     tchgroups.g8 = ["POZ"];
@@ -132,7 +139,6 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %ind_f = ind_f -1;
     
     %% PSD
-    FigH1 = figure('Position', get(0, 'Screensize')); 
     fn = fieldnames(chgroups);
 
     % Find Channel corrispondance in differet Channel systems
@@ -159,8 +165,9 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         end
     end
 
-
-    tiledlayout(ceil(sqrt(length(fn))),ceil(sqrt(length(fn))), 'Padding', 'none', 'TileSpacing', 'compact');
+    
+    FigH1 = figure('Position', get(0, 'Screensize')); 
+    tiledlayout(ceil(sqrt(length(fn))),ceil(sqrt(length(fn))), 'Padding', 'compact', 'TileSpacing', 'tight');
 
     % Generate PSD Plots
     for i=1:length(fn)
@@ -206,7 +213,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %% Boxplot
     
     FigH2 = figure('Position', get(0, 'Screensize'));
-    tiledlayout(2,3, 'Padding', 'none', 'TileSpacing', 'compact')
+    tiledlayout(2,3, 'Padding', 'compact', 'TileSpacing', 'tight');
     
     positions = zeros(length(groups)*(length(groups)-1)/2,2);
     ep = 0.1;
@@ -348,18 +355,18 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     if length(groups)>1 && length(pipelines)==1
         if length(groups)==2
-            tiledlayout(length(groups)+1,length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
+            tiledlayout(length(groups)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
         else
-            tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
+            tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
         end
     elseif length(groups)==1 && length(pipelines)>1
         if length(pipelines)==2
-            tiledlayout(length(pipelines)+1,length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
+            tiledlayout(length(pipelines)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
         else
-            tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
+            tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
         end
     elseif length(groups)==1 && length(pipelines)==1
-        tiledlayout(1,length(ind_f)-1, 'Padding', 'none', 'TileSpacing', 'compact')
+        tiledlayout(1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
     end
 
     % Extract Max-Min for Topoplot-Colormap
@@ -368,7 +375,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     for j=1:length(groups)
         for i=1:length(ind_f)-1
-            [TEST, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);    
+            
+            [TEST, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i); 
             mA = mean(TEST,1);
             minPSD(i) = min([minPSD(i),min(mA)]);
             maxPSD(i) = max([maxPSD(i),max(mA)]);
@@ -449,7 +457,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         end
 
         FigH4 = figure('Position', get(0, 'Screensize'));
-        tiledlayout(ceil(sqrt(length(fn))),ceil(sqrt(length(fn))),'Padding', 'none', 'TileSpacing', 'compact');
+        tiledlayout(ceil(sqrt(length(fn))),ceil(sqrt(length(fn))), 'Padding', 'compact', 'TileSpacing', 'tight');
 
         for i=1:length(fn)
             nexttile;
@@ -493,11 +501,65 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     sgtitle([filename ' | Time Comparison'],'Interpreter','none');
     end
 
+    if ~isempty(filename)
+        
+        FigH5 = figure('Position', get(0, 'Screensize'));
+        tiledlayout(length(groups),length(channels), 'Padding', 'compact', 'TileSpacing', 'tight');
+        c=1;
+        for i=1:length(groups)
+            for j=1:length(channels)
+                
+                if verbose
+                    if length(gint)>=1 && length(pint)==1
+                        EEG = pop_loadset([folder gint{i} '_' pint{1} '/' filename '.set']);
+                    elseif length(pint)>1 && length(gint)==1
+                        EEG = pop_loadset([folder gint{1} '_' pint{i} '/' filename '.set']); 
+                    end
+                    EEG = pop_epoch(EEG, event_name, epoch_lims, 'epochinfo', 'yes');
+                    EEG = pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);
+                else
+                    if length(gint)>=1 && length(pint)==1
+                        [~,EEG] = evalc("pop_loadset([folder gint{i} '_' pint{1} '/' filename '.set']);");
+                    elseif length(pint)>1 && length(gint)==1
+                        [~,EEG] = evalc("pop_loadset([folder gint{1} '_' pint{i} '/' filename '.set']);"); 
+                    end
+                    [~,EEG] = evalc("pop_epoch(EEG, event_name, epoch_lims, 'epochinfo', 'yes');");
+                    [~,EEG] = evalc("pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);");  
+                end
+                listB = strings(1,length(EEG.chanlocs));
+                for t=1:length(EEG.chanlocs)
+                    listB(t) = string(EEG.chanlocs(t).labels);                             
+                end
+        
+                [channel_index, ~] = get_indexch(listB, channels(j));
+                if isempty(channel_index)
+                    error('CHANNEL NOT FOUND');
+                else
+                    titl = [EEG.chanlocs(channel_index).labels ' | ' groups{i}];
+                end
+        
+                subplot(length(groups),length(channels),c);
+                if verbose
+                    pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' ,...
+                                'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });
+                else
+                    cmd2run = "pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' , " + ...
+                              " 'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });";
+                    [~] = evalc(cmd2run);
+                end
+                c=c+1;
+            end
+        end
+        sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
+        
+    end
+
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_chansPSD.png']);
         saveas(FigH3,[save_img dataset '_' pipelines{1} '_topoplot.png']);
         if ~isempty(filename)
             saveas(FigH4,[save_img dataset '_' pipelines{1} '_timechan.png']);
+            saveas(FigH5,[save_img dataset '_' pipelines{1} '_erp.png']);
         end
     end
 

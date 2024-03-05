@@ -74,7 +74,6 @@ function [ar, ind_f_iaf] = band_content(m,paf_v,paf,ind_f,F,i)
                     ar(k,:) = (trapz(dF,mr)/(dF(end)-dF(1)))';
                 end
             end
-
         end
 
     else
