@@ -71,7 +71,7 @@ params_info = struct('low_freq',1,...                          %filtering
                      'lineC',4, ...                                   %1° ASR
                      'burstC',20,...                               %2° ASR
                      'windowC',0.25,...                        %2° ASR
-                     'burstR','on',...                             %2° ASR
+                     'burstR','off',...                             %2° ASR
                      'th_reject',250,...                        %amplitude threshold in uV
                      'ica_type','fastica',...                     %ICA
                      'non_linearity','tanh',...                  %ICA
@@ -89,7 +89,7 @@ params_info = struct('low_freq',1,...                          %filtering
                                          'filtering'  , true,...
                                          'ICA'        , false,...
                                          'ICrejection', false,... 
-                                         'ASR'        , false,...
+                                         'ASR'        , true,...
                                          'rereference', true));
 
 %% Set Paths

@@ -1,5 +1,5 @@
 
-function groups_visualization(folder, filename, save_img, git_path, dataset, groups, pipelines, paf, exclude_subj, channel_system, verbose)
+function groups_visualization(folder, filename, save_img, git_path, dataset, groups, pipelines, paf, exclude_subj, channel_system, event_name, epoch_lims, verbose)
     % FUNCTION: groups_visualization
     %
     % Description: Generates visualizations of EEG data for different groups.
@@ -18,6 +18,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %   - paf (logical): Indicates whether to calculate and plot Peak Alpha Frequency (PAF) or not.
     %   - exclude_subj (cell array): File names of subject to exclude from visualization.
     %   - channel_system (char): Channel system used in the dataset.
+    %   - event_name (cell array): Event names for epoching.
+    %   - epoch_lims (numeric array): Epoch limits [min max] in [s].
     %   - verbose: Boolean setting the verbosity level.
     %
     % Output:
@@ -47,8 +49,6 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     nperms = 200;
 
     % ERP
-    event_name = {'S  6'};
-    epoch_lims = [-0.5 1.5];
     smooth = 5;
     channels = ["FZ","PZ"];
 
@@ -501,11 +501,14 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     sgtitle([filename ' | Time Comparison'],'Interpreter','none');
     end
 
-    if ~isempty(filename)
+    if ~isempty(filename) && ~isempty(event_name)
         
         FigH5 = figure('Position', get(0, 'Screensize'));
-        tiledlayout(length(groups),length(channels), 'Padding', 'compact', 'TileSpacing', 'tight');
-        c=1;
+        tiledlayout(length(groups)+1,length(channels), 'Padding', 'compact', 'TileSpacing', 'tight');
+        count=1;
+        minPSD = 10^20;
+        maxPSD = 10^(-20);
+
         for i=1:length(groups)
             for j=1:length(channels)
                 
@@ -538,17 +541,64 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                     titl = [EEG.chanlocs(channel_index).labels ' | ' groups{i}];
                 end
         
-                subplot(length(groups),length(channels),c);
-                if verbose
-                    pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' ,...
-                                'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });
-                else
-                    cmd2run = "pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' , " + ...
-                              " 'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });";
-                    [~] = evalc(cmd2run);
-                end
-                c=c+1;
+                % subplot(length(groups),length(channels),c);
+                % if verbose
+                %     pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' ,...
+                %                 'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });
+                % else
+                %     cmd2run = "pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' , " + ...
+                %               " 'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });";
+                %     [~] = evalc(cmd2run);
+                % end
+                % c=c+1;
+
+                nexttile;
+                %pop_erpimage(EEG,1, [channel_index],[[]],title,smooth,1,{},[],'' ,...
+                %     'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });
+                [a,b,c] = size(EEG.data);
+                ERP_matrix = squeeze(EEG.data(channel_index,:,:))';
+                ERP_matrix_mean = movmean(ERP_matrix,smooth);
+    
+                imagesc(EEG.times,1:1:c,ERP_matrix_mean);
+                ylabel('Trials');
+                xlabel('Time [ms]');
+                cmap = colormap('jet');
+                title(titl);
+                evalc(['ax' num2str(count)  ' = gca']);    
+                evalc(['EEG_' groups{i} '=EEG']);
+                minPSD = min([minPSD min(ERP_matrix_mean,[],"all")]);
+                maxPSD = max([maxPSD max(ERP_matrix_mean,[],"all")]);
+                count = count+1;
             end
+        end
+
+        for i=1:length(groups)*length(channels)
+            ax = eval(['ax' num2str(i)]);
+            ax.LineWidth = 1.1;
+            ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
+            cbar = colorbar(ax);
+            set(cbar, 'ylim', [minPSD maxPSD]);
+        end
+        
+        for j=1:length(channels)
+            nexttile;
+            [channel_index, ~] = get_indexch(listB, channels(j));
+            for i=1:length(groups)
+                EEG = eval(['EEG_' groups{i}]);
+                channel_ERP_mean = squeeze(mean(EEG.data(channel_index,:,:),3)');
+                evalc(['ERP_' groups{i} '= channel_ERP_mean']);
+                channel_ERP_std  = squeeze(std(EEG.data(channel_index,:,:),[],3)');
+                norm_factor = 1/sqrt(c-1);
+                shadedErrorBar(EEG.times,channel_ERP_mean, channel_ERP_std*norm_factor,{'Color',colors{i}}); hold on;
+            end
+            title(['AVG ERP | ' EEG.chanlocs(channel_index).labels])
+            lgd = legend(groups);
+            lgd.Location ='southwest';
+            ax = gca;
+            ax.LineWidth = 1.1;
+            ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
+            xlabel('Time [ms]');
+            ylabel('Potential [\muV]');
         end
         sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
         
