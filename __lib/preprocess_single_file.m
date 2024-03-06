@@ -1,5 +1,5 @@
 
-function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, ...
+function [EEG,L, obj_info] = preprocess_single_file(L, obj_info, data_info, params_info, ...
     path_info, template_info, save_info, verbose)
     % FUNCTION: preprocess_single_file
     %
@@ -22,6 +22,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
     % Output:
     %   - EEG: EEG data structure after preprocessing.
     %   - L: Updated structure containing information about channel locations.
+    %   - obj_info: Updated structure containing information about the EEG data file.
     %
     % Notes:
     %   - This function performs various preprocessing steps on a single EEG data file,
@@ -47,7 +48,7 @@ function [EEG,L] = preprocess_single_file(L, obj_info, data_info, params_info, .
     end
 
     %% Overwrite Reference
-    [EEG] = get_reference(EEG, data_info, obj_info, verbose);
+    [EEG, obj_info] = get_reference(EEG, data_info, obj_info, verbose);
 
     %% Trye to Import Event
     if isempty(EEG.event) && ~isempty(obj_info.event_filename)

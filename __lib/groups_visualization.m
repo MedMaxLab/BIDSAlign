@@ -180,7 +180,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         nexttile;
         for j=1:length(groups)
             [ m, s, norm_factor] = get_metrics(eval(['Pxx_' groups{j}]), ch_index, [], [1 3]);
-            [minPSD, maxPSD] = plot_channels_PSD(m, s, norm_factor, colors{j}, groups{j}, F, minPSD, maxPSD);
+            [minPSD, maxPSD] = plot_channels_PSD(m, s, norm_factor, colors{j}, F, minPSD, maxPSD);
         end
     
         letter_y = maxPSD*1.2;

@@ -56,6 +56,7 @@ function [EEG] = rereference(EEG, data_info, params_info, obj_info, ...
                 end
                 EEG.history = [EEG.history newline 'RE-REFERENCE TO: ' ...
                     standard_reference];
+                
             end
         else
             %% Check if ref. is in the channel location -------------------------

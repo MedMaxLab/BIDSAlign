@@ -57,19 +57,30 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     %% Extract Channels Name 
     B = EEG.chanlocs;
     [listB] = list_chan_systems(B,data_info.channel_system, ...
-        template_info,data_info.channel_systems);
+                                template_info,data_info.channel_systems, false);
+
+    %% Handle Old Reference
+    % if isempty(intersect(convertCharsToStrings(obj_info.old_reference),listB))
+    %     old_reference_registered = false;
+    % else
+    %     old_reference_registered = true;
+    % end
 
     %% Check number of missing channels and save who 
     pad_interpol_channels = false(chans_DATA_MATRIX,1);
-    number_miss_ch = 0;
-
-    for t=1:chans_DATA_MATRIX
-        chan_name = template_info.template_matrix(t);
-        if isempty(find(listB == chan_name,1)) % chan from template not in chanloc file
-            number_miss_ch = number_miss_ch+1;
-            pad_interpol_channels(t) = true;   %classified as interpolated
-        end
-    end
+    [val,pos] = setdiff(template_info.template_matrix,listB);
+    % ref_ind = [];
+    % for i=1:length(val)
+    %     if isequal(val(i),obj_info.old_reference)
+    %         ref_ind = i;
+    %     end
+    % end
+    % if ~isempty(ref_ind)
+    %     val(ref_ind) = [];
+    %     pos(ref_ind) = [];
+    % end
+    pad_interpol_channels(pos) = 1;
+    number_miss_ch = length(val);
 
     %% Interpolation Step 
     if number_miss_ch ~= 0 
@@ -81,31 +92,44 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
         % But chanlocs is not used anymore.
         if verbose
             EEG1 = pop_interp(EEG, L1, params_info.interpol_method); 
+            %EEG1 channell order is changed!
         else
             [~, EEG1] = evalc('pop_interp(EEG, L1, params_info.interpol_method);');
         end
+        % Update channel order and list of names
     else
         EEG1 = EEG;
     end
-       
-    %% Update Channels Name 
-    B = EEG1.chanlocs;
-    [listB] = list_chan_systems(B,data_info.channel_system, ...
-        template_info,data_info.channel_systems);
 
+    B1 = EEG1.chanlocs;
+    [listB1] = list_chan_systems(B1,data_info.channel_system, template_info,data_info.channel_systems, false);
+       
     %% Set the standard ref channel as a vector of zeros 
     %Here if Cz is not present, is also interpolated, so then Cz should be 0.
-    if ~isequal(standard_ref_ch,'COMMON')
-        EEG1.data(listB==standard_ref_ch,:) = zeros(1,length(EEG.data));
-    end
+    % if ~isequal(standard_ref_ch,'COMMON')
+    %     EEG1.data(listB==standard_ref_ch,:) = zeros(1,length(EEG.data));
+    % end
 
     %% Select only channels in the template 
-    NchanS = length(template_info.template_matrix);
-    mask_ch = zeros(NchanS,1);
-    for t=1:NchanS
-        J = find(listB == template_info.template_matrix(t));
+    mask_ch = zeros(chans_DATA_MATRIX,1);
+    for t=1:chans_DATA_MATRIX
+        if  isequal(data_info.channel_system,data_info.channel_systems{1}) || ...
+            isequal(data_info.channel_system,data_info.channel_systems{2}) || ...
+            isequal(data_info.channel_system,data_info.channel_systems{3})
+
+            J = find(listB1 == template_info.template_matrix(t));
+
+        elseif isequal(data_info.channel_system, data_info.channel_systems{4}) || ...
+               isequal(data_info.channel_system, data_info.channel_systems{5})
+
+            K = find(template_info.conversion(:,1)==template_info.template_matrix(t));
+            J = find(listB1 == template_info.conversion(K,2));
+        end
+
         if ~isempty(J)
             mask_ch(t) = J;
+        else
+            error('MISSING CHANNEL FROM TEMPLATE');
         end
     end
 
@@ -154,7 +178,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
 
 end
 
-function [listB] = list_chan_systems(B,channel_system,template_info,channel_systems)
+function [listB] = list_chan_systems(B,channel_system,template_info,channel_systems, conversion)
 
     NchanB = length(B);
     listB = strings(1,NchanB);
@@ -170,11 +194,15 @@ function [listB] = list_chan_systems(B,channel_system,template_info,channel_syst
     elseif isequal(channel_system, channel_systems{4}) || ...
             isequal(channel_system, channel_systems{5})
         for t = 1:NchanB
-            mask = template_info.conversion(:,2) == B(t).labels;
-            if any(mask) 
-                % in this way we neglect channels 
-                % that are not present in the conversion file
-                listB(t) = template_info.conversion(mask,1);
+            if conversion
+                mask = template_info.conversion(:,2) == B(t).labels;
+                if any(mask) 
+                    % in this way we neglect channels 
+                    % that are not present in the conversion file
+                    listB(t) = template_info.conversion(mask,1);
+                end
+            else
+                listB(t) = string(B(t).labels);
             end
         end
     end

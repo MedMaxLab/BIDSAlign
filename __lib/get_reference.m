@@ -1,5 +1,5 @@
 
-function [EEG] = get_reference(EEG, data_info, obj_info, verbose)
+function [EEG, obj_info] = get_reference(EEG, data_info, obj_info, verbose)
     % FUNCTION: get_reference
     %
     % Description: Check and update the EEG reference based on information from JSON reference.
@@ -15,6 +15,7 @@ function [EEG] = get_reference(EEG, data_info, obj_info, verbose)
     %
     % Output:
     %   - EEG (struct): Updated EEG structure with reference information.
+    %   - obj_info (struct): Updated struct with reference EEG information.
     %
     % Author: [Andrea Zanola]
     % Date: [28/02/2024]
@@ -102,5 +103,6 @@ function [EEG] = get_reference(EEG, data_info, obj_info, verbose)
 
     %% Overwrite EEG reference
     EEG.ref = dataset_reference;
+    obj_info.old_reference = EEG.ref;
 
 end
