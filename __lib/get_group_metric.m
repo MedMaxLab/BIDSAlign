@@ -54,11 +54,15 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
         end
 
         if c
-            [~,EEG] = evalc("pop_loadset(path_file);");
+            if verbose
+                EEG = pop_loadset(path_file);
+            else
+                [~,EEG] = evalc("pop_loadset(path_file);");
+            end
 
             dataN = EEG.data;
             if norm
-                dataN = normalize(dataN,2);
+                dataN = normalize(dataN,2,'zscore');
             end
 
             try

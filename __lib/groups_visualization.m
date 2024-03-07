@@ -41,17 +41,16 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %% Optional Input Variables
     
     freq_vec = [0.1,4,8,13,30,45];
-    pth = 0.05;
+    pth = 0.01;
     norm_cbar_topo = [];
     norm_data = true;
     test_parametric = false;
     FDR_correction = true;
-    nperms = 200;
+    nperms = 20000;
 
     % ERP
     smooth = 5;
     channels = ["FZ","PZ"];
-
 
     chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
@@ -105,26 +104,46 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         listB(t) = string(EEG.chanlocs(t).labels);                             
     end
     
-    %% Import Data and Get PSD matrix per group
+    %% Import Data and Get PSD, ERP matrix per group
 
     if length(groups)>=1 && length(pipelines)==1
         for i=1:length(groups)
             group = [groups{i} '_' pipelines{1}];
-            [t,F, paf_mean, paf_std] = get_group_metric([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
-            evalc(['Pxx_' groups{i} '=t']);
+            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+            evalc(['Pxx_' groups{i} '=Pxx']);
             evalc(['paf_mean_' groups{i} '=paf_mean']);
             evalc(['paf_std_' groups{i} '=paf_std']);
+        end
+
+        if isempty(filename) && ~isempty(event_name)
+            for i=1:length(groups)
+                group = [groups{i} '_' pipelines{1}];
+                [Pxx,F, paf_mean, paf_std] = get_group_ERP([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+                evalc(['Pxx_' groups{i} '=Pxx']);
+                evalc(['paf_mean_' groups{i} '=paf_mean']);
+                evalc(['paf_std_' groups{i} '=paf_std']);
+            end  
         end
         gint = groups;
         pint = pipelines;
     elseif length(pipelines)>1 && length(groups)==1
         for i=1:length(pipelines)
             group = [groups{1} '_' pipelines{i}];
-            [t,F, paf_mean, paf_std] = get_group_metric([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
-            evalc(['Pxx_' pipelines{i} '=t']);
+            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+            evalc(['Pxx_' pipelines{i} '=Pxx']);
             evalc(['paf_mean_' pipelines{i} '=paf_mean']);
             evalc(['paf_std_' pipelines{i} '=paf_std']);
         end 
+
+        if isempty(filename) && ~isempty(event_name)
+            for i=1:length(pipelines)
+                group = [groups{1} '_' pipelines{i}];
+                [Pxx,F, paf_mean, paf_std] = get_group_ERP([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+                evalc(['Pxx_' groups{i} '=Pxx']);
+                evalc(['paf_mean_' groups{i} '=paf_mean']);
+                evalc(['paf_std_' groups{i} '=paf_std']);
+            end
+        end
         gint = groups;
         pint = pipelines;
         groups = pipelines;
@@ -500,7 +519,10 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     sgtitle([filename ' | Time Comparison'],'Interpreter','none');
     end
+    %% Plot Group ERP
 
+
+    %% Plot Single File ERP
     if ~isempty(filename) && ~isempty(event_name)
         
         FigH5 = figure('Position', get(0, 'Screensize'));
@@ -577,6 +599,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             ax.LineWidth = 1.1;
             ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
             cbar = colorbar(ax);
+            cbar.Label.String = '\muV';
             set(cbar, 'ylim', [minPSD maxPSD]);
         end
         
