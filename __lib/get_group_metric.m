@@ -33,6 +33,8 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
     % Examples:
     %   [Pxx_group, F, paf_mean, paf_std] = get_group_metric('data_folder', 256, hanning(256), 128, 64, {'5_1_1_1'}, true)
 
+    modality = 'cog';
+
     if isempty(filename)
         a = dir([folder '/*.set']);
     else
@@ -67,6 +69,7 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
 
             try
                 [Pxx,F] = pwelch(dataN',WINDOW,[],NFFT,EEG.srate);
+                %Pxx = Pxx./mean(Pxx,1);
             catch
                 error(['ERROR IN: ' a(i).name]);
             end
@@ -84,8 +87,17 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
                     else
                         [~,o,~,~] = evalc("restingIAF(EEG.data,length(EEG.chanlocs), 3, [1 45], EEG.srate, PA_range, 7, 5, 'nfft',NFFT, 'taper','hanning');");
                     end
-                    paf_mean(t) = o.paf;
-                    paf_std(t)  = o.pafStd;
+                    
+                    if isequel(modality,'paf')
+                        paf_mean(t) = o.paf;
+                        paf_std(t)  = o.pafStd;
+                    elseif isequel(modality,'cog')
+                        paf_mean(t) = o.cog;
+                        paf_std(t)  = o.cogStd;
+                    else
+                        error('OTHER METRIC');
+                    end
+
                 catch
                     paf_mean(t) = nan;
                     paf_std(t)  = nan;
@@ -96,7 +108,7 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
                 paf_std(t)  = o.pafStd;
                 % %F = c';
                 % 
-                % p = plot(F(ind_PA(1):ind_PA(2)), mean(Pxx(ind_PA(1):ind_PA(2),:),2));
+                % p = plot(F, mean(Pxx(2:Lf+1,:),2));
                 % hold on, xline(o.paf,'Color',p.Color);
 
             end
@@ -108,4 +120,7 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
         end
         c = true;
     end
+    % disp(folder)
+    % p = plot(squeeze(mean(Pxx_group(:,:,:),[1 3])));
+    % hold on, xline(o.paf,'Color',p.Color);
 end

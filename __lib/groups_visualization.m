@@ -1,5 +1,5 @@
 
-function groups_visualization(folder, filename, save_img, git_path, dataset, groups, pipelines, paf, exclude_subj, channel_system, event_name, epoch_lims, verbose)
+function groups_visualization(folder, filename, save_img, git_path, dataset, groups, pipelines, paf, exclude_subj, channel_system, verbose)
     % FUNCTION: groups_visualization
     %
     % Description: Generates visualizations of EEG data for different groups.
@@ -18,8 +18,6 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %   - paf (logical): Indicates whether to calculate and plot Peak Alpha Frequency (PAF) or not.
     %   - exclude_subj (cell array): File names of subject to exclude from visualization.
     %   - channel_system (char): Channel system used in the dataset.
-    %   - event_name (cell array): Event names for epoching.
-    %   - epoch_lims (numeric array): Epoch limits [min max] in [s].
     %   - verbose: Boolean setting the verbosity level.
     %
     % Output:
@@ -30,9 +28,6 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %
     % See also: get_group_metric, plot_channels_PSD, plot_topography
     %
-    % Examples:
-    %   groups_visualization('data_folder', 'images_folder', 'dataset_name', {'group1', 'group2'}, {'pipeline1'}, true, {'5_2_2_1', '5_8_1_1'}, true)
-    %
 
     if length(groups)>1 && length(pipelines)>1
         error('YOU CANNOT PREPROCESS MULTIPLE GROUPS WITH MULTIPLE PIPELINES');
@@ -41,16 +36,12 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %% Optional Input Variables
     
     freq_vec = [0.1,4,8,13,30,45];
-    pth = 0.01;
+    pth = 0.05;
     norm_cbar_topo = [];
     norm_data = true;
     test_parametric = false;
     FDR_correction = true;
     nperms = 20000;
-
-    % ERP
-    smooth = 5;
-    channels = ["FZ","PZ"];
 
     chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
@@ -84,25 +75,24 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     path_file = [a(1).folder '/' a(1).name];
     [~,EEG] = evalc("pop_loadset(path_file);");
 
+    % Get Channel Names
+    listB = strings(1,length(EEG.chanlocs));
+    for t=1:length(EEG.chanlocs)
+        listB(t) = string(EEG.chanlocs(t).labels);                             
+    end
+
+    % PSD metrics
     NFFT    = 2^(nextpow2(EEG.srate)+1); %next power for 0.5Hz 
     WINDOW  = hanning(NFFT);
-
     [~,F] = pwelch(EEG.data',WINDOW,[],NFFT,EEG.srate);
     Nch = EEG.nbchan;
-    
-    % Find frequency indices
+
     t = length(freq_vec);
     ind_f = zeros(1,t);
     for i=1:t
         [~,ind_f(i)] = min(abs(F-freq_vec(i)));
     end
     Lf = length(F(1:ind_f(end)));
-    
-    % Get Channel Names
-    listB = strings(1,length(EEG.chanlocs));
-    for t=1:length(EEG.chanlocs)
-        listB(t) = string(EEG.chanlocs(t).labels);                             
-    end
     
     %% Import Data and Get PSD, ERP matrix per group
 
@@ -115,35 +105,17 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             evalc(['paf_std_' groups{i} '=paf_std']);
         end
 
-        if isempty(filename) && ~isempty(event_name)
-            for i=1:length(groups)
-                group = [groups{i} '_' pipelines{1}];
-                [Pxx,F, paf_mean, paf_std] = get_group_ERP([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
-                evalc(['Pxx_' groups{i} '=Pxx']);
-                evalc(['paf_mean_' groups{i} '=paf_mean']);
-                evalc(['paf_std_' groups{i} '=paf_std']);
-            end  
-        end
         gint = groups;
         pint = pipelines;
     elseif length(pipelines)>1 && length(groups)==1
         for i=1:length(pipelines)
             group = [groups{1} '_' pipelines{i}];
             [Pxx,F, paf_mean, paf_std] = get_group_metric([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+            
             evalc(['Pxx_' pipelines{i} '=Pxx']);
             evalc(['paf_mean_' pipelines{i} '=paf_mean']);
             evalc(['paf_std_' pipelines{i} '=paf_std']);
         end 
-
-        if isempty(filename) && ~isempty(event_name)
-            for i=1:length(pipelines)
-                group = [groups{1} '_' pipelines{i}];
-                [Pxx,F, paf_mean, paf_std] = get_group_ERP([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
-                evalc(['Pxx_' groups{i} '=Pxx']);
-                evalc(['paf_mean_' groups{i} '=paf_mean']);
-                evalc(['paf_std_' groups{i} '=paf_std']);
-            end
-        end
         gint = groups;
         pint = pipelines;
         groups = pipelines;
@@ -155,7 +127,6 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     for i=1:t
         [~,ind_f(i)] = min(abs(F-freq_vec(i)));
     end
-    %ind_f = ind_f -1;
     
     %% PSD
     fn = fieldnames(chgroups);
@@ -230,7 +201,6 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     end
     
     %% Boxplot
-    
     FigH2 = figure('Position', get(0, 'Screensize'));
     tiledlayout(2,3, 'Padding', 'compact', 'TileSpacing', 'tight');
     
@@ -276,9 +246,11 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' num2str(freq_vec(i)) '-' num2str(freq_vec(i+1)) 'Hz'],'FontSize',14);
         ylabel('PSD [\muV^2/Hz]','FontSize',12);
     
-        yt = max(x,[],'all');
-        coeff = 2.5;
-        axis([xlim    0  ceil(yt*coeff)])
+        bandmax = max(x,[],'all');
+        bandmin = min(x,[],'all');
+        coeff = 1.5;
+        yt = 0.8*bandmax;
+        ylim([bandmin*0.8  bandmax*coeff]);
         yspace = linspace(0.2, coeff-1.1, length(groups)*(length(groups)-1)/2);
     
         c=1;
@@ -290,9 +262,16 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                 if H_FDR
                     if verbose
                         disp('----------');
-                        disp([band_name{i} ' | ' groups{j} ' vs ' groups{k} ' p-val: ' num2str(P_FDR)]);
+                        disp([band_name{i} ' | ' groups{j} ' vs ' groups{k} ' p-val: ' num2str(min(P_FDR))]);
                     end
                     plot(positions(c,:), [1 1]*yt*(1+yspace(c)), '-k', mean(positions(c,:)), yt*(1.1+yspace(c)), '*k','LineWidth',1.5);
+
+                    if min(P_FDR)<0.001
+                        pstr = '<0.001';
+                    else
+                        pstr = ['=' num2str(min(P_FDR),'%.3f')];
+                    end
+                    text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c))*1.12,['p' pstr]);
                 end
                 c = c+1;
             end
@@ -326,8 +305,11 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         set(bo,{'linew'},{2});
         hold on;
         
-        yt = max(x,[],'all');
-        axis([xlim    0  ceil(yt*coeff)])
+        bandmax = max(x,[],'all');
+        bandmin = min(x,[],'all');
+        yt = 0.8*bandmax;
+        coeff = 1.5;
+        ylim([bandmin*0.8  bandmax*coeff]);
         
         yspace = linspace(0.2, coeff-1.1, length(groups)*(length(groups)-1)/2);
         
@@ -340,9 +322,15 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                 if H_FDR
                     if verbose
                         disp('----- IAF -----')
-                        disp([groups{j} ' vs ' groups{k} ' p-val: ' num2str(P_FDR)]);
+                        disp([groups{j} ' vs ' groups{k} ' p-val: ' num2str(min(P_FDR))]);
                     end
                     plot(positions(c,:), [1 1]*yt*(1+yspace(c)), '-k', mean(positions(c,:)), yt*(1.1+yspace(c)), '*k','LineWidth',1.5);
+                    if min(P_FDR)<0.001
+                        pstr = '<0.001';
+                    else
+                        pstr = ['=' num2str(min(P_FDR),'%.3f')];
+                    end
+                    text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c)),['p' pstr]);
                 end
                 c = c+1;
             end
@@ -519,120 +507,12 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     sgtitle([filename ' | Time Comparison'],'Interpreter','none');
     end
-    %% Plot Group ERP
-
-
-    %% Plot Single File ERP
-    if ~isempty(filename) && ~isempty(event_name)
-        
-        FigH5 = figure('Position', get(0, 'Screensize'));
-        tiledlayout(length(groups)+1,length(channels), 'Padding', 'compact', 'TileSpacing', 'tight');
-        count=1;
-        minPSD = 10^20;
-        maxPSD = 10^(-20);
-
-        for i=1:length(groups)
-            for j=1:length(channels)
-                
-                if verbose
-                    if length(gint)>=1 && length(pint)==1
-                        EEG = pop_loadset([folder gint{i} '_' pint{1} '/' filename '.set']);
-                    elseif length(pint)>1 && length(gint)==1
-                        EEG = pop_loadset([folder gint{1} '_' pint{i} '/' filename '.set']); 
-                    end
-                    EEG = pop_epoch(EEG, event_name, epoch_lims, 'epochinfo', 'yes');
-                    EEG = pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);
-                else
-                    if length(gint)>=1 && length(pint)==1
-                        [~,EEG] = evalc("pop_loadset([folder gint{i} '_' pint{1} '/' filename '.set']);");
-                    elseif length(pint)>1 && length(gint)==1
-                        [~,EEG] = evalc("pop_loadset([folder gint{1} '_' pint{i} '/' filename '.set']);"); 
-                    end
-                    [~,EEG] = evalc("pop_epoch(EEG, event_name, epoch_lims, 'epochinfo', 'yes');");
-                    [~,EEG] = evalc("pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);");  
-                end
-                listB = strings(1,length(EEG.chanlocs));
-                for t=1:length(EEG.chanlocs)
-                    listB(t) = string(EEG.chanlocs(t).labels);                             
-                end
-        
-                [channel_index, ~] = get_indexch(listB, channels(j));
-                if isempty(channel_index)
-                    error('CHANNEL NOT FOUND');
-                else
-                    titl = [EEG.chanlocs(channel_index).labels ' | ' groups{i}];
-                end
-        
-                % subplot(length(groups),length(channels),c);
-                % if verbose
-                %     pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' ,...
-                %                 'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });
-                % else
-                %     cmd2run = "pop_erpimage(EEG,1, [channel_index],[[]],titl,smooth,1,{},[],'' , " + ...
-                %               " 'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });";
-                %     [~] = evalc(cmd2run);
-                % end
-                % c=c+1;
-
-                nexttile;
-                %pop_erpimage(EEG,1, [channel_index],[[]],title,smooth,1,{},[],'' ,...
-                %     'yerplabel','\muV','erp','on','cbar','on','topo', {[channel_index] EEG.chanlocs EEG.chaninfo });
-                [a,b,c] = size(EEG.data);
-                ERP_matrix = squeeze(EEG.data(channel_index,:,:))';
-                ERP_matrix_mean = movmean(ERP_matrix,smooth);
-    
-                imagesc(EEG.times,1:1:c,ERP_matrix_mean);
-                ylabel('Trials');
-                xlabel('Time [ms]');
-                cmap = colormap('jet');
-                title(titl);
-                evalc(['ax' num2str(count)  ' = gca']);    
-                evalc(['EEG_' groups{i} '=EEG']);
-                minPSD = min([minPSD min(ERP_matrix_mean,[],"all")]);
-                maxPSD = max([maxPSD max(ERP_matrix_mean,[],"all")]);
-                count = count+1;
-            end
-        end
-
-        for i=1:length(groups)*length(channels)
-            ax = eval(['ax' num2str(i)]);
-            ax.LineWidth = 1.1;
-            ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
-            cbar = colorbar(ax);
-            cbar.Label.String = '\muV';
-            set(cbar, 'ylim', [minPSD maxPSD]);
-        end
-        
-        for j=1:length(channels)
-            nexttile;
-            [channel_index, ~] = get_indexch(listB, channels(j));
-            for i=1:length(groups)
-                EEG = eval(['EEG_' groups{i}]);
-                channel_ERP_mean = squeeze(mean(EEG.data(channel_index,:,:),3)');
-                evalc(['ERP_' groups{i} '= channel_ERP_mean']);
-                channel_ERP_std  = squeeze(std(EEG.data(channel_index,:,:),[],3)');
-                norm_factor = 1/sqrt(c-1);
-                shadedErrorBar(EEG.times,channel_ERP_mean, channel_ERP_std*norm_factor,{'Color',colors{i}}); hold on;
-            end
-            title(['AVG ERP | ' EEG.chanlocs(channel_index).labels])
-            lgd = legend(groups);
-            lgd.Location ='southwest';
-            ax = gca;
-            ax.LineWidth = 1.1;
-            ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
-            xlabel('Time [ms]');
-            ylabel('Potential [\muV]');
-        end
-        sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
-        
-    end
 
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_chansPSD.png']);
         saveas(FigH3,[save_img dataset '_' pipelines{1} '_topoplot.png']);
         if ~isempty(filename)
             saveas(FigH4,[save_img dataset '_' pipelines{1} '_timechan.png']);
-            saveas(FigH5,[save_img dataset '_' pipelines{1} '_erp.png']);
         end
     end
 

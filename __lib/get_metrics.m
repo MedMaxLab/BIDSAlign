@@ -47,6 +47,8 @@ function [ mPxx, sPxx, norm_factor] = get_metrics(Pxx, ch_index, sub_index, mean
         norm_factor = 0;
     end
 
+    %norm_factor = 1;
+
     mPxx = squeeze(mean(Pxx(sub_index,:,ch_index),   mean_over));
     sPxx = squeeze( std(Pxx(sub_index,:,ch_index),[],mean_over));
 
