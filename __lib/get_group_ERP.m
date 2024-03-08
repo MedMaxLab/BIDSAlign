@@ -31,7 +31,7 @@ function [ERP_group] = get_group_ERP(folder, filename, channels, listB, event_na
     end
     out = size(a,1);
 
-    ERP_group = zeros(out-length(exclude_subj),LERP,length(channels)); 
+    ERP_group = zeros(length(event_name),out-length(exclude_subj),LERP,length(channels)); 
 
     t = 1;
     for i=1:length(a)
@@ -52,11 +52,18 @@ function [ERP_group] = get_group_ERP(folder, filename, channels, listB, event_na
                 [~,EEG] = evalc("pop_epoch(EEG, event_name, epoch_lims, 'epochinfo', 'yes');");
                 [~,EEG] = evalc("pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);");  
             end
-        
+
+            list_events = [];
+            for j=1:length(EEG.epoch)
+                list_events = [list_events string(EEG.epoch(j).eventtype{1})];
+            end
+
             for j=1:length(channels)
                 [channel_index, ~] = get_indexch(listB, channels(j));
-    
-                ERP_group(t,:,j) = squeeze(mean(EEG.data(channel_index,:,:),3));
+                for k=1:length(event_name)
+                    mask_event = (list_events == convertCharsToStrings(event_name{k}));
+                    ERP_group(k,t,:,j) = squeeze(mean(EEG.data(channel_index,:,mask_event),3));
+                end
             end
         end
         t = t+1;
