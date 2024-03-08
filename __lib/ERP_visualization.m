@@ -1,10 +1,32 @@
 function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,event_name,epoch_lims,exclude_subj,verbose)
+    % ERP_visualization: Visualizes event-related potentials (ERPs) for a group of subjects.
+    %
+    % Syntax:
+    %   ERP_visualization(folder, dataset, groups, pipelines, filename, save_img, event_name, epoch_lims, exclude_subj, verbose)
+    %
+    % Input:
+    %   - folder (string): Path to the folder containing EEG data files.
+    %   - dataset (string): Name of the dataset.
+    %   - groups (cell array of strings): List of group names.
+    %   - pipelines (cell array of strings): List of pipeline names.
+    %   - filename (string): Name of the EEG data file.
+    %   - save_img (string): Optional. Path to save the generated images.
+    %   - event_name (string): Name of the event marker.
+    %   - epoch_lims (vector): Epoch limits [start_time, end_time].
+    %   - exclude_subj (cell array of strings): List of subjects to exclude from analysis.
+    %   - verbose (logical): Flag indicating whether to display progress messages.
+    %
+    % Output:
+    %   None
+    %
+    % Author: [Andrea Zanola]
+    % Date: [08/03/2024]
 
+    %% Optional Inputs
     smooth = 5;
+    dt = 0.1; %Xticks
     channels = ["FZ","PZ"];
     colors = {'r','b','g','m','k','c','y'};
-    
-    
     cmap = colormap('jet');
     
     folder = [folder '/' dataset];
@@ -43,9 +65,9 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         pipelines = gint;
     end
     
+    %% Group ERP
     FigH1 = figure('Position', get(0, 'Screensize'));
     tiledlayout(length(channels),1, 'Padding', 'compact', 'TileSpacing', 'tight');
-    dt = 0.1;
     for i=1:length(channels)
         nexttile;
         for j=1:length(groups)
@@ -129,6 +151,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
     end
     
+    %% Single file ERP
     cmap = colormap('jet');
     minPSD = 10^20;
     maxPSD = 10^(-20);
@@ -222,6 +245,5 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
             saveas(FigH2,[save_img dataset '_' pipelines{1} '_ERP.png']);
         end
     end
-
 
 end
