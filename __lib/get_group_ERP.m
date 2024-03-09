@@ -55,7 +55,11 @@ function [ERP_group] = get_group_ERP(folder, filename, channels, listB, event_na
 
             list_events = [];
             for j=1:length(EEG.epoch)
-                list_events = [list_events string(EEG.epoch(j).eventtype{1})];
+                if iscell(EEG.epoch(1).eventtype)
+                    list_events = [list_events string(EEG.epoch(j).eventtype{1})];
+                elseif ischar(EEG.epoch(1).eventtype)
+                    list_events = [list_events string(EEG.epoch(j).eventtype)];
+                end
             end
 
             for j=1:length(channels)

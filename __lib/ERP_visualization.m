@@ -25,10 +25,12 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     %% Optional Inputs
     smooth = 5;
     dt = 0.1; %Xticks
+    times = [150 250 400 600];
     channels = ["FZ","PZ"];
-    colors = {'r','b','g','m','k','c','y'};
-    cmap = colormap('jet');
+    colors = {'k','g','r','m','k','c','y'};
+    cmap = 'turbo';
     
+    %% Load First Example
     folder = [folder '/' dataset];
     group = [groups{1} '_' pipelines{1}];
     a = dir([folder group '/*.set']);
@@ -65,7 +67,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         pipelines = gint;
     end
     
-    %% Group ERP
+    %% Group ERP (x pipelines)
     FigH1 = figure('Position', get(0, 'Screensize'));
     tiledlayout(length(event_name), length(channels),  'Padding', 'compact', 'TileSpacing', 'tight');
     for k=1:length(event_name)
@@ -73,8 +75,13 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
             nexttile;
             for j=1:length(groups)
                 ERP = eval(['ERP_' groups{j}]);
+
                 [~,d,~,~] = size(ERP);
-                norm_factor = 1/sqrt(d-1);
+                if d~=1
+                    norm_factor = 1/sqrt(d-1);
+                else
+                    norm_factor = 1;
+                end
                 [channel_index, ~] = get_indexch(listB, channels(i));
     
                 m = squeeze(mean(ERP(k,:,:,channel_index),2));
@@ -82,21 +89,76 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
                 shadedErrorBar(EEG.times, m, s*norm_factor,{'Color',colors{j}}); hold on;
             end
 
-            title(['AVG ERP - event: ' event_name{k} ' | ' convertStringsToChars(channels(i))]);
+            title(['event: ' event_name{k} ' | ' convertStringsToChars(channels(i))],'FontSize',14);
             lgd = legend(groups);
             lgd.Location ='southwest';
             ax = gca;
             ax.XTick = (epoch_lims(1):dt:epoch_lims(2))*1000;
-            xlabel('t [ms]');
-            ylabel('\muV');
+            ax.LineWidth = 1.1;
+            ax.FontSize = 12;
+            xlabel('t [ms]','FontSize',12);
+            ylabel('\muV','FontSize',12);
             xline(0,'k','HandleVisibility','off');
             yline(0,'k','HandleVisibility','off');
         end
     end
+    if isempty(filename)
+        if length(gint)==1
+            sgtitle([dataset ' - Group: ' pipelines{1} ' | Pipelines Comparison']);
+        else
+            sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Groups Comparison']);
+        end
+    else
+        sgtitle([filename ' | Pipelines Comparison'],'Interpreter','none');
+    end
+
+    %% Group ERP (x conditions)
+    FigH2 = figure('Position', get(0, 'Screensize'));
+    tiledlayout(length(groups), length(channels),  'Padding', 'compact', 'TileSpacing', 'tight');
+
+    for j=1:length(groups)
+        for i=1:length(channels)
+            nexttile;
+            for k=1:length(event_name)
+                ERP = eval(['ERP_' groups{j}]);
+                [~,d,~,~] = size(ERP);
+                if d~=1
+                    norm_factor = 1/sqrt(d-1);
+                else
+                    norm_factor = 1;
+                end
+                [channel_index, ~] = get_indexch(listB, channels(i));
+    
+                m = squeeze(mean(ERP(k,:,:,channel_index),2));
+                s = squeeze(std(ERP(k,:,:,channel_index),[],2));
+                shadedErrorBar(EEG.times, m, s*norm_factor,{'Color',colors{k}}); hold on;
+            end
+
+            title(['Group: ' groups{j} ' | ' convertStringsToChars(channels(i))],'FontSize',14);
+            lgd = legend(event_name);
+            lgd.Location ='southwest';
+            ax = gca;
+            ax.XTick = (epoch_lims(1):dt:epoch_lims(2))*1000;
+            ax.LineWidth = 1.1;
+            ax.FontSize = 12;
+            xlabel('t [ms]','FontSize',12);
+            ylabel('\muV','FontSize',12);
+            xline(0,'k','HandleVisibility','off');
+            yline(0,'k','HandleVisibility','off');
+        end
+    end
+
+    if isempty(filename)
+        if length(gint)==1
+            sgtitle([dataset ' - Group: ' pipelines{1} ' | Events Comparison']);
+        else
+            sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Events Comparison']);
+        end
+    else
+        sgtitle([filename ' | Events Comparison'],'Interpreter','none');
+    end
     
     %% Plot ERP topography
-    times = [150 250 400 600];
-    
     if verbose
         verb = 'on';
     else
@@ -110,7 +172,8 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     end
     
     if length(event_name)==1
-        FigH1 = figure('Position', get(0, 'Screensize'));
+        FigH3 = figure('Position', get(0, 'Screensize'));
+        cmap = colormap(cmap);
         if length(groups)==2
             tiledlayout(length(groups)+1,length(times), 'Padding', 'compact', 'TileSpacing', 'tight');
         else
@@ -119,11 +182,11 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         
         for i=1:length(groups)
             for j=1:length(times)
-                m = squeeze(mean(eval(['ERP_' groups{i}]),1));
+                m = squeeze(mean(eval(['ERP_' groups{i}]),2));
                 [~,ind_t] = min(abs(EEG.times-times(j)));
                 nexttile;
-                topoplot(m(ind_t,:),EEG.chanlocs,'electrodes',electrode_mode,'maplimits','minmax','colormap',cmap,'verbose',verb);
-                title([num2str(EEG.times(ind_t)) ' ms | ' groups{i}]);
+                topoplot(m(ind_t,:),EEG.chanlocs,'electrodes',electrode_mode,'colormap',cmap,'maplimits','minmax','verbose',verb);
+                title([num2str(EEG.times(ind_t)) ' ms | ' groups{i}],'FontSize',14);
         
                 cbar = colorbar;
                 cbar.Label.String = '\muV';
@@ -133,11 +196,11 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         
         if length(groups)==2
             for j=1:length(times)
-                m = squeeze(mean(eval(['ERP_' groups{1}])-eval(['ERP_' groups{2}]),1));
+                m = squeeze(mean(eval(['ERP_' groups{1}])-eval(['ERP_' groups{2}]),2));
                 [~,ind_t] = min(abs(EEG.times-times(j)));
                 nexttile;
                 topoplot(m(ind_t,:),EEG.chanlocs,'electrodes',electrode_mode,'maplimits','minmax','colormap',cmap,'verbose',verb);
-                title([num2str(EEG.times(ind_t)) ' ms | Discrepancy ' groups{1} ' - ' groups{2}]);
+                title([num2str(EEG.times(ind_t)) ' ms | Discrepancy ' groups{1} ' - ' groups{2}],'FontSize',14);
             
                 cbar = colorbar;
                 cbar.Label.String = '\muV';
@@ -147,22 +210,21 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         
         if isempty(filename)
             if length(gint)==1
-                sgtitle([dataset ' - Group: ' pipelines{1} ' | AVG ERP Comparison']);
+                sgtitle([dataset ' - Group: ' pipelines{1} ' | Time Comparison']);
             else
-                sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | AVG ERP Comparison']);
+                sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Time Comparison']);
             end
         else
-            sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
+            sgtitle([filename ' | Time Comparison'],'Interpreter','none');
         end
     end
 
     %% Single file ERP
-    cmap = colormap('jet');
     minPSD = 10^20;
     maxPSD = 10^(-20);
     
-    if ~isempty(filename) && ~isempty(event_name) && length(event_name)==1
-        FigH2 = figure('Position', get(0, 'Screensize'));
+    if ~isempty(filename) && length(event_name)==1
+        FigH4 = figure('Position', get(0, 'Screensize'));
         tiledlayout(length(pipelines)+1,length(channels), 'Padding', 'compact', 'TileSpacing', 'tight');
         count=1;
         for i=1:length(pipelines)
@@ -189,10 +251,10 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
                 ERP_matrix_mean = movmean(ERP_matrix,smooth);
     
                 imagesc(EEG.times,1:1:c,ERP_matrix_mean);
-                ylabel('Trials');
-                xlabel('Time [ms]');
+                ylabel('Trials','FontSize',12);
+                xlabel('Time [ms]','FontSize',12);
                 cmap = colormap('jet');
-                title(titl);
+                title(titlm,'FontSize',14);
                 evalc(['ax' num2str(count)  ' = gca']);    
                 evalc(['EEG_' pipelines{i} '=EEG']);
                 minPSD = min([minPSD min(ERP_matrix_mean,[],"all")]);
@@ -204,6 +266,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         for i=1:length(pipelines)*length(channels)
             ax = eval(['ax' num2str(i)]);
             ax.LineWidth = 1.1;
+            ax.FontSize = 12;
             ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
             cbar = colorbar(ax);
             set(cbar, 'ylim', [minPSD maxPSD]);
@@ -221,31 +284,37 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
                 norm_factor = 1/sqrt(c-1);
                 shadedErrorBar(EEG.times,channel_ERP_mean, channel_ERP_std*norm_factor,{'Color',colors{i}}); hold on;
             end
-            title(['AVG ERP | ' EEG.chanlocs(channel_index).labels])
+            title([EEG.chanlocs(channel_index).labels],'FontSize',14)
             lgd = legend(pipelines);
             lgd.Location ='southwest';
             ax = gca;
             ax.LineWidth = 1.1;
+            ax.FontSize = 12;
             ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
-            xlabel('Time [ms]');
-            ylabel('Potential [\muV]');
+            xlabel('Time [ms]','FontSize',12);
+            ylabel('Potential [\muV]','FontSize',12);
+        end
+
+        if isempty(filename)
+            if length(gint)==1
+                sgtitle([dataset ' - Group: ' pipelines{1} ' | ERP Comparison']);
+            else
+                sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | ERP Comparison']);
+            end
+        else
+            sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
         end
     end
     
-    if isempty(filename)
-        if length(gint)==1
-            sgtitle([dataset ' - Group: ' pipelines{1} ' | ERP Comparison']);
-        else
-            sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | ERP Comparison']);
-        end
-    else
-        sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
-    end
 
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_AVGERP.png']);
-        if ~isempty(filename)
-            saveas(FigH2,[save_img dataset '_' pipelines{1} '_ERP.png']);
+        saveas(FigH2,[save_img dataset '_events_AVGERP.png']);
+        if length(event_name)==1
+            saveas(FigH3,[save_img dataset '_' pipelines{1} '_topoplot.png']);
+        end
+        if ~isempty(filename) && length(event_name)==1
+            saveas(FigH4,[save_img dataset '_' pipelines{1} '_ERP.png']);
         end
     end
 
