@@ -48,7 +48,7 @@ function [H] = shadedErrorBar(x,y,errBar,lineProps)
         lineProps={lineProps}; 
     end
     
-    H.mainLine=plot(x,y,lineProps{:},'HandleVisibility','off');
+    H.mainLine=plot(x,y,lineProps{:},'HandleVisibility','off','LineWidth',1.5);
     
     col=get(H.mainLine,'color');
     edgeColor=col+(1-col)*0.55;

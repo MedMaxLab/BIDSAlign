@@ -53,10 +53,15 @@ function [ERP_group] = get_group_ERP(folder, filename, channels, listB, event_na
                 [~,EEG] = evalc("pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);");  
             end
 
+            %% Extract list_events
             list_events = [];
             for j=1:length(EEG.epoch)
-                if iscell(EEG.epoch(1).eventtype)
-                    list_events = [list_events string(EEG.epoch(j).eventtype{1})];
+                if iscell(EEG.epoch(j).eventtype)
+                    for u=1:length(event_name)
+                        if any(contains(EEG.epoch(j).eventtype,event_name{u}))
+                            list_events = [list_events string(event_name{u})];
+                        end
+                    end  
                 elseif ischar(EEG.epoch(1).eventtype)
                     list_events = [list_events string(EEG.epoch(j).eventtype)];
                 end

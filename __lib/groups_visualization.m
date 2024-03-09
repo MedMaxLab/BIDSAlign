@@ -35,7 +35,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     %% Optional Input Variables
     
-    freq_vec = [0.1,4,8,13,30,45];
+    freq_vec = [0.1,4,8,13,30,44];
     pth = 0.05;
     norm_cbar_topo = [];
     norm_data = true;

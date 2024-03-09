@@ -225,28 +225,28 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     
     if ~isempty(filename) && length(event_name)==1
         FigH4 = figure('Position', get(0, 'Screensize'));
-        tiledlayout(length(pipelines)+1,length(channels), 'Padding', 'compact', 'TileSpacing', 'tight');
+        tiledlayout(length(groups)+1,length(channels), 'Padding', 'compact', 'TileSpacing', 'tight');
         count=1;
-        for i=1:length(pipelines)
+        for i=1:length(groups)
+            if length(gint)>1
+                [~,EEG] = evalc("pop_loadset([folder gint{i} '_' pint{1} '/' filename '.set']);");
+            else
+                [~,EEG] = evalc("pop_loadset([folder gint{1} '_' pint{i} '/' filename '.set']);");
+            end
+            [~,EEG] = evalc("pop_epoch(EEG, event_name, epoch_lims, 'epochinfo', 'yes');");
+            [~,EEG] = evalc("pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);");
+            [~] = evalc(['EEG_' groups{i} '=EEG;']);
+
             for j=1:length(channels)
-                [~,EEG] = evalc("pop_loadset([path dataset groups{1} '_' pipelines{i} '/' filename '.set']);");
-                [~,EEG] = evalc("pop_epoch(EEG, event_name, epoch_lims, 'epochinfo', 'yes');");
-                [~,EEG] = evalc("pop_rmbase(EEG, [epoch_lims(1) 0] ,[]);");
-    
-                listB = strings(1,length(EEG.chanlocs));
-                for t=1:length(EEG.chanlocs)
-                    listB(t) = string(EEG.chanlocs(t).labels);                             
-                end
-    
+
                 [channel_index, ~] = get_indexch(listB, channels(j));
                 if isempty(channel_index)
                     error('CHANNEL NOT FOUND');
                 else
-                    titl = [EEG.chanlocs(channel_index).labels ' | ' pipelines{i}];
+                    titl = [EEG.chanlocs(channel_index).labels ' | ' groups{i}];
                 end
     
                 nexttile;
-                [a,b,c] = size(EEG.data);
                 ERP_matrix = squeeze(EEG.data(channel_index,:,:))';
                 ERP_matrix_mean = movmean(ERP_matrix,smooth);
     
@@ -254,38 +254,44 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
                 ylabel('Trials','FontSize',12);
                 xlabel('Time [ms]','FontSize',12);
                 cmap = colormap('jet');
-                title(titlm,'FontSize',14);
-                evalc(['ax' num2str(count)  ' = gca']);    
-                evalc(['EEG_' pipelines{i} '=EEG']);
+                title(titl,'FontSize',14);
+                %evalc(['ax' num2str(count)  ' = gca']);    
+                %evalc(['EEG_' groups{i} '=EEG']);
+
+                ax = gca;
+                ax.LineWidth = 1.1;
+                ax.FontSize = 12;
+                ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
+                cbar = colorbar(ax);
+
                 minPSD = min([minPSD min(ERP_matrix_mean,[],"all")]);
                 maxPSD = max([maxPSD max(ERP_matrix_mean,[],"all")]);
                 count = count+1;
             end
         end
     
-        for i=1:length(pipelines)*length(channels)
-            ax = eval(['ax' num2str(i)]);
-            ax.LineWidth = 1.1;
-            ax.FontSize = 12;
-            ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
-            cbar = colorbar(ax);
-            set(cbar, 'ylim', [minPSD maxPSD]);
-        end
+        % for i=1:length(groups)*length(channels)
+        %     ax = eval(['ax' num2str(i)]);
+        %     ax.LineWidth = 1.1;
+        %     ax.FontSize = 12;
+        %     ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
+        %     %cbar = colorbar(ax);
+        %     %set(cbar, 'ylim', [minPSD maxPSD]);
+        % end
     
     
         for j=1:length(channels)
             nexttile;
             [channel_index, ~] = get_indexch(listB, channels(j));
-            for i=1:length(pipelines)
-                EEG = eval(['EEG_' pipelines{i}]);
+            for i=1:length(groups)
+                EEG = eval(['EEG_' groups{i}]);
                 channel_ERP_mean = squeeze(mean(EEG.data(channel_index,:,:),3)');
-                evalc(['ERP_' pipelines{i} '= channel_ERP_mean']);
                 channel_ERP_std  = squeeze(std(EEG.data(channel_index,:,:),[],3)');
                 norm_factor = 1/sqrt(c-1);
                 shadedErrorBar(EEG.times,channel_ERP_mean, channel_ERP_std*norm_factor,{'Color',colors{i}}); hold on;
             end
             title([EEG.chanlocs(channel_index).labels],'FontSize',14)
-            lgd = legend(pipelines);
+            lgd = legend(groups);
             lgd.Location ='southwest';
             ax = gca;
             ax.LineWidth = 1.1;
@@ -295,15 +301,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
             ylabel('Potential [\muV]','FontSize',12);
         end
 
-        if isempty(filename)
-            if length(gint)==1
-                sgtitle([dataset ' - Group: ' pipelines{1} ' | ERP Comparison']);
-            else
-                sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | ERP Comparison']);
-            end
-        else
-            sgtitle([filename ' | ERP Comparison'],'Interpreter','none');
-        end
+        sgtitle([filename ' event: ' event_name{1} ' | ERP Comparison'],'Interpreter','none');
     end
     
 
