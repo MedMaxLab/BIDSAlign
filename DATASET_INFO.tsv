@@ -16,3 +16,4 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nos
 15	BMI_HDEEG_4	ds004448			GSN129	CZ		.edf	1000
 16	Nencki_Sym	ds004621			10_5	FCZ		.vhdr	1000
 17	HDEEG1	ds003420	chanloc_template_GSN257.sfp		GSN257	CZ		.vhdr	1000
+18	HDEEG2	ds003421	chanloc_template_GSN257.sfp		GSN257	CZ		.vhdr	1000

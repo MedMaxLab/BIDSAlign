@@ -37,8 +37,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
     freq_vec = [0.1,4,8,13,30,44];
     pth = 0.05;
-    norm_cbar_topo = [];
-    norm_data = true;
+    norm_cbar_topo = 'minmax';
+    norm_data = false;
     test_parametric = false;
     FDR_correction = true;
     nperms = 20000;
@@ -201,159 +201,161 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     end
     
     %% Boxplot
-    FigH2 = figure('Position', get(0, 'Screensize'));
-    tiledlayout(2,3, 'Padding', 'compact', 'TileSpacing', 'tight');
-    
-    positions = zeros(length(groups)*(length(groups)-1)/2,2);
-    ep = 0.1;
-    c=1;
-    for j=1:length(groups)
-        for k=j+1:length(groups)
-            positions(c,:) = [j+ep k-ep];
-            c = c+1;
-        end
-    end
-    
-    for i=1:length(ind_f)-1
-        nexttile;
-        g = [];
-        x = [];
-        
-        for j=1:length(groups)
-            [ m, ~, ~] = get_metrics(eval(['Pxx_' groups{j}]), [], [], [3]);
-            [ar, ~] = band_content(m,eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
-            evalc(['ar' num2str(j) '=ar;']);
-            g = [g; j*ones(length(ar),1)];
-            x = [x; ar];
-        end
-
-        if verbose
-            bo = boxplot(x, g, 'Labels',groups); 
-            hold on;
-        else
-            [~, bo] = evalc("boxplot(x, g, 'Labels', groups);");
-            hold on;
-        end
-        set(bo,{'linew'},{2});
-        ax = gca;
-        ax.FontSize = 12;
-        
-        if ~isempty(ch_index) && length(ch_index)==1
-            label_ch = ['- Channel ' EEG.chanlocs(ch_index).labels];
-        else
-            label_ch = '';
-        end
-        title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' num2str(freq_vec(i)) '-' num2str(freq_vec(i+1)) 'Hz'],'FontSize',14);
-        ylabel('PSD [\muV^2/Hz]','FontSize',12);
-    
-        bandmax = max(x,[],'all');
-        bandmin = min(x,[],'all');
-        coeff = 1.5;
-        yt = 0.8*bandmax;
-        ylim([bandmin*0.8  bandmax*coeff]);
-        yspace = linspace(0.2, coeff-1.1, length(groups)*(length(groups)-1)/2);
-    
-        c=1;
-        for j=1:length(groups)
-            for k=j+1:length(groups)
-    
-                [H_FDR, P_FDR, ~, ~] = group_statistics(eval(['ar' num2str(j)]),eval(['ar' num2str(k)]), pth, test_parametric, FDR_correction, nperms);
-                
-                if H_FDR
-                    if verbose
-                        disp('----------');
-                        disp([band_name{i} ' | ' groups{j} ' vs ' groups{k} ' p-val: ' num2str(min(P_FDR))]);
-                    end
-                    plot(positions(c,:), [1 1]*yt*(1+yspace(c)), '-k', mean(positions(c,:)), yt*(1.1+yspace(c)), '*k','LineWidth',1.5);
-
-                    if min(P_FDR)<0.001
-                        pstr = '<0.001';
-                    else
-                        pstr = ['=' num2str(min(P_FDR),'%.3f')];
-                    end
-                    text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c))*1.12,['p' pstr]);
-                end
-                c = c+1;
-            end
-        end
-        ax = gca;
-        ax.YAxis.Scale = "log";
-        ax.LineWidth = 1.1;
-        grid on;
-    end
-    
-    if ~paf && ~isempty(save_img)
-        saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
-    end
-    
-    %% Boxplot PAF
-    if paf
-        nexttile;
-        
-        g = [];
-        x = [];
-        for j=1:length(groups)
-        
-            g = [g; j*ones(eval(['length(paf_mean_' groups{j} ')']), 1)];
-            x = [x; eval(['paf_mean_' groups{j}])];
-        end
-        if verbose
-            bo = boxplot(x, g, 'Labels',groups);
-        else
-            [~, bo] = evalc("boxplot(x,g, 'Labels',groups);");
-        end
-        set(bo,{'linew'},{2});
-        hold on;
-        
-        bandmax = max(x,[],'all');
-        bandmin = min(x,[],'all');
-        yt = 0.8*bandmax;
-        coeff = 1.5;
-        ylim([bandmin*0.8  bandmax*coeff]);
-        
-        yspace = linspace(0.2, coeff-1.1, length(groups)*(length(groups)-1)/2);
-        
-        c=1;
-        for j=1:length(groups)
-            for k=j+1:length(groups)
-        
-                [ H_FDR, P_FDR, ~, ~] = group_statistics(eval(['paf_mean_' groups{j}]), eval(['paf_mean_' groups{k}]), pth, test_parametric, FDR_correction, nperms);
-
-                if H_FDR
-                    if verbose
-                        disp('----- IAF -----')
-                        disp([groups{j} ' vs ' groups{k} ' p-val: ' num2str(min(P_FDR))]);
-                    end
-                    plot(positions(c,:), [1 1]*yt*(1+yspace(c)), '-k', mean(positions(c,:)), yt*(1.1+yspace(c)), '*k','LineWidth',1.5);
-                    if min(P_FDR)<0.001
-                        pstr = '<0.001';
-                    else
-                        pstr = ['=' num2str(min(P_FDR),'%.3f')];
-                    end
-                    text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c)),['p' pstr]);
-                end
-                c = c+1;
-            end
-        end
-        ax = gca;
-        ax.FontSize = 12;
-        ax.LineWidth = 1.1;
-        title('Individual Alpha Frequency','FontSize',14);
-        ylabel('IAF [Hz]','FontSize',12);
-        grid on;
-    end
-
     if isempty(filename)
-        if length(gint)==1
-            sgtitle([dataset ' - Group: ' pipelines{1} ' | Band Comparison']);
-        else
-            sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Band Comparison']);
+        FigH2 = figure('Position', get(0, 'Screensize'));
+        tiledlayout(2,3, 'Padding', 'compact', 'TileSpacing', 'tight');
+        
+        positions = zeros(length(groups)*(length(groups)-1)/2,2);
+        ep = 0.1;
+        c=1;
+        for j=1:length(groups)
+            for k=j+1:length(groups)
+                positions(c,:) = [j+ep k-ep];
+                c = c+1;
+            end
         end
-    else
-        sgtitle([filename ' | Band Comparison'],'Interpreter','none');
-    end
-    if paf && ~isempty(save_img)
-        saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
+        
+        for i=1:length(ind_f)-1
+            nexttile;
+            g = [];
+            x = [];
+            
+            for j=1:length(groups)
+                [ m, ~, ~] = get_metrics(eval(['Pxx_' groups{j}]), [], [], [3]);
+                [ar, ~] = band_content(m,eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
+                evalc(['ar' num2str(j) '=ar;']);
+                g = [g; j*ones(length(ar),1)];
+                x = [x; ar];
+            end
+    
+            if verbose
+                bo = boxplot(x, g, 'Labels',groups); 
+                hold on;
+            else
+                [~, bo] = evalc("boxplot(x, g, 'Labels', groups);");
+                hold on;
+            end
+            set(bo,{'linew'},{2});
+            ax = gca;
+            ax.FontSize = 12;
+            
+            if ~isempty(ch_index) && length(ch_index)==1
+                label_ch = ['- Channel ' EEG.chanlocs(ch_index).labels];
+            else
+                label_ch = '';
+            end
+            title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' num2str(freq_vec(i)) '-' num2str(freq_vec(i+1)) 'Hz'],'FontSize',14);
+            ylabel('PSD [\muV^2/Hz]','FontSize',12);
+        
+            bandmax = max(x,[],'all');
+            bandmin = min(x,[],'all');
+            coeff = 1.5;
+            yt = 0.8*bandmax;
+            ylim([bandmin*0.8  bandmax*coeff]);
+            yspace = linspace(0.2, coeff-1.1, length(groups)*(length(groups)-1)/2);
+        
+            c=1;
+            for j=1:length(groups)
+                for k=j+1:length(groups)
+        
+                    [H_FDR, P_FDR, ~, ~] = group_statistics(eval(['ar' num2str(j)]),eval(['ar' num2str(k)]), pth, test_parametric, FDR_correction, nperms);
+                    
+                    if H_FDR
+                        if verbose
+                            disp('----------');
+                            disp([band_name{i} ' | ' groups{j} ' vs ' groups{k} ' p-val: ' num2str(min(P_FDR))]);
+                        end
+                        plot(positions(c,:), [1 1]*yt*(1+yspace(c)), '-k', mean(positions(c,:)), yt*(1.1+yspace(c)), '*k','LineWidth',1.5);
+    
+                        if min(P_FDR)<0.001
+                            pstr = '<0.001';
+                        else
+                            pstr = ['=' num2str(min(P_FDR),'%.3f')];
+                        end
+                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c))*1.12,['p' pstr]);
+                    end
+                    c = c+1;
+                end
+            end
+            ax = gca;
+            ax.YAxis.Scale = "log";
+            ax.LineWidth = 1.1;
+            grid on;
+        end
+        
+        if ~paf && ~isempty(save_img)
+            saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
+        end
+ 
+        %% Boxplot PAF
+        if paf
+            nexttile;
+            
+            g = [];
+            x = [];
+            for j=1:length(groups)
+            
+                g = [g; j*ones(eval(['length(paf_mean_' groups{j} ')']), 1)];
+                x = [x; eval(['paf_mean_' groups{j}])];
+            end
+            if verbose
+                bo = boxplot(x, g, 'Labels',groups);
+            else
+                [~, bo] = evalc("boxplot(x,g, 'Labels',groups);");
+            end
+            set(bo,{'linew'},{2});
+            hold on;
+            
+            bandmax = max(x,[],'all');
+            bandmin = min(x,[],'all');
+            yt = 0.8*bandmax;
+            coeff = 1.5;
+            ylim([bandmin*0.8  bandmax*coeff]);
+            
+            yspace = linspace(0.2, coeff-1.1, length(groups)*(length(groups)-1)/2);
+            
+            c=1;
+            for j=1:length(groups)
+                for k=j+1:length(groups)
+            
+                    [ H_FDR, P_FDR, ~, ~] = group_statistics(eval(['paf_mean_' groups{j}]), eval(['paf_mean_' groups{k}]), pth, test_parametric, FDR_correction, nperms);
+    
+                    if H_FDR
+                        if verbose
+                            disp('----- IAF -----')
+                            disp([groups{j} ' vs ' groups{k} ' p-val: ' num2str(min(P_FDR))]);
+                        end
+                        plot(positions(c,:), [1 1]*yt*(1+yspace(c)), '-k', mean(positions(c,:)), yt*(1.1+yspace(c)), '*k','LineWidth',1.5);
+                        if min(P_FDR)<0.001
+                            pstr = '<0.001';
+                        else
+                            pstr = ['=' num2str(min(P_FDR),'%.3f')];
+                        end
+                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c)),['p' pstr]);
+                    end
+                    c = c+1;
+                end
+            end
+            ax = gca;
+            ax.FontSize = 12;
+            ax.LineWidth = 1.1;
+            title('Individual Alpha Frequency','FontSize',14);
+            ylabel('IAF [Hz]','FontSize',12);
+            grid on;
+        end
+    
+        if isempty(filename)
+            if length(gint)==1
+                sgtitle([dataset ' - Group: ' pipelines{1} ' | Band Comparison']);
+            else
+                sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Band Comparison']);
+            end
+        else
+            sgtitle([filename ' | Band Comparison'],'Interpreter','none');
+        end
+        if paf && ~isempty(save_img)
+            saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
+        end
     end
 
     %% Topolots PSD
@@ -362,13 +364,21 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     if length(groups)>1 && length(pipelines)==1
         if length(groups)==2
-            tiledlayout(length(groups)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+            if isempty(filename)
+                tiledlayout(length(groups)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+            else
+                tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+            end
         else
             tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
         end
     elseif length(groups)==1 && length(pipelines)>1
         if length(pipelines)==2
-            tiledlayout(length(pipelines)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+            if isempty(filename)
+                tiledlayout(length(pipelines)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+            else
+                tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+            end
         else
             tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
         end
@@ -400,7 +410,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     end
 
     %% Permutation t-test
-    if length(groups)==2
+    if length(groups)==2 && isempty(filename)
         for i=1:length(ind_f)-1
 
             [TEST_A, ~] = band_content(eval(['Pxx_' groups{1}]),eval(['paf_mean_' groups{1}]),paf,ind_f,F,i);

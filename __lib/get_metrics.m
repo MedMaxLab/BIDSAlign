@@ -41,8 +41,14 @@ function [ mPxx, sPxx, norm_factor] = get_metrics(Pxx, ch_index, sub_index, mean
         Nch = length(ch_index);
     end
     
-    if (Nch*Nsubj - 1)~=0
-        norm_factor = 1/sqrt(Nch*Nsubj - 1);
+    % if (Nch*Nsubj - 1)~=0
+    %     norm_factor = 1/sqrt(Nch*Nsubj - 1);
+    % else
+    %     norm_factor = 0;
+    % end
+
+    if (Nsubj - 1)~=0
+        norm_factor = 1/sqrt(Nsubj - 1);
     else
         norm_factor = 0;
     end
