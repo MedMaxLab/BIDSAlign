@@ -134,7 +134,8 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     end
 
     %% Convert from uV to mV
-    DATA_MATRIX = EEG1.data(mask_ch,:)/1000;
+    %DATA_MATRIX = EEG1.data(mask_ch,:)/1000;
+    DATA_MATRIX = EEG1.data(mask_ch,:);
 
     %% Save and Create Tensor or Save Matrix standard template 
     data_tensor_size = size(template_info.template_tensor);

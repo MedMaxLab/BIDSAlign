@@ -211,7 +211,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
                         ' ' num2str(i) '/' num2str(length(vec_obj)) ' ---\n']);
                 end
                 % Extract right electrodes, channels and event filenames
-                [obj_info] = extract_filenames(obj_info, path_info, data_info);
+                [obj_info] = extract_filenames(obj_info, path_info, data_info, template_info);
 
               %% Run preprocess
                 [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, ...

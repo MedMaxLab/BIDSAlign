@@ -1,5 +1,5 @@
 
-function [obj_info] = extract_filenames(obj_info, path_info, data_info)
+function [obj_info] = extract_filenames(obj_info, path_info, data_info, template_info)
     % FUNCTION: extract_filenames
     %
     % Description: Extracts filenames related to EEG data, 
@@ -12,6 +12,7 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     %   - obj_info: Structure containing information about the EEG data file.
     %   - path_info: Structure containing paths for saving preprocessed data.
     %   - data_info: Structure containing information about the EEG dataset.
+    %   - template_info: Structure containing template information.
     %
     % Output:
     %   - obj_info: Updated structure with filenames extracted.
@@ -68,6 +69,10 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info)
     if ~isempty(obj_info.channel_location_filename)
         if isequal(obj_info.channel_location_filename,'loaded')
             obj_info.electrodes_filename = [];
+        elseif isequal(obj_info.channel_location_filename,'default')
+
+            obj_info.electrodes_filename = template_info.standard_chanloc;
+
         else
             obj_info.electrodes_filename = [path_info.dataset_path  ...
                 obj_info.channel_location_filename];

@@ -52,7 +52,7 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     data_info.channel_systems = {'10_20', '10_10', '10_5', 'GSN129', 'GSN257'};
 
     % Create the template struct to store channel template information
-    template_folder           = [path_info.lib_path '/template/template_channel_selection/'];
+    template_folder           = [path_info.lib_path 'template/template_channel_selection/'];
     tensor_template_filename  = 'tensor_channel_template.mat';
     matrix_template_filename  = 'matrix_channel_template.mat';
     
