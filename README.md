@@ -50,34 +50,40 @@ single_file = false;
 dataset_name = [];
 ```
 
-
-# Preprocessing
-The structure *params_info* contains all the parameters you need to set. Please note that the variable *params_info.prep_steps* is another structure in which you can specify the preprocessing steps you want to perform. 
+## Preprocessing
 In the current version of the library, the following preprocessing steps are available:
 1. Channels removal
-2. Segment removal
+2. Segment removal (first and last specified seconds)
 3. Baseline removal
 4. Resampling
 5. Filtering
 6. Rereference
-7. ICA
-8. ASR
+7. Independent Component Analysis and Automatic IC rejection with MARA and ICLabel
+8. ASR, that can be used independently in two ways: for removing bad channels or for removing/reconstructing bad time windows.
 
 Please note that EEG data are assumed to be saved in $\mu V$.
 
+## Saving and Visualization
+In order to use the visualization functions, please save the set folders by specifing the name as *group* _ *pipeline*; for example group could be 'A' indicating Alzheimer and pipeline could be 'ICA' indicating the preprocessing step done.
+BIDSAling provides three main function for visualization of the results:
+1. groups_visualization: you can compare more groups for a single pipeline, or viceversa; you can also specify the single filename to be visualized. Please see the associated paper in order to see which plots can be produced.
+2. ERP_visualization: you can see the average ERP a group of patients or for a single one, for multiple event names. If there is only one event, scalp topographies of channels activation in time is shown.
+3. template_comparison: you can see the differences between the topographies obtained from two channel location, and the effects of the conversion file. 
 
 # Compatibility
 The library was written in MATLAB 2021, EEGLAB 2023.0, requiring the following plug-in:
-- "Biosig" v3.8.1
+- "Biosig" v3.8.3
 - "FastICA" v25
-- "Fileio" v20230716
-- "bva-io" v1.71
-- "clean_rawdata" v2.8
-- "dipfit" v5.2
+- "Fileio" v20240111
+- "ICLabel" v1.4
+- "MARA" v1.2
+- "bva-io" v1.73
+- "clean_rawdata" v2.91
+- "dipfit" v5.3
 - "firfilt" v2.7.1
+- "eegstats" v2.7.1
 
-# Versions
-v1.0 - Library associated to the pubblication < >.
+Moreover interally it uses two functions for the non-parametric permutation t-test \url{https://github.com/eglerean/hfASDmodules/tree/master} and the iaf calculations https://github.com/corcorana/restingIAF. If you want to avoid downloading these external packages, please set iaf_correction=false and test_parametric = true whenever required.
 
 
 
