@@ -35,7 +35,7 @@ You have to specify the dataset name, from which the file is taken, the filename
 single_file = true;
 dataset_name = ['UC_SD'];
 raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf']; 
-raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
+raw_filepath = ['/Users/.../Datasets/ds002778/sub-hc10/ses-hc/eeg/'];
 ```
 2. Preprocess the entire specified dataset.
 You have to specify the dataset. In this case you can process the entire dataset, a portion, only some subjects or some session, or even preprocess specific groups and/or specific task.
