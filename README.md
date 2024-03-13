@@ -4,6 +4,9 @@ BIDSAlign preprocess public datasets saved in both BIDS and non-BIDS structure, 
 For the use of the GUI please see the attached detailed documentation.
 
 ## Preparation Steps
+In order to successfully use BIDSAlign, check the following steps.
+
+### Datasets List
 You have to create a folder where you will store all the datasets present in DATASET_INFO.tsv. 
 DATASET_INFO.csv is a file structured in the following way:
 | dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate |
@@ -11,35 +14,20 @@ DATASET_INFO.csv is a file structured in the following way:
 | 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | 500       |
 | 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       |
 
-Please remember that you have to specify the name of the dataset, not the name of the folder where the dataset is stored, that instead corresponds to *dataset_code* in DATASET_INFO.csv. 
-Since this project uses institutional computing resources, you can choose between two set of paths ('local' or 'server') setting the variable *modality*.
-If you want to use parallel computing resources please set:
-```
-use_parpool = true;
-```
-This will allows to process multiple datasets in parallel.
+Please remember that the name of the folder where the dataset is stored must corresponds to *dataset_code* in DATASET_INFO.csv. 
 
+### BIDS Format
+This library can preprocess datasets structured with both BIDS and non-BIDS format. Thus is expected in input a dataset structured as shown in [https://bids.neuroimaging.io/](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html) .
+However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset.
+As specified by the BIDS format, *participants.tsv* is recommended and should be stored in the dataset folder.
 
-# BIDS Format
-This library can preprocess datasets structured with a BIDS format. Thus is expected in input a dataset structured as shown in https://bids.neuroimaging.io/ .
-However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset. For all the cases handled, please see <>.
-As specified by the BIDS format, *participants.tsv* should be stored in the dataset folder.
-If other diagnostical tests have been performed and stored in .csv files, please create a diagnostical folder and set the corresponding name:
-```
-diagnostic_folder_name = '_test';
-```
-Please note that the 1° column of the *participants.tsv* or any other files reporting diagnostical test, has to be the subjects name.
-Folders inside the dataset folder, should have the name of the corresponding subject. Thus the subjects names in *participants.tsv* should match the folder names.
+### Channel Location
+If a specific channel location should be used for the entire dataset, please enter the filename in the corresponding column in DATASET_INFO.
+If the eeg files have already the channel coordinates, please enter 'loaded' in the corresponding colum in DATASET_INFO.
+If the default channel location can be used for the dataset, enter 'default' DATASET_INFO.tsv, and it will use the default channel locations present in EEGLAB.
+If no channel location is specified, and the field is left empty, than *_electrodes.tsv* files are searched and eventually used.
 
-
-# Channel Location
-If a specific channel location should be used for the entire dataset, please enter the filename in the corresponding column in DATASET_INFO.csv. 
-If the eeg files have already the channel coordinates, please enter 'loaded' in the corresponding colum in DATASET_INFO.csv.
-If no channel location is specified, and the field is left empty, than *_electrodes.tsv* files are used.
-*_electrodes.tsv* and *_channels.tsv* files could be saved in every position inside the BIDS structure. These files will be used for all the eeg recording contained in the folder position.
-
-
-# Usage Modalities
+## Usage Modalities
 This library allows 3 way of using:
 1. Preprocess the specified file.
 You have to specify the dataset name, from which the file is taken, the filename and the corresponding filepath. The modality is activated with the variable *single_file*.
@@ -50,18 +38,16 @@ raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf'];
 raw_filepath = ['E:\02_Documenti\05_PhD\1°_anno\EEG_Prep\Datasets\ds002778\sub-hc10\ses-hc\eeg\'];
 ```
 2. Preprocess the entire specified dataset.
-You have to specify the dataset name and number of subjects, sessions and objects you to want to preprocess. The options are a specified number or 'all', if you want to preprocess the entire dataset.
+You have to specify the dataset. In this case you can process the entire dataset, a portion, only some subjects or some session, or even preprocess specific groups and/or specific task.
 ```
 single_file = false;
 dataset_name = ['UC_SD'];
-numbers_files = struct('N_subj','all','N_sess','all','N_obj','all'); 
 ```
-3. Preprocess all the datasets contained in DATASET_INFO.csv
-You have to specify only number of subjects, sessions and objects you to want to preprocess.
+3. Preprocess all the datasets contained in DATASET_INFO
+You have to left empty the dataset name and set single file as false.
 ```
 single_file = false;
 dataset_name = [];
-numbers_files = struct('N_subj','all','N_sess','all','N_obj','all'); 
 ```
 
 
