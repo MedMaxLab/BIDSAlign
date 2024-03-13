@@ -28,6 +28,11 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     % Date: [23/02/2024]
     %
 
+    title_size = 26;
+    labels_size = 24;
+    ticks_size = 22;
+    ax_size = 2;
+
     if verbose
         verb = 'on';
     else
@@ -45,7 +50,7 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     if isempty(norm)
         range = [minPSD maxPSD];
     else
-        range = 'minmax';
+        range = norm;
     end
 
     %topoplot(mr,chanloc,'electrodes',electrode_mode,'maplimits',range,'colormap',cmap,'verbose',verb);
@@ -53,27 +58,35 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
 
     if ~fdr_plot
         if length(groups)>1 && length(pipelines)==1
-            title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | ' groups{j}],'FontSize',14);
+            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' groups{j}],'FontSize',title_size);
         elseif length(groups)==1 && length(pipelines)>1
-            title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | ' pipelines{j}],'FontSize',14);
+            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' pipelines{j}],'FontSize',title_size);
         elseif length(groups)==1 && length(pipelines)==1
-            title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | ' groups{1} '- ' pipelines{1}],'FontSize',14);
+            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' groups{1} '- ' pipelines{1}],'FontSize',title_size);
         end
         cbar = colorbar;
         cbar.Label.String = 'PSD [\muV^2/Hz]';
-        cbar.FontSize = 10;
+        cbar.FontSize = labels_size;
     else
         if length(groups)>1 && length(pipelines)==1
-            title([groups{1} ' vs ' groups{2} ' | ' string_topoplot ' FDR corrected'],'FontSize',14);
+            title([groups{1} ' vs ' groups{2} ' | ' string_topoplot ' FDR correct'],'FontSize',title_size);
         elseif length(groups)==1 && length(pipelines)>1
-            title([pipelines{1} ' vs ' pipelines{2} ' | ' string_topoplot ' FDR corrected'],'FontSize',14);
+            title([pipelines{1} ' vs ' pipelines{2} ' | ' string_topoplot ' FDR correct'],'FontSize',title_size);
         end
         cbar = colorbar;
         cbar.Label.String = 't statistic';
-        cbar.FontSize = 10;
         if maxPSD ~=0
-            cbar.Ticks = linspace(minPSD,maxPSD,7);
+            cbar.Ticks = ceil(minPSD):1:floor(maxPSD);
+            if length(cbar.Ticks)>10
+                cbar.Ticks = ceil(minPSD):4:floor(maxPSD);
+            elseif length(cbar.Ticks)>5
+                cbar.Ticks = ceil(minPSD):2:floor(maxPSD);
+            end
+        else
+            cbar.Ticks = linspace(-1,1,5);
         end
+        cbar.FontSize = labels_size;
+
     end
     
 end

@@ -37,11 +37,16 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
     freq_vec = [0.1,4,8,13,30,44];
     pth = 0.05;
-    norm_cbar_topo = 'minmax';
+    norm_cbar_topo = [];
     norm_data = false;
     test_parametric = false;
     FDR_correction = true;
     nperms = 20000;
+
+    title_size  = 26;
+    labels_size = 24;
+    ticks_size  = 22;
+    ax_size = 2;
 
     chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
@@ -176,29 +181,32 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         letter_y = maxPSD*1.2;
         xline(4,'--','Color','#808080'); xline(8,'--','Color','#808080'); 
         xline(13,'--','Color','#808080');xline(30,'--','Color','#808080');
-        text(2,letter_y,'\delta','FontSize',16);text(6,letter_y,'\theta','FontSize',16);text(10,letter_y,'\alpha','FontSize',16);
-        text(22,letter_y,'\beta','FontSize',16);text(40,letter_y,'\gamma','FontSize',16);
+        text(2,letter_y,'\delta','FontSize',ticks_size);
+        text(6,letter_y,'\theta','FontSize',ticks_size);text(10,letter_y,'\alpha','FontSize',ticks_size);
+        text(22,letter_y,'\beta','FontSize',ticks_size);text(40,letter_y,'\gamma','FontSize',ticks_size);
         
         ax = gca;
         ax.YAxis.Scale ="log";
-        ax.LineWidth = 1.1;
+        ax.LineWidth = ax_size;
+        ax.FontSize = ticks_size;
         axis([F(1) F(end) minPSD*0.8 maxPSD*1.6]);
-        title(['Mean PSD | chs: '  convertStringsToChars(strjoin(ch_considered))],'FontSize',14);
-        xlabel('f [Hz]','FontSize',12);
-        ylabel('PSD [\muV^2/Hz]','FontSize',12);
+        title(['Mean PSD | chs: '  convertStringsToChars(strjoin(ch_considered))],'FontSize',title_size);
+        xlabel('f [Hz]','FontSize',labels_size);
+        ylabel('PSD [\muV^2/Hz]','FontSize',labels_size);
         grid on;
         lgd = legend(groups);
         lgd.Location ='southwest';
+        lgd.FontSize = ticks_size;
     end
-    if isempty(filename)
-        if length(gint)==1
-            sgtitle([dataset ' - Group: ' pipelines{1} ' | Channels Comparison']);
-        else
-            sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Channels Comparison']);
-        end
-    else
-        sgtitle([filename ' | Channels Comparison'],'Interpreter','none');
-    end
+    % if isempty(filename)
+    %     if length(gint)==1
+    %         sgtitle([dataset ' - Group: ' pipelines{1} ' | Channels Comparison']);
+    %     else
+    %         sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Channels Comparison']);
+    %     end
+    % else
+    %     sgtitle([filename ' | Channels Comparison'],'Interpreter','none');
+    % end
     
     %% Boxplot
     if isempty(filename)
@@ -244,8 +252,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             else
                 label_ch = '';
             end
-            title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' num2str(freq_vec(i)) '-' num2str(freq_vec(i+1)) 'Hz'],'FontSize',14);
-            ylabel('PSD [\muV^2/Hz]','FontSize',12);
+            title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz'],'FontSize',title_size);
+            ylabel('PSD [\muV^2/Hz]','FontSize',labels_size);
         
             bandmax = max(x,[],'all');
             bandmin = min(x,[],'all');
@@ -272,14 +280,15 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                         else
                             pstr = ['=' num2str(min(P_FDR),'%.3f')];
                         end
-                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c))*1.12,['p' pstr]);
+                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c))*1.12,['p' pstr],'FontSize',ticks_size);
                     end
                     c = c+1;
                 end
             end
             ax = gca;
             ax.YAxis.Scale = "log";
-            ax.LineWidth = 1.1;
+            ax.LineWidth = ax_size;
+            ax.FontSize = ticks_size;
             grid on;
         end
         
@@ -331,28 +340,28 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                         else
                             pstr = ['=' num2str(min(P_FDR),'%.3f')];
                         end
-                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c)),['p' pstr]);
+                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c)),['p' pstr],'FontSize',ticks_size);
                     end
                     c = c+1;
                 end
             end
             ax = gca;
-            ax.FontSize = 12;
-            ax.LineWidth = 1.1;
-            title('Individual Alpha Frequency','FontSize',14);
-            ylabel('IAF [Hz]','FontSize',12);
+            ax.FontSize = ticks_size;
+            ax.LineWidth = ax_size;
+            title('Individual Alpha Frequency','FontSize',title_size);
+            ylabel('IAF [Hz]','FontSize',labels_size);
             grid on;
         end
     
-        if isempty(filename)
-            if length(gint)==1
-                sgtitle([dataset ' - Group: ' pipelines{1} ' | Band Comparison']);
-            else
-                sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Band Comparison']);
-            end
-        else
-            sgtitle([filename ' | Band Comparison'],'Interpreter','none');
-        end
+        % if isempty(filename)
+        %     if length(gint)==1
+        %         sgtitle([dataset ' - Group: ' pipelines{1} ' | Band Comparison']);
+        %     else
+        %         sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Band Comparison']);
+        %     end
+        % else
+        %     sgtitle([filename ' | Band Comparison'],'Interpreter','none');
+        % end
         if paf && ~isempty(save_img)
             saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
         end
@@ -419,9 +428,9 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             [ ~, ~, T_FDR, string_topoplot] = group_statistics(TEST_A, TEST_B, pth, test_parametric, FDR_correction, nperms);
 
             maxPSD = max([abs(min(T_FDR)),abs(max(T_FDR))]);
-            if maxPSD == 0
-                maxPSD = 1;
-            end
+            % if maxPSD == 0
+            %     maxPSD = 1;
+            % end
             minPSD = -maxPSD;
 
             plot_topography(ind_f, groups, T_FDR, EEG.chanlocs, band_name, F, pipelines, j, minPSD, maxPSD, norm_cbar_topo, cmap, i, true, string_topoplot, verbose);
@@ -429,15 +438,15 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         end
     end
 
-    if isempty(filename)
-        if length(gint)==1
-            sgtitle([dataset ' - Group: ' pipelines{1} ' | Topography Comparison']);
-        else
-            sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Topography Comparison']);
-        end
-    else
-        sgtitle([filename ' | Topography Comparison'],'Interpreter','none');
-    end
+    % if isempty(filename)
+    %     if length(gint)==1
+    %         sgtitle([dataset ' - Group: ' pipelines{1} ' | Topography Comparison']);
+    %     else
+    %         sgtitle([dataset ' - Pipeline: ' pipelines{1} ' | Topography Comparison']);
+    %     end
+    % else
+    %     sgtitle([filename ' | Topography Comparison'],'Interpreter','none');
+    % end
 
     %% Temporal of some Channels
     if ~isempty(filename)
@@ -491,14 +500,14 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                         end
                         if isfield(EEG.etc,'clean_sample_mask')
                             t = EEG_1ASR.xmin:1/EEG_1ASR.srate:EEG_1ASR.xmax;
-                            plot(t(EEG.etc.clean_sample_mask), EEG_1ASR.data(c, EEG.etc.clean_sample_mask),colors{j}); hold on;
+                            plot(t(EEG.etc.clean_sample_mask), EEG_1ASR.data(c, EEG.etc.clean_sample_mask),colors{j},'LineWidth',ax_size); hold on;
                         else
                             t = EEG.xmin:1/EEG.srate:EEG.xmax;
-                            plot(t, EEG.data(c,:),colors{j}); hold on;
+                            plot(t, EEG.data(c,:),colors{j},'LineWidth',ax_size); hold on;
                         end
                     else
                         t = EEG.xmin:1/EEG.srate:EEG.xmax;
-                        plot(t, EEG.data(c,:),colors{j}); hold on;
+                        plot(t, EEG.data(c,:),colors{j},'LineWidth',ax_size); hold on;
                     end
                 else
                     error([convertStringsToChars(tchgroups.(fn{i})) ' IS MISSING FROM CHANLOC']);
@@ -506,16 +515,18 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
             end
         
-            title(['ch: ' convertStringsToChars(ch_considered)],'FontSize',14);
-            lgd = legend(groups);
-            lgd.Location ='southwest';
-            xlabel('t[s]','FontSize',12);
-            ylabel('Channel [\muV]','FontSize',12);
+            title(['ch: ' convertStringsToChars(ch_considered)],'FontSize',title_size);
+            xlabel('t[s]','FontSize',labels_size);
+            ylabel('Channel [\muV]','FontSize',labels_size);
             ax = gca;
-            ax.LineWidth = 1.1;
+            ax.LineWidth = ax_size;
+            ax.FontSize = ticks_size;
         end
+        lgd = legend(groups);
+        lgd.Location ='southwest';
+        lgd.FontSize = ticks_size;
 
-    sgtitle([filename ' | Time Comparison'],'Interpreter','none');
+    %sgtitle([filename ' | Time Comparison'],'Interpreter','none');
     end
 
     if ~isempty(save_img)

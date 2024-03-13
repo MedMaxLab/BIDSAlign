@@ -24,10 +24,16 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
     band_name = {'\delta','\theta','\alpha','\beta','\gamma'};
     colors = {'r','b','g','m','k','c','y'};
     cmap = 'turbo';
+    norm_cbar_topo = [];
     norm = false;
     freq_vec = [0.1,4,8,13,30,44];
     template_file = 'chanloc_template_10_5.sfp';
     
+    title_size = 26;
+    labels_size = 24;
+    ticks_size = 22;
+    ax_size = 2;
+
     %%
     if verbose
         verb = 'on';
@@ -137,49 +143,71 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
     end
 
     %% Show Topography Comparison
+    maxPSD = [];
+    minPSD = [];
+    % Find Maximum and Minimum
+    for i=1:length(ind_f)-1
+        [arset, ind_f_iaf] = band_content(Pxx_set,iaf,paf,ind_f,F,i);
+        [armat, ind_f_iaf] = band_content(Pxx_mat,iaf,paf,ind_f,F,i);
+        maxPSD = [maxPSD max([arset,armat],[],'all')];
+        minPSD = [minPSD min([arset,armat],[],'all')];
+    end
+
     FigH1 = figure('Position', get(0, 'Screensize'));
     cmap = colormap(cmap);
     tiledlayout(2,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+
     for i=1:length(ind_f)-1
+
+        if isempty(norm_cbar_topo)
+            range = [minPSD(i) maxPSD(i)];
+        else
+            range = norm_cbar_topo;
+        end
         nexttile;
         [ar, ind_f_iaf] = band_content(Pxx_set,iaf,paf,ind_f,F,i);
 
-        topoplot(ar,EEG.chanlocs,'electrodes',electrode_mode,'maplimits','minmax',...
+        topoplot(ar,EEG.chanlocs,'electrodes',electrode_mode,'maplimits',range,...
                     'colormap',cmap,'verbose',verb,'intrad',0.86,'plotrad',0.6);
 
-        title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | ' channel_system],'FontSize',14);
+        title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | ' channel_system],'FontSize',title_size);
 
         cbar = colorbar;
         cbar.Label.String = 'PSD [\muV^2/Hz]';
-        cbar.FontSize = 10;
+        cbar.FontSize = labels_size;
     end
     for i=1:length(ind_f)-1
+        if isempty(norm_cbar_topo)
+            range = [minPSD(i) maxPSD(i)];
+        else
+            range = norm_cbar_topo;
+        end
         nexttile;
         [ar, ind_f_iaf] = band_content(Pxx_mat,iaf,paf,ind_f,F,i);
 
-        topoplot(ar(mat_chanindex),EEG.chanlocs(set_chanindex),'electrodes',electrode_mode,'maplimits','minmax',...
+        topoplot(ar(mat_chanindex),EEG.chanlocs(set_chanindex),'electrodes',electrode_mode,'maplimits',range,...
                 'colormap',cmap,'verbose',verb,'intrad',0.86,'plotrad',0.6);
 
-        title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | Template'],'FontSize',14);
+        title([band_name{i} ' @' num2str(F(ind_f(i)),3) '-' num2str(F(ind_f(i+1)),3) 'Hz | Template'],'FontSize',title_size);
 
         cbar = colorbar;
         cbar.Label.String = 'PSD [\muV^2/Hz]';
-        cbar.FontSize = 10;
+        cbar.FontSize = labels_size;
     end
-    sgtitle([filename ' | Template Comparison'],'Interpreter','none');
+    %sgtitle([filename ' | Template Comparison'],'Interpreter','none');
 
     %% Inspect Channel Location Comparison
     headrad = 0.5;
-    plotrad = 0.82;
-    intrad = 0.85;
+    plotrad = 0.6;
+    intrad = 0.86;
     FigH2 = figure('Position', get(0, 'Screensize'));
     tiledlayout(2,2, 'Padding', 'compact', 'TileSpacing', 'tight');
     nexttile;
     topoplot([],EEG.chanlocs,'electrodes','labels','intrad',intrad,'plotrad',plotrad,'headrad',headrad);
-    title([channel_system ' Channel Location'],'FontSize',14);
+    title([channel_system ' Channel Location'],'FontSize',title_size);
     nexttile;
     topoplot([],EEG.chanlocs(set_chanindex),'electrodes','labels','intrad',intrad,'plotrad',plotrad,'headrad',headrad);
-    title('Template Channel Location','FontSize',14);
+    title('Template Channel Location','FontSize',title_size);
     nexttile;
     B = readlocs([git_path '__lib/template/template_channel_location/' template_file]);
 
@@ -195,7 +223,7 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
     [temp_chanindex, ~] = get_indexch(listB_temp,listB_mat);
 
     topoplot([],B(temp_chanindex),'electrodes','labels','intrad',intrad,'plotrad',plotrad,'headrad',headrad);
-    title('10/10 Template Channel Location','FontSize',14);
+    title('10/10 Template Channel Location','FontSize',title_size);
 
     nexttile;
     SUB = EEG.chanlocs(set_chanindex);
@@ -203,15 +231,15 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
         SUB(i).labels = strtrim(DATA_STRUCT.template(i,:));
     end
     topoplot([],SUB,'electrodes','labels','intrad',intrad,'plotrad',plotrad,'headrad',headrad);
-    title('10/10 Equivalent Template Channel Location','FontSize',14);
+    title('10/10 Equivalent Template Channel Location','FontSize',title_size);
 
     %% 3D channel location
     plotchans3d([[EEG.chanlocs.X]' [EEG.chanlocs.Y]' [EEG.chanlocs.Z]'],{ EEG.chanlocs.labels });
-    title([channel_system ' Template Channel Location'],'FontSize',14);
+    title([channel_system ' Template Channel Location'],'FontSize',title_size);
 
     if ~isempty(save_img)
-        saveas(FigH1,[filename '_topoplot_template.png']);
-        saveas(FigH2,[filename '_chanlocs.png']);
+        saveas(FigH1,[save_img filename '_topoplot_template.png']);
+        saveas(FigH2,[save_img filename '_chanlocs.png']);
     end
 
 end
