@@ -83,7 +83,7 @@ The library was written in MATLAB 2021, EEGLAB 2023.0, requiring the following p
 - "firfilt" v2.7.1
 - "eegstats" v2.7.1
 
-Moreover interally it uses two functions for the non-parametric permutation t-test \url{https://github.com/eglerean/hfASDmodules/tree/master} and the iaf calculations https://github.com/corcorana/restingIAF. If you want to avoid downloading these external packages, please set iaf_correction=false and test_parametric = true whenever required.
+Moreover interally it uses two functions for the non-parametric permutation t-test https://github.com/eglerean/hfASDmodules/tree/master and the iaf calculations https://github.com/corcorana/restingIAF. If you want to avoid downloading these external packages, please set iaf_correction=false and test_parametric = true whenever required.
 
 
 
