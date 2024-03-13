@@ -70,8 +70,8 @@ BIDSAling provides three main function for visualization of the results:
 2. ERP_visualization: you can see the average ERP a group of patients or for a single one, for multiple event names. If there is only one event, scalp topographies of channels activation in time is shown.
 3. template_comparison: you can see the differences between the topographies obtained from two channel location, and the effects of the conversion file. 
 
-# Compatibility
-The library was written in MATLAB 2021, EEGLAB 2023.0, requiring the following plug-in:
+## Compatibility
+The library was written in MATLAB 2023b, EEGLAB 2023.0, and requires the following plug-in:
 - "Biosig" v3.8.3
 - "FastICA" v25
 - "Fileio" v20240111
