@@ -19,6 +19,24 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
     %
     % Author: [Andrea Zanola]
     % Date: [11/03/2024]
+    %
+    % Example of use:
+    %
+    % folder   = '/Users/.../_set_preprocessed';
+    % save_img = '/Users/.../_png_group_comp/';
+    % git_path = '/Users/.../BIDSAlign/';
+    % mat_filepath = '/Users/.../_mat_preprocessed/';
+    % dataset = 'ds003421';
+    % groups = {'REST'};
+    % pipelines = {'FILT'};
+    % filename = ['18_1_4_1'];
+    % verbose = false;
+    % channel_system = 'GSN257';
+    % paf = false;
+    % set_filepath = [folder '/' dataset groups{1} '_' pipelines{1} '/'];
+    % 
+    % template_comparison(filename, set_filepath, mat_filepath, git_path, save_img, channel_system, paf, verbose);
+    %
 
     %% Optional Inputs
     band_name = {'\delta','\theta','\alpha','\beta','\gamma'};

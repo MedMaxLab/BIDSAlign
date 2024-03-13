@@ -21,6 +21,22 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     %
     % Author: [Andrea Zanola]
     % Date: [08/03/2024]
+    %
+    % Example of use:
+    %
+    % folder   = '/Users/.../_set_preprocessed';
+    % save_img = '/Users/.../_png_group_comp/';
+    % dataset = 'ds004621';
+    % groups = {'ODDBALL'};
+    % pipelines = {'FILT','ICA'};
+    % filename = [];
+    % verbose = false;
+    % exclude_subj = {};
+    % event_name = {'S  6'}; %S 5 standard, S 7 deviant, S 6 target
+    % epoch_lims = [-0.2 1];
+    %
+    % ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,event_name,epoch_lims,exclude_subj,verbose);
+    %
 
     %% Optional Inputs
     smooth = 5;

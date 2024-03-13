@@ -1,5 +1,5 @@
 
-function groups_visualization(folder, filename, save_img, git_path, dataset, groups, pipelines, paf, exclude_subj, channel_system, verbose)
+function groups_visualization(folder, filename, save_img, git_path, dataset, groups, pipelines, paf, exclude_subj, channel_system, test_parametric, verbose)
     % FUNCTION: groups_visualization
     %
     % Description: Generates visualizations of EEG data for different groups.
@@ -18,6 +18,9 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %   - paf (logical): Indicates whether to calculate and plot Peak Alpha Frequency (PAF) or not.
     %   - exclude_subj (cell array): File names of subject to exclude from visualization.
     %   - channel_system (char): Channel system used in the dataset.
+    %   - test_parametric (logical): Indicates if the t-test should be
+    %   parametric or not. In second cases it uses an external function,
+    %   othwerise the MATLAB function ttest2.
     %   - verbose: Boolean setting the verbosity level.
     %
     % Output:
@@ -25,6 +28,24 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %
     % Author: [Andrea Zanola]
     % Date: [23/02/2024]
+    %
+    % Example of use:
+    %
+    % folder   = '/Users/.../_set_preprocessed';
+    % save_img = '/Users/.../_png_group_comp/';
+    % git_path = '/Users/.../BIDSAlign/';
+    % dataset = 'ds002778';
+    % group_hill = {'C','POFF'};
+    % groups_to_plot = {'PIPEF'};
+    % filename = [];
+    % verbose = false;
+    % channel_system = '10_10';
+    % exclude_subj = {};
+    % iaf_correction = false;
+    % test_parametric = false;
+    % 
+    % groups_visualization(folder, filename, save_img, git_path, dataset, group_hill,groups_to_plot,...
+    %                     iaf_correction, exclude_subj, channel_system, test_parametric, verbose);
     %
     % See also: get_group_metric, plot_channels_PSD, plot_topography
     %
@@ -39,7 +60,6 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     pth = 0.05;
     norm_cbar_topo = [];
     norm_data = false;
-    test_parametric = false;
     FDR_correction = true;
     nperms = 20000;
 

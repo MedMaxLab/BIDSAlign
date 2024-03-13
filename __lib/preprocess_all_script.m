@@ -370,8 +370,9 @@ channel_system = data_info.channel_system;
 filename = [];
 exclude_subj = {};
 iaf_correction = false;
+test_parametric = false;
 
 if ~isempty(dataset_name)
     %groups_visualization(folder, filename, save_img, git_path, dataset, group_hill,...
-    %                    groups_to_plot, iaf_correction, exclude_subj, channel_system, verbose);
+    %                    groups_to_plot, iaf_correction, exclude_subj, channel_system, test_parametric, verbose);
 end
