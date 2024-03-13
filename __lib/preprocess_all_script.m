@@ -25,7 +25,7 @@ setting_name = 'test_dev_';
 
 %% Select Modality (preprocess all, single dataset or single file)
 single_file  = false;               % preprocess a single file
-dataset_name = ['HDEEG1'];  % Set the name of the current dataset
+dataset_name = ['HDEEG2'];  % Set the name of the current dataset
 
 raw_filename = [];                % file name to give in case of single file
 raw_filepath = [];                 % path to file in case of single file preprocessing

@@ -177,5 +177,14 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
             mkdir(path_info.set_folder)
         end
     end
+    %% Check if folder already exist otherwise create set_preprocessed folder
+    if save_info.save_data
+        path_info.mat_folder = [path_info.output_mat_path ...
+            data_info.dataset_code save_info.set_label filesep];
+        if ~exist(path_info.mat_folder, 'dir')
+            mkdir(path_info.mat_folder)
+        end
+    end
+
 
 end

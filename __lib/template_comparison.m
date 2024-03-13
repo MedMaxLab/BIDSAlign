@@ -1,13 +1,13 @@
-function template_comparison(filename, set_filepath, mat_filepath, git_path, save_img, channel_system, paf, verbose)
+function template_comparison(filename, folder, mat_folder, dataset, groups, pipelines, git_path, save_img, channel_system, paf, verbose)
     % template_comparison: Compares EEG power spectral density (PSD) between a dataset and a template.
-    %
-    % Syntax:
-    %   template_comparison(filename, set_filepath, mat_filepath, git_path, save_img, channel_system, paf, verbose)
     %
     % Input:
     %   - filename (string): Name of the EEG data file.
-    %   - set_filepath (string): Path to the folder containing the EEG data set file.
-    %   - mat_filepath (string): Path to the folder containing the EEG data mat file.
+    %   - folder (string): Path to the folder containing the EEG data set files.
+    %   - mat_folder (string): Path to the folder containing the EEG data mat files.
+    %   - dataset (char): Name of the dataset.
+    %   - groups (cell array): Group names for visualization.
+    %   - pipelines (cell array): Pipelines names for visualization.
     %   - git_path (string): Path to the Git repository.
     %   - save_img (string): Optional. Path to save the generated images.
     %   - channel_system (string): Name of the channel system.
@@ -25,7 +25,7 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
     % folder   = '/Users/.../_set_preprocessed';
     % save_img = '/Users/.../_png_group_comp/';
     % git_path = '/Users/.../BIDSAlign/';
-    % mat_filepath = '/Users/.../_mat_preprocessed/';
+    % mat_folder = '/Users/.../_mat_preprocessed';
     % dataset = 'ds003421';
     % groups = {'REST'};
     % pipelines = {'FILT'};
@@ -33,9 +33,8 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
     % verbose = false;
     % channel_system = 'GSN257';
     % paf = false;
-    % set_filepath = [folder '/' dataset groups{1} '_' pipelines{1} '/'];
     % 
-    % template_comparison(filename, set_filepath, mat_filepath, git_path, save_img, channel_system, paf, verbose);
+    % template_comparison(filename, set_filepath, mat_folder, dataset, groups, pipelines, git_path, save_img, channel_system, paf, verbose);
     %
 
     %% Optional Inputs
@@ -59,6 +58,8 @@ function template_comparison(filename, set_filepath, mat_filepath, git_path, sav
         verb = 'off';
     end
 
+    set_filepath = [folder '/' dataset groups{1} '_' pipelines{1} '/'];
+    mat_filepath = [mat_folder '/' dataset groups{1} '_' pipelines{1} '/'];
     [~,EEG] = evalc("pop_loadset([set_filepath filename '.set']);");
 
     listB_set = strings(1,length(EEG.chanlocs));

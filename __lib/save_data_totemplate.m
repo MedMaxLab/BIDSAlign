@@ -51,6 +51,7 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     if nargin < 9
         verbose = false;
     end
+
     chans_DATA_MATRIX = length(template_info.template_matrix(:,1));
     standard_ref_ch   = params_info.standard_ref;
    
