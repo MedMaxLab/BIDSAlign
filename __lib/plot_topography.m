@@ -1,5 +1,5 @@
 
-function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j, minPSD, maxPSD, norm, cmap, i, fdr_plot, string_topoplot, verbose)  
+function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j, minPSD, maxPSD, norm, cmap, i, fdr_plot, string_topoplot, font, verbose)  
     % FUNCTION: plot_topography
     %
     % Description: Plot topographic maps of mean power spectral density (PSD) for specified frequency bands.
@@ -16,22 +16,18 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     %   - F (numeric array): Frequency vector.
     %   - pipelines (cell array): groupss or conditions to plot.
     %   - j (numeric): Index of the groups or condition to plot.
-    %   - minPSD: Minimum value of PSD for groups, for each frequency band.
-    %   - maxPSD: Maximum value of PSD for groups, for each frequency band.
+    %   - minPSD (double): Minimum value of PSD for groups, for each frequency band.
+    %   - maxPSD (double): Maximum value of PSD for groups, for each frequency band.
     %   - cmap: Colormap used for the topoplots.
-    %   - norm: Normalization option for colorbar in the topoplot.
-    %   - fdr_plot: Boolean indicating if fdr plot.
-    %   - string_topoplot: Topoplot FDR custom title.
+    %   - norm (char array): Normalization option for colorbar in the topoplot.
+    %   - fdr_plot (logical): Boolean indicating if fdr plot.
+    %   - string_topoplot (char array): Topoplot FDR custom title.
+    %   - font (structure): Structure of font sizes.
     %   - verbose: Boolean setting the verbosity level.
     %
     % Author: [Andrea Zanola]
     % Date: [23/02/2024]
     %
-
-    title_size = 26;
-    labels_size = 24;
-    ticks_size = 22;
-    ax_size = 2;
 
     if verbose
         verb = 'on';
@@ -58,34 +54,39 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
 
     if ~fdr_plot
         if length(groups)>1 && length(pipelines)==1
-            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' groups{j}],'FontSize',title_size);
+            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' groups{j}],'FontSize',font.title_size);
         elseif length(groups)==1 && length(pipelines)>1
-            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' pipelines{j}],'FontSize',title_size);
+            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' pipelines{j}],'FontSize',font.title_size);
         elseif length(groups)==1 && length(pipelines)==1
-            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' groups{1} '- ' pipelines{1}],'FontSize',title_size);
+            title([band_name{i} ' @' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz | ' groups{1} '- ' pipelines{1}],'FontSize',font.title_size);
         end
         cbar = colorbar;
         cbar.Label.String = 'PSD [\muV^2/Hz]';
-        cbar.FontSize = labels_size;
+        cbar.FontSize = font.labels_size;
     else
         if length(groups)>1 && length(pipelines)==1
-            title([groups{1} ' vs ' groups{2} ' | ' string_topoplot ' FDR correct'],'FontSize',title_size);
+            title([groups{1} ' vs ' groups{2} ' | ' string_topoplot ' FDR correct'],'FontSize',font.title_size);
         elseif length(groups)==1 && length(pipelines)>1
-            title([pipelines{1} ' vs ' pipelines{2} ' | ' string_topoplot ' FDR correct'],'FontSize',title_size);
+            title([pipelines{1} ' vs ' pipelines{2} ' | ' string_topoplot ' FDR correct'],'FontSize',font.title_size);
         end
         cbar = colorbar;
         cbar.Label.String = 't statistic';
         if maxPSD ~=0
-            cbar.Ticks = ceil(minPSD):1:floor(maxPSD);
-            if length(cbar.Ticks)>10
-                cbar.Ticks = ceil(minPSD):4:floor(maxPSD);
-            elseif length(cbar.Ticks)>5
-                cbar.Ticks = ceil(minPSD):2:floor(maxPSD);
+            ticks = [ceil(minPSD):1:floor(maxPSD)];
+            if length(ticks)<5
+                cbar.Ticks = ticks;
+            elseif length(ticks)<10
+                cbar.Ticks = [ceil(minPSD):2:floor(maxPSD)];
+            elseif length(ticks)<20
+                cbar.Ticks = [ceil(minPSD):4:floor(maxPSD)];
             end
+            set(gca,'CLim',[minPSD maxPSD]);
         else
             cbar.Ticks = linspace(-1,1,5);
+            set(gca,'CLim',[-1 1]);
         end
-        cbar.FontSize = labels_size;
+
+        cbar.FontSize = font.labels_size;
 
     end
     

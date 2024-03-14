@@ -63,10 +63,10 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     FDR_correction = true;
     nperms = 20000;
 
-    title_size  = 26;
-    labels_size = 24;
-    ticks_size  = 22;
-    ax_size = 2;
+    font.title_size  = 14;%26;
+    font.labels_size = 12;%24;
+    font.ticks_size  = 10;%22;
+    font.ax_size = 2;
 
     chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
@@ -201,22 +201,22 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         letter_y = maxPSD*1.2;
         xline(4,'--','Color','#808080'); xline(8,'--','Color','#808080'); 
         xline(13,'--','Color','#808080');xline(30,'--','Color','#808080');
-        text(2,letter_y,'\delta','FontSize',ticks_size);
-        text(6,letter_y,'\theta','FontSize',ticks_size);text(10,letter_y,'\alpha','FontSize',ticks_size);
-        text(22,letter_y,'\beta','FontSize',ticks_size);text(40,letter_y,'\gamma','FontSize',ticks_size);
+        text(2,letter_y,'\delta','FontSize',font.ticks_size);
+        text(6,letter_y,'\theta','FontSize',font.ticks_size);text(10,letter_y,'\alpha','FontSize',font.ticks_size);
+        text(22,letter_y,'\beta','FontSize',font.ticks_size);text(40,letter_y,'\gamma','FontSize',font.ticks_size);
         
         ax = gca;
         ax.YAxis.Scale ="log";
-        ax.LineWidth = ax_size;
-        ax.FontSize = ticks_size;
+        ax.LineWidth = font.ax_size;
+        ax.FontSize = font.ticks_size;
         axis([F(1) F(end) minPSD*0.8 maxPSD*1.6]);
-        title(['Mean PSD | chs: '  convertStringsToChars(strjoin(ch_considered))],'FontSize',title_size);
-        xlabel('f [Hz]','FontSize',labels_size);
-        ylabel('PSD [\muV^2/Hz]','FontSize',labels_size);
+        title(['Mean PSD | chs: '  convertStringsToChars(strjoin(ch_considered))],'FontSize',font.title_size);
+        xlabel('f [Hz]','FontSize',font.labels_size);
+        ylabel('PSD [\muV^2/Hz]','FontSize',font.labels_size);
         grid on;
         lgd = legend(groups);
         lgd.Location ='southwest';
-        lgd.FontSize = ticks_size;
+        lgd.FontSize = font.ticks_size;
     end
     % if isempty(filename)
     %     if length(gint)==1
@@ -272,8 +272,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             else
                 label_ch = '';
             end
-            title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz'],'FontSize',title_size);
-            ylabel('PSD [\muV^2/Hz]','FontSize',labels_size);
+            title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz'],'FontSize',font.title_size);
+            ylabel('PSD [\muV^2/Hz]','FontSize',font.labels_size);
         
             bandmax = max(x,[],'all');
             bandmin = min(x,[],'all');
@@ -300,15 +300,15 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                         else
                             pstr = ['=' num2str(min(P_FDR),'%.3f')];
                         end
-                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c))*1.12,['p' pstr],'FontSize',ticks_size);
+                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c))*1.12,['p' pstr],'FontSize',font.ticks_size);
                     end
                     c = c+1;
                 end
             end
             ax = gca;
             ax.YAxis.Scale = "log";
-            ax.LineWidth = ax_size;
-            ax.FontSize = ticks_size;
+            ax.LineWidth = font.ax_size;
+            ax.FontSize = font.ticks_size;
             grid on;
         end
         
@@ -360,16 +360,16 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                         else
                             pstr = ['=' num2str(min(P_FDR),'%.3f')];
                         end
-                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c)),['p' pstr],'FontSize',ticks_size);
+                        text(mean(positions(c,:))*1.05,yt*(1.1+yspace(c)),['p' pstr],'FontSize',font.ticks_size);
                     end
                     c = c+1;
                 end
             end
             ax = gca;
-            ax.FontSize = ticks_size;
-            ax.LineWidth = ax_size;
-            title('Individual Alpha Frequency','FontSize',title_size);
-            ylabel('IAF [Hz]','FontSize',labels_size);
+            ax.FontSize = font.ticks_size;
+            ax.LineWidth = font.ax_size;
+            title('Individual Alpha Frequency','FontSize',font.title_size);
+            ylabel('IAF [Hz]','FontSize',font.labels_size);
             grid on;
         end
     
@@ -434,7 +434,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         for i=1:length(ind_f)-1
             [TEST_A, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
             mA = mean(TEST_A,1);
-            plot_topography(ind_f, groups, mA, EEG.chanlocs, band_name, F, pipelines, j, minPSD(i), maxPSD(i), norm_cbar_topo, cmap, i, false, '', verbose);
+            plot_topography(ind_f, groups, mA, EEG.chanlocs, band_name, F, pipelines, j, minPSD(i), maxPSD(i), norm_cbar_topo, cmap, i, false, '',font, verbose);
         end
     end
 
@@ -453,7 +453,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             % end
             minPSD = -maxPSD;
 
-            plot_topography(ind_f, groups, T_FDR, EEG.chanlocs, band_name, F, pipelines, j, minPSD, maxPSD, norm_cbar_topo, cmap, i, true, string_topoplot, verbose);
+            plot_topography(ind_f, groups, T_FDR, EEG.chanlocs, band_name, F, pipelines, j, minPSD, maxPSD, norm_cbar_topo, cmap, i, true, string_topoplot, font, verbose);
 
         end
     end
@@ -520,14 +520,14 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
                         end
                         if isfield(EEG.etc,'clean_sample_mask')
                             t = EEG_1ASR.xmin:1/EEG_1ASR.srate:EEG_1ASR.xmax;
-                            plot(t(EEG.etc.clean_sample_mask), EEG_1ASR.data(c, EEG.etc.clean_sample_mask),colors{j},'LineWidth',ax_size); hold on;
+                            plot(t(EEG.etc.clean_sample_mask), EEG_1ASR.data(c, EEG.etc.clean_sample_mask),colors{j},'LineWidth',font.ax_size); hold on;
                         else
                             t = EEG.xmin:1/EEG.srate:EEG.xmax;
-                            plot(t, EEG.data(c,:),colors{j},'LineWidth',ax_size); hold on;
+                            plot(t, EEG.data(c,:),colors{j},'LineWidth',font.ax_size); hold on;
                         end
                     else
                         t = EEG.xmin:1/EEG.srate:EEG.xmax;
-                        plot(t, EEG.data(c,:),colors{j},'LineWidth',ax_size); hold on;
+                        plot(t, EEG.data(c,:),colors{j},'LineWidth',font.ax_size); hold on;
                     end
                 else
                     error([convertStringsToChars(tchgroups.(fn{i})) ' IS MISSING FROM CHANLOC']);
@@ -535,16 +535,16 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
             end
         
-            title(['ch: ' convertStringsToChars(ch_considered)],'FontSize',title_size);
-            xlabel('t[s]','FontSize',labels_size);
-            ylabel('Channel [\muV]','FontSize',labels_size);
+            title(['ch: ' convertStringsToChars(ch_considered)],'FontSize',font.title_size);
+            xlabel('t[s]','FontSize',font.labels_size);
+            ylabel('Channel [\muV]','FontSize',font.labels_size);
             ax = gca;
-            ax.LineWidth = ax_size;
-            ax.FontSize = ticks_size;
+            ax.LineWidth = font.ax_size;
+            ax.FontSize = font.ticks_size;
         end
         lgd = legend(groups);
         lgd.Location ='southwest';
-        lgd.FontSize = ticks_size;
+        lgd.FontSize = font.ticks_size;
 
     %sgtitle([filename ' | Time Comparison'],'Interpreter','none');
     end
