@@ -41,7 +41,7 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
         a = dir([folder '/' filename '.set']);
     end
     out = size(a,1);
-    
+
     Pxx_group = zeros(out-length(exclude_subj),Lf,Nch); 
     paf_mean  = zeros(out-length(exclude_subj),1);
     paf_std   = zeros(out-length(exclude_subj),1);
@@ -61,8 +61,9 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
             else
                 [~,EEG] = evalc("pop_loadset(path_file);");
             end
-
             dataN = EEG.data;
+
+
             if norm
                 dataN = normalize(dataN,2,'zscore');
             end
