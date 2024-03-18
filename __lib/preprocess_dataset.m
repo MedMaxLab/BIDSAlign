@@ -46,19 +46,28 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
     cd(path_info.dataset_path);
 
     % Check if subject selection is required
-    if selection_info.select_subjects && isempty(T)
-        error('UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE LOADED');
+    % if selection_info.select_subjects && isempty(T)
+    %     error('UNABLE TO SELECT SUBJECTS WITH NO PARTICIPANT FILE LOADED');
+    % 
+    % else
 
-    elseif selection_info.select_subjects && ~isempty(T) && ...
-            ~isempty(selection_info.label_name) && ~isempty(selection_info.label_value)
+    if xor(isempty(selection_info.label_name),isempty(selection_info.label_value))
+        error("ONE BETWEEN LABEL NAME AND LABEL VALUE IS EMPTY.");
+    end
 
-        idx_column = linspace(1,width(T),width(T));
-        I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name));
-        subj_list = T.(1); % first column always ID
-        all_subj_list = subj_list; % to avoid errors if T is empty (no participant file)
-        mask = strcmp(T.(I), selection_info.label_value);                                     
-        subj_list = subj_list(mask,:);
-        Tr = T(mask,:);
+    if selection_info.select_subjects && ~isempty(selection_info.label_name) && ~isempty(selection_info.label_value)
+        if ~isempty(T)
+            idx_column = linspace(1,width(T),width(T));
+            I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name));
+            subj_list = T.(1); % first column always ID
+            all_subj_list = subj_list; % to avoid errors if T is empty (no participant file)
+            mask = strcmp(T.(I), selection_info.label_value);                                     
+            subj_list = subj_list(mask,:);
+            Tr = T(mask,:);
+        else
+             error('UNABLE TO SELECT SUBJECTS BY GROUP WITH NO PARTICIPANT FILE LOADED');
+        end
+        
     else
         d = dir(pwd);
         dfolders = d([d(:).isdir]);

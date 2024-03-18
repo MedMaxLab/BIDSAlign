@@ -142,11 +142,12 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     data_tensor_size = size(template_info.template_tensor);
 
     DATA_STRUCT.filepath  = [obj_info.raw_filepath '/' obj_info.raw_filename];
-    %DATA_STRUCT.pad_file  = pad_interpol_channels; 
+    DATA_STRUCT.pad_file  = pad_interpol_channels; 
     DATA_STRUCT.subj_info = subj_info;
+    
     set_label = strsplit(save_info.set_label,'_');
-    DATA_STRUCT.group = set_label{1};
-    DATA_STRUCT.pipeline = set_label{2};
+    DATA_STRUCT.label_group = set_label{1};
+    DATA_STRUCT.label_pipeline = set_label{2};
 
     if strcmp(save_info.save_data_as,'tensor')
         DATA_STRUCT.template = char(template_info.template_tensor); 

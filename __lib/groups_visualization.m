@@ -58,7 +58,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
     freq_vec = [0.1,4,8,13,30,44];
     pth = 0.05;
-    norm_cbar_topo = [];
+    norm_cbar_topo = 'minmax';
     norm_data = false;
     FDR_correction = true;
     nperms = 20000;
@@ -551,7 +551,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_chansPSD.png']);
-        saveas(FigH3,[save_img dataset '_' pipelines{1} '_topoplot.png']);
+        saveas(FigH2,[save_img dataset '_' pipelines{1} '_topoplot.png']);
         if ~isempty(filename)
             saveas(FigH4,[save_img dataset '_' pipelines{1} '_timechan.png']);
         end
