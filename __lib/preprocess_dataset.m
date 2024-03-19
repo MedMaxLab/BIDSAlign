@@ -76,7 +76,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
         untouchable_folders = {'.','..','code','stimuli','derivatives','sourcedata','.datalad'};
         dfolders = dfolders(~ismember({dfolders(:).name},[untouchable_folders path_info.diagnostic_folder_name]));
         subj_list = {dfolders.name};
+        %if isempty(T)
         all_subj_list = subj_list; % to avoid errors if T is empty (no participant file)
+        %else
+        %    all_subj_list = T.participant_id;
+        %end
         Tr = T;
     end
 

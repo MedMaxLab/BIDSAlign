@@ -58,25 +58,25 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
     freq_vec = [0.1,4,8,13,30,44];
     pth = 0.05;
-    norm_cbar_topo = 'minmax';
+    norm_cbar_topo = [];
     norm_data = true;
     FDR_correction = true;
     nperms = 20000;
 
-    font.title_size  = 26; %14
-    font.labels_size = 24; %12
-    font.ticks_size  = 22; %10
+    font.title_size  = 32; %14
+    font.labels_size = 30; %12
+    font.ticks_size  = 28; %10
     font.ax_size = 2;
 
-    chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
+    % chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
-    chgroups.g3 = ["AF8","AF4","F8","F6","F4","F2"];
-    chgroups.g4 = ["FT7","T7","TP7","FC5","C5","CP5"];
-    chgroups.g5 = ["FCZ","CZ","CPZ","FC1","C1","CP1","FC2","C2","CP2"];
-    chgroups.g6 = ["FT8","T8","TP8","FC6","C6","CP6"];
-    chgroups.g7 = ["P7","P5","PO7","PO3","P3"];
-    chgroups.g8 = ["POZ","OZ","O1","O2"];
-    chgroups.g9 = ["P8","P6","PO8","PO4","P4"];
+    % chgroups.g3 = ["AF8","AF4","F8","F6","F4","F2"];
+    % chgroups.g4 = ["FT7","T7","TP7","FC5","C5","CP5"];
+    % chgroups.g5 = ["FCZ","CZ","CPZ","FC1","C1","CP1","FC2","C2","CP2"];
+    % chgroups.g6 = ["FT8","T8","TP8","FC6","C6","CP6"];
+    % chgroups.g7 = ["P7","P5","PO7","PO3","P3"];
+    % chgroups.g8 = ["POZ","OZ","O1","O2"];
+    % chgroups.g9 = ["P8","P6","PO8","PO4","P4"];
 
     tchgroups.g1 = ["F5"];
     tchgroups.g2 = ["AFZ"];
@@ -93,39 +93,39 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     cmap = 'turbo';
     
     %%  Load first example to calculate and fix quantities
-    folder = [folder '/' dataset];
-    group = [groups{1} '_' pipelines{1}];
-    a = dir([folder group '/*.set']);
-    out = size(a,1)-length(exclude_subj);        
-    path_file = [a(1).folder '/' a(1).name];
-    [~,EEG] = evalc("pop_loadset(path_file);");
-
-    % Get Channel Names
-    listB = strings(1,length(EEG.chanlocs));
-    for t=1:length(EEG.chanlocs)
-        listB(t) = string(EEG.chanlocs(t).labels);                             
-    end
-
-    % PSD metrics
-    NFFT    = 2^(nextpow2(EEG.srate)+1); %next power for 0.5Hz 
-    WINDOW  = hanning(NFFT);
-    [~,F] = pwelch(EEG.data',WINDOW,[],NFFT,EEG.srate);
-    Nch = EEG.nbchan;
-
-    t = length(freq_vec);
-    ind_f = zeros(1,t);
-    for i=1:t
-        [~,ind_f(i)] = min(abs(F-freq_vec(i)));
-    end
-    Lf = length(F(1:ind_f(end)));
+    %folder = [folder '/' dataset];
+    % group = [groups{1} '_' pipelines{1}];
+    % a = dir([folder group '/*.set']);
+    % out = size(a,1)-length(exclude_subj);        
+    % path_file = [a(1).folder '/' a(1).name];
+    % [~,EEG] = evalc("pop_loadset(path_file);");
+    % 
+    % % Get Channel Names
+    % listB = strings(1,length(EEG.chanlocs));
+    % for t=1:length(EEG.chanlocs)
+    %     listB(t) = string(EEG.chanlocs(t).labels);                             
+    % end
+    % 
+    % % PSD metrics
+    % NFFT    = 2^(nextpow2(EEG.srate)+1); %next power for 0.5Hz 
+    % WINDOW  = hanning(NFFT);
+    % [~,F] = pwelch(EEG.data',WINDOW,[],NFFT,EEG.srate);
+    % Nch = EEG.nbchan;
+    % 
+    % t = length(freq_vec);
+    % ind_f = zeros(1,t);
+    % for i=1:t
+    %     [~,ind_f(i)] = min(abs(F-freq_vec(i)));
+    % end
+    % Lf = length(F(1:ind_f(end)));
     
     %% Import Data and Get PSD, ERP matrix per group
     if length(groups)>=1 && length(pipelines)==1
         for i=1:length(groups)
-            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file(folder, dataset, groups{i}, pipelines{1}, exclude_subj, freq_vec);
+            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file([folder '/' dataset groups{i} '_' pipelines{1}], exclude_subj, freq_vec);
 
             group = [groups{i} '_' pipelines{1}];
-            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder '/' dataset group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
 
             evalc(['Pxx_' groups{i} '=Pxx']);
             evalc(['paf_mean_' groups{i} '=paf_mean']);
@@ -139,10 +139,10 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     elseif length(pipelines)>1 && length(groups)==1
         for i=1:length(pipelines)
-            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file(folder, dataset, groups{1}, pipelines{i}, exclude_subj);
+            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file([folder '/' dataset groups{1} '_' pipelines{i}], exclude_subj, freq_vec);
 
             group = [groups{1} '_' pipelines{i}];
-            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder '/' dataset group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
             
             evalc(['Pxx_' pipelines{i} '=Pxx']);
             evalc(['paf_mean_' pipelines{i} '=paf_mean']);
@@ -562,7 +562,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_chansPSD.png']);
-        saveas(FigH2,[save_img dataset '_' pipelines{1} '_topoplot.png']);
+        saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
+        saveas(FigH3,[save_img dataset '_' pipelines{1} '_topoplot.png'])
         if ~isempty(filename)
             saveas(FigH4,[save_img dataset '_' pipelines{1} '_timechan.png']);
         end
