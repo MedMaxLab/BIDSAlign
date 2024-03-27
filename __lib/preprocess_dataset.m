@@ -61,11 +61,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
             I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name));
             subj_list = T.(1); % first column always ID
             all_subj_list = subj_list; % to avoid errors if T is empty (no participant file)
+            
             mask = strcmp(T.(I), selection_info.label_value);                                     
             subj_list = subj_list(mask,:);
             Tr = T(mask,:);
         else
-             error('UNABLE TO SELECT SUBJECTS BY GROUP WITH NO PARTICIPANT FILE LOADED');
+            error('UNABLE TO SELECT SUBJECTS BY GROUP WITH NO PARTICIPANT FILE LOADED');
         end
         
     else

@@ -42,6 +42,7 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     else
         electrode_mode = 'labels';
     end
+    electrode_mode = 'labels';
 
     if isempty(norm)
         range = [minPSD maxPSD];

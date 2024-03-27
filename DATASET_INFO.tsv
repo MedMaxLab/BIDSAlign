@@ -17,3 +17,4 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nos
 16	Nencki_Sym	ds004621			10_5	FCZ		.vhdr	1000
 17	HDEEG1	ds003420	default		GSN257	CZ		.vhdr	1000
 18	HDEEG2	ds003421	default		GSN257	CZ		.vhdr	1000
+25	EEG_MMI	ds004362	loaded		10_10	A1-A2		.set	180

@@ -58,14 +58,14 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
     freq_vec = [0.1,4,8,13,30,44];
     pth = 0.05;
-    norm_cbar_topo = [];
-    norm_data = true;
+    norm_cbar_topo = 'minmax';
+    norm_data = false;
     FDR_correction = true;
-    nperms = 20000;
+    nperms = 5000; %20000
 
-    font.title_size  = 32; %14
-    font.labels_size = 30; %12
-    font.ticks_size  = 28; %10
+    font.title_size  = 14;
+    font.labels_size = 12;
+    font.ticks_size  = 10;
     font.ax_size = 2;
 
     % chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];

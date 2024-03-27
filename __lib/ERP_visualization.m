@@ -41,13 +41,13 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     %% Optional Inputs
     smooth = 5;
     dt = 0.1; %Xticks
-    times = [150 250 400 600];
-    channels = ["FZ","PZ"];
+    times = [65 110 180];
+    channels = ["C3","FCZ","C4"];
     colors = {'k','g','r','m','k','c','y'};
     cmap = 'turbo';
-    title_size = 26;
-    labels_size = 24;
-    ticks_size = 22;
+    title_size = 16;%26;
+    labels_size = 14;%24;
+    ticks_size = 12;%22;
     ax_size = 2;
 
     
@@ -112,12 +112,13 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
 
             title(['event: ' event_name{k} ' | ' convertStringsToChars(channels(i))],'FontSize',title_size);
             lgd = legend(groups);
-            lgd.Location ='northwest';
+            lgd.Location ='northeast';
             lgd.FontSize = ticks_size;
             ax = gca;
             ax.XTick = (epoch_lims(1):dt:epoch_lims(2))*1000;
             ax.LineWidth = ax_size;
             ax.FontSize = ticks_size;
+            xlim([epoch_lims(1) epoch_lims(2)]*1000);
             xlabel('t [ms]','FontSize',labels_size);
             ylabel('\muV','FontSize',labels_size);
             xline(0,'k','HandleVisibility','off');
@@ -158,12 +159,13 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
 
             title(['Group: ' groups{j} ' | ' convertStringsToChars(channels(i))],'FontSize',title_size);
             lgd = legend(event_name);
-            lgd.Location ='northwest';
+            lgd.Location ='northeast';
             lgd.FontSize = labels_size;
             ax = gca;
             ax.XTick = (epoch_lims(1):dt:epoch_lims(2))*1000;
             ax.LineWidth = ax_size;
             ax.FontSize = ticks_size;
+            xlim([epoch_lims(1) epoch_lims(2)]*1000);
             xlabel('t [ms]','FontSize',labels_size);
             ylabel('\muV','FontSize',labels_size);
             xline(0,'k','HandleVisibility','off');
@@ -193,6 +195,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     else
         electrode_mode = 'labels';
     end
+    electrode_mode = 'labels';
     
     if length(event_name)==1
         FigH3 = figure('Position', get(0, 'Screensize'));
