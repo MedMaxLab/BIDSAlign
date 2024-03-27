@@ -51,8 +51,10 @@ Temporary Items
 
 ### MATLAB ###
 # specific files or folder to ignore for dev things
-__lib/default_settings/test_dev_/
+!__lib/default_settings/default/
+__lib/default_settings/*
 __lib/BIDSAlign_debugging.m
+__lib/preprocess_all_script.m
 
 # Windows default autosave extension
 *.asv
