@@ -23,7 +23,6 @@ function [ar, ind_f_iaf] = band_content(m,paf_v,paf,ind_f,F,i)
     % Author: [Andrea Zanola]
     % Date: [26/02/2024]
     %
-
     s = size(m);
 
     if length(s)==3

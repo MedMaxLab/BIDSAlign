@@ -24,7 +24,7 @@ function [ mPxx, sPxx, norm_factor] = get_metrics(Pxx, ch_index, sub_index, mean
     % Date: [23/02/2024]
     %
     % Examples:
-    %   [mPxx, sPxx, norm_factor] = get_metrics(Pxx, [3], [1,2,3])
+    %   [mPxx, sPxx, norm_factor] = get_metrics(Pxx, [3], [], [1])
 
     %%
     [Nsubj,~,Nch] = size(Pxx);

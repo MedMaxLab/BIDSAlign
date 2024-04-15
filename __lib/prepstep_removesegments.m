@@ -27,10 +27,10 @@ function [EEG] = prepstep_removesegments(EEG, params_info, verbose)
             if EEG.xmax - params_info.dt_i - params_info.dt_f>0
                 if verbose
                     [EEG] = pop_select(EEG, 'rmtime', ...
-                        [0 params_info.dt_i; EEG.xmax-params_info.dt_f EEG.xmax]);
+                        [0 params_info.dt_i-1/EEG.srate; EEG.xmax-params_info.dt_f+1/EEG.srate EEG.xmax]); %-1/EEG.srate in order to keep extremal point
                 else
                     cmd2run = "pop_select(EEG, 'rmtime', " + ... 
-                        "[0 params_info.dt_i; EEG.xmax-params_info.dt_f EEG.xmax]);";
+                        "[0 params_info.dt_i-1/EEG.srate; EEG.xmax-params_info.dt_f+1/EEG.srate EEG.xmax]);";
                     [~,EEG] = evalc(cmd2run);
                 end
                 EEG.history = [EEG.history newline 'REMOVED FIRST ' ...
@@ -40,10 +40,10 @@ function [EEG] = prepstep_removesegments(EEG, params_info, verbose)
             elseif EEG.xmax - params_info.dt_f>0
                 if verbose
                     [EEG] = pop_select(EEG, ...
-                        'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);
+                        'rmtime', [EEG.xmax-params_info.dt_f+1/EEG.srate EEG.xmax]);
                 else
                     cmd2run = "pop_select(EEG, " + ... 
-                        "'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);";
+                        "'rmtime', [EEG.xmax-params_info.dt_f+1/EEG.srate EEG.xmax]);";
                     [~,EEG] = evalc(cmd2run);
                 end
                 EEG.history = [EEG.history newline 'REMOVED LAST ' ...
@@ -59,10 +59,10 @@ function [EEG] = prepstep_removesegments(EEG, params_info, verbose)
             if EEG.xmax - params_info.dt_f>0
                 if verbose
                     [EEG] = pop_select(EEG, ...
-                        'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);
+                        'rmtime', [EEG.xmax-params_info.dt_f+1/EEG.srate EEG.xmax]);
                 else
                     cmd2run = "pop_select(EEG, " + ...
-                        "'rmtime', [EEG.xmax-params_info.dt_f EEG.xmax]);";
+                        "'rmtime', [EEG.xmax-params_info.dt_f+1/EEG.srate EEG.xmax]);";
                     [~, EEG] = evalc(cmd2run);
                 end
                 EEG.history = [EEG.history newline 'REMOVED LAST ' ...
@@ -77,9 +77,9 @@ function [EEG] = prepstep_removesegments(EEG, params_info, verbose)
         elseif params_info.dt_i>0 && params_info.dt_f==0
             if EEG.xmax - params_info.dt_i>0
                 if verbose
-                    [EEG] = pop_select(EEG, 'rmtime', [0 params_info.dt_i]);
+                    [EEG] = pop_select(EEG, 'rmtime', [0 params_info.dt_i-1/EEG.srate]);
                 else
-                    [EEG] = evalc("pop_select(EEG, 'rmtime', [0 params_info.dt_i]);");
+                    [EEG] = evalc("pop_select(EEG, 'rmtime', [0 params_info.dt_i-1/EEG.srate]);");
                 end
                 EEG.history = [EEG.history newline 'REMOVED FIRST ' ...
                     num2str(params_info.dt_i) 's'];

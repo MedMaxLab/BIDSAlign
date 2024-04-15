@@ -26,16 +26,16 @@ function [EEG] = prepstep_resampling(EEG, data_info, params_info, obj_info, verb
 
         if isempty(obj_info.SamplingFrequency)
 
-            if mod(EEG.srate, 1) ~= 0
-                %This is useful when the sampling rate in the file is
-                %corrupted, but the sampling rate expected is known.
-                EEG.srate = data_info.samp_rate;
-                EEG.xmax = EEG.pnts/data_info.samp_rate;
-            end
+            % if mod(EEG.srate, 1) ~= 0
+            %     %This is useful when the sampling rate in the file is
+            %     %corrupted, but the sampling rate expected is known.
+            %     EEG.srate = data_info.samp_rate;
+            %     EEG.xmax = EEG.pnts/data_info.samp_rate;
+            % end
 
             if params_info.sampling_rate ~= data_info.samp_rate
                 if verbose
-                    [EEG] = pop_resample( EEG, params_info.sampling_rate);
+                    [EEG] = pop_resample(EEG, params_info.sampling_rate);
                 else
                     [~, EEG] = evalc("pop_resample( EEG, params_info.sampling_rate);");
                 end
@@ -44,15 +44,15 @@ function [EEG] = prepstep_resampling(EEG, data_info, params_info, obj_info, verb
                  
             end
         else
-            if obj_info.SamplingFrequency ~= EEG.srate
-                if mod(EEG.srate, 1) ~= 0
-                    %This is useful when the sampling rate in the file is
-                    %corrupted, but the sampling rate expected is known.
-                    EEG.srate = obj_info.SamplingFrequency;
-                    EEG.xmax = EEG.pnts/obj_info.SamplingFrequency;
-                end
-                warning('EEG srate in struct, differs from EEG srate in json file.')
-            end
+            % if obj_info.SamplingFrequency ~= EEG.srate
+            %     if mod(EEG.srate, 1) ~= 0
+            %         %This is useful when the sampling rate in the file is
+            %         %corrupted, but the sampling rate expected is known.
+            %         EEG.srate = obj_info.SamplingFrequency;
+            %         EEG.xmax = EEG.pnts/obj_info.SamplingFrequency;
+            %     end
+            %     warning('EEG srate in struct, differs from EEG srate in json file.')
+            % end
 
             if params_info.sampling_rate ~= obj_info.SamplingFrequency
                 if verbose

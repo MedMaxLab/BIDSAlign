@@ -1,15 +1,17 @@
 
-function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, NFFT, WINDOW, Lf, Nch, exclude_subj, iav, norm, verbose)
+function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, srate, NFFT, WINDOW, Lf, ...
+                                                              Nch, exclude_subj, iav, norm, modality, verbose)
     % FUNCTION: get_group_metric
     %
     % Description: Computes group-level metrics from EEG data.
     %
     % Syntax:
-    %   [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, ind_f, NFFT, WINDOW, Lf, Nch, exclude_subj, iav, norm, verbose)
+    %   [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, srate, NFFT, WINDOW, Lf, Nch, exclude_subj, iav, norm, modality verbose)
     %
     % Input:
     %   - folder (char): Path to the folder containing EEG data.
     %   - filename (char): Filename of a specific EEG recording.
+    %   - srate (double): Sampling rate loaded from the preprocessing info setting.
     %   - NFFT (numeric): Length of the FFT window.
     %   - WINDOW (numeric): Window vector.
     %   - Lf (numeric): Length of the frequency vector.
@@ -17,6 +19,7 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
     %   - exclude_subj (cell array): List of subjects to exclude from analysis.
     %   - iav (logical): Flag indicating whether to compute IAF metrics.
     %   - norm (logical): Standardize channels.
+    %   - modality (char): IAF calculation modality: 
     %   - verbose: Boolean setting the verbosity level.
     %
     % Output:
@@ -30,15 +33,23 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
     %
     % See also: restingIAF
     %
-    % Examples:
-    %   [Pxx_group, F, paf_mean, paf_std] = get_group_metric('data_folder', 256, hanning(256), 128, 64, {'5_1_1_1'}, true)
-
-    modality = 'cog';
 
     if isempty(filename)
         a = dir([folder '/*.set']);
+        if isempty(a)
+            a = dir([folder '/*.mat']);
+        end
+        if isempty(a)
+            error('Empty folder.')
+        end
     else
         a = dir([folder '/' filename '.set']);
+        if isempty(a)
+            a = dir([folder '/' filename '.mat']);
+        end
+        if isempty(a)
+            error('Filename not found.')
+        end
     end
     out = size(a,1);
 
@@ -56,13 +67,25 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
         end
 
         if c
-            if verbose
-                EEG = pop_loadset(path_file);
-            else
-                [~,EEG] = evalc("pop_loadset(path_file);");
+            try
+                if verbose
+                    EEG = pop_loadset(path_file);
+                else
+                    [~,EEG] = evalc("pop_loadset(path_file);");
+                end
+            catch
+                EEGmat = load(path_file);
+                EEG.data = EEGmat.DATA_STRUCT.data;
+                EEG.srate = srate;
+                [EEG.nbchan, EEG.pnts] = size(EEG.data);
+                for w=1:EEG.nbchan
+                    EEG.chanlocs(w).labels = EEGmat.DATA_STRUCT.template(w,:);
+                end
+                EEG.xmin = 0;
+                EEG.xmax = EEG.pnts/EEG.srate;
             end
+            
             dataN = EEG.data;
-
 
             if norm
                 dataN = normalize(dataN,2,'zscore');
@@ -83,10 +106,10 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
 
                 try
                     if verbose
-                        [o,~,~] = restingIAF(EEG.data,length(EEG.chanlocs), 3, [1 45],...
+                        [o,~,~] = restingIAF(EEG.data,EEG.nbchan, 3, [1 45],...
                                                 EEG.srate, [PA_range], 7, 5, 'nfft',NFFT, 'taper','hanning');
                     else
-                        [~,o,~,~] = evalc("restingIAF(EEG.data,length(EEG.chanlocs), 3, [1 45], EEG.srate, PA_range, 7, 5, 'nfft',NFFT, 'taper','hanning');");
+                        [~,o,~,~] = evalc("restingIAF(EEG.data,EEG.nbchan, 3, [1 45], EEG.srate, PA_range, 7, 5, 'nfft',NFFT, 'taper','hanning');");
                     end
                     
                     if isequel(modality,'paf')

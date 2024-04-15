@@ -1,5 +1,6 @@
 
-function groups_visualization(folder, filename, save_img, git_path, dataset, groups, pipelines, paf, exclude_subj, channel_system, test_parametric, verbose)
+function groups_visualization(folder, filename, save_img, git_path, settings_path, dataset, groups, pipelines, ...
+                              paf, exclude_subj, channel_system, test_parametric, verbose)
     % FUNCTION: groups_visualization
     %
     % Description: Generates visualizations of EEG data for different groups.
@@ -11,7 +12,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     %   - folder (char): Path to the folder containing EEG data.
     %   - filename (char): Specific Filename to be visualized.
     %   - save_img (char): Path to save the generated images.
-    %   - lib_path (char): Path to the BIDSAlign folder.
+    %   - git_path (char): Path to the BIDSAlign folder.
+    %   - settings_path (char): Path to the settings used for preprocessing.
     %   - dataset (char): Name of the dataset.
     %   - groups (cell array): Group names for visualization.
     %   - pipelines (cell array): Pipelines names for visualization.
@@ -34,6 +36,8 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     % folder   = '/Users/.../_set_preprocessed';
     % save_img = '/Users/.../_png_group_comp/';
     % git_path = '/Users/.../BIDSAlign/';
+    % settings_path = '/Users/.../BIDSAlign/__lib/default_settings/';
+
     % dataset = 'ds002778';
     % group_hill = {'C','POFF'};
     % groups_to_plot = {'PIPEF'};
@@ -44,7 +48,7 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     % iaf_correction = false;
     % test_parametric = false;
     % 
-    % groups_visualization(folder, filename, save_img, git_path, dataset, group_hill,groups_to_plot,...
+    % groups_visualization(folder, filename, save_img, git_path, settings_path, dataset, group_hill, groups_to_plot,...
     %                     iaf_correction, exclude_subj, channel_system, test_parametric, verbose);
     %
     % See also: get_group_metric, plot_channels_PSD, plot_topography
@@ -58,25 +62,26 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     
     freq_vec = [0.1,4,8,13,30,44];
     pth = 0.05;
-    norm_cbar_topo = 'minmax';
-    norm_data = false;
+    norm_cbar_topo = [];
+    norm_data = true;
     FDR_correction = true;
-    nperms = 5000; %20000
+    nperms = 20000;
+    modality = 'cog';
 
-    font.title_size  = 14;
-    font.labels_size = 12;
-    font.ticks_size  = 10;
+    font.title_size  = 20;
+    font.labels_size = 18;
+    font.ticks_size  = 16;
     font.ax_size = 2;
 
-    % chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
+    chgroups.g1 = ["AF7","AF3","F7","F5","F3","F1"];
     chgroups.g2 = ["AFZ","FZ","FPZ","FP1","FP2"];
-    % chgroups.g3 = ["AF8","AF4","F8","F6","F4","F2"];
-    % chgroups.g4 = ["FT7","T7","TP7","FC5","C5","CP5"];
-    % chgroups.g5 = ["FCZ","CZ","CPZ","FC1","C1","CP1","FC2","C2","CP2"];
-    % chgroups.g6 = ["FT8","T8","TP8","FC6","C6","CP6"];
-    % chgroups.g7 = ["P7","P5","PO7","PO3","P3"];
-    % chgroups.g8 = ["POZ","OZ","O1","O2"];
-    % chgroups.g9 = ["P8","P6","PO8","PO4","P4"];
+    chgroups.g3 = ["AF8","AF4","F8","F6","F4","F2"];
+    chgroups.g4 = ["FT7","T7","TP7","FC5","C5","CP5"];
+    chgroups.g5 = ["FCZ","CZ","CPZ","FC1","C1","CP1","FC2","C2","CP2"];
+    chgroups.g6 = ["FT8","T8","TP8","FC6","C6","CP6"];
+    chgroups.g7 = ["P7","P5","PO7","PO3","P3"];
+    chgroups.g8 = ["POZ","OZ","O1","O2"];
+    chgroups.g9 = ["P8","P6","PO8","PO4","P4"];
 
     tchgroups.g1 = ["F5"];
     tchgroups.g2 = ["AFZ"];
@@ -91,47 +96,31 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     band_name = {'\delta','\theta','\alpha','\beta','\gamma'};
     colors = {'r','b','g','m','k','c','y'};
     cmap = 'turbo';
-    
-    %%  Load first example to calculate and fix quantities
-    %folder = [folder '/' dataset];
-    % group = [groups{1} '_' pipelines{1}];
-    % a = dir([folder group '/*.set']);
-    % out = size(a,1)-length(exclude_subj);        
-    % path_file = [a(1).folder '/' a(1).name];
-    % [~,EEG] = evalc("pop_loadset(path_file);");
-    % 
-    % % Get Channel Names
-    % listB = strings(1,length(EEG.chanlocs));
-    % for t=1:length(EEG.chanlocs)
-    %     listB(t) = string(EEG.chanlocs(t).labels);                             
-    % end
-    % 
-    % % PSD metrics
-    % NFFT    = 2^(nextpow2(EEG.srate)+1); %next power for 0.5Hz 
-    % WINDOW  = hanning(NFFT);
-    % [~,F] = pwelch(EEG.data',WINDOW,[],NFFT,EEG.srate);
-    % Nch = EEG.nbchan;
-    % 
-    % t = length(freq_vec);
-    % ind_f = zeros(1,t);
-    % for i=1:t
-    %     [~,ind_f(i)] = min(abs(F-freq_vec(i)));
-    % end
-    % Lf = length(F(1:ind_f(end)));
+    jitter = 0.05;
     
     %% Import Data and Get PSD, ERP matrix per group
+    chanloc_present = true;
     if length(groups)>=1 && length(pipelines)==1
         for i=1:length(groups)
-            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file([folder '/' dataset groups{i} '_' pipelines{1}], exclude_subj, freq_vec);
+
+            load([settings_path lower(pipelines{1}) '/preprocessing_info.mat']);
+            srate = params_info.sampling_rate;
+
+            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file([folder dataset groups{i} '_' pipelines{1}], exclude_subj, freq_vec, srate);
 
             group = [groups{i} '_' pipelines{1}];
-            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder '/' dataset group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder dataset group], filename, srate, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, modality, verbose);
 
             evalc(['Pxx_' groups{i} '=Pxx']);
             evalc(['paf_mean_' groups{i} '=paf_mean']);
             evalc(['paf_std_' groups{i} '=paf_std']);
             evalc(['listB_' groups{i} '=listB']);
             evalc(['chanloc_' groups{i} '=chanloc']);
+
+            % Check if chanloc has only names (mat imported case)
+            if length(fieldnames(chanloc))==1
+                chanloc_present = false;
+            end
         end
 
         gint = groups;
@@ -139,16 +128,24 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     elseif length(pipelines)>1 && length(groups)==1
         for i=1:length(pipelines)
-            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file([folder '/' dataset groups{1} '_' pipelines{i}], exclude_subj, freq_vec);
+            setting = load([settings_path lower(pipelines{i}) '/preprocessing_info.mat']);
+            srate = params_info.sampling_rate;
+
+            [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file([folder dataset groups{1} '_' pipelines{i}], exclude_subj, freq_vec, srate);
 
             group = [groups{1} '_' pipelines{i}];
-            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder '/' dataset group], filename, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, verbose);
+            [Pxx,F, paf_mean, paf_std] = get_group_metric([folder dataset group], filename, srate, NFFT, WINDOW, Lf, Nch, exclude_subj, paf, norm_data, modality, verbose);
             
             evalc(['Pxx_' pipelines{i} '=Pxx']);
             evalc(['paf_mean_' pipelines{i} '=paf_mean']);
             evalc(['paf_std_' pipelines{i} '=paf_std']);
             evalc(['listB_' pipelines{i} '=listB']);
             evalc(['chanloc_' pipelines{i} '=chanloc']);
+
+            % Check if chanloc has only names (mat imported case)
+            if length(fieldnames(chanloc))==1
+                chanloc_present = false;
+            end
         end 
         gint = groups;
         pint = pipelines;
@@ -256,25 +253,34 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             g = [];
             x = [];
             
+            size_groups = [0];
             for j=1:length(groups)
                 [ m, ~, ~] = get_metrics(eval(['Pxx_' groups{j}]), [], [], [3]);
                 [ar, ~] = band_content(m,eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
                 evalc(['ar' num2str(j) '=ar;']);
                 g = [g; j*ones(length(ar),1)];
                 x = [x; ar];
+                size_groups = [size_groups length(x)];
             end
     
             if verbose
-                bo = boxplot(x, g, 'Labels',groups); 
-                hold on;
+                bo = boxplot(x, g, 'Labels',groups,'Symbol',''); 
             else
-                [~, bo] = evalc("boxplot(x, g, 'Labels', groups);");
-                hold on;
+                [~, bo] = evalc("boxplot(x, g, 'Labels', groups,'Symbol','');");
             end
+            hold on;
+            lines = findobj(gcf, 'type', 'line', 'Tag', 'Box');
+            set(lines, 'Color', 'k');
+            lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
+            set(lines, 'Color', 'k');
             set(bo,{'linew'},{2});
             ax = gca;
             ax.FontSize = 12;
             
+            for j=1:length(groups)
+                scatter(g(size_groups(j)+1:size_groups(j+1)),x(size_groups(j)+1:size_groups(j+1)),colors{j},'filled','jitter','on','JitterAmount',jitter);
+            end
+
             chanloc = eval(['chanloc_' groups{j}]);
 
             if ~isempty(ch_index) && length(ch_index)==1
@@ -332,18 +338,29 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
             
             g = [];
             x = [];
+            size_groups = [0];
             for j=1:length(groups)
             
                 g = [g; j*ones(eval(['length(paf_mean_' groups{j} ')']), 1)];
                 x = [x; eval(['paf_mean_' groups{j}])];
+                size_groups = [size_groups length(x)];
             end
             if verbose
-                bo = boxplot(x, g, 'Labels',groups);
+                bo = boxplot(x, g, 'Labels',groups,'Symbol','');
             else
-                [~, bo] = evalc("boxplot(x,g, 'Labels',groups);");
+                [~, bo] = evalc("boxplot(x,g, 'Labels',groups,'Symbol','');");
             end
+
+            lines = findobj(gcf, 'type', 'line', 'Tag', 'Box');
+            set(lines, 'Color', 'k');
+            lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
+            set(lines, 'Color', 'k');
             set(bo,{'linew'},{2});
             hold on;
+
+            for j=1:length(groups)
+                scatter(g(size_groups(j)+1:size_groups(j+1)),x(size_groups(j)+1:size_groups(j+1)),colors{j},'filled','jitter','on','JitterAmount',jitter);
+            end
             
             bandmax = max(x,[],'all');
             bandmin = min(x,[],'all');
@@ -398,77 +415,77 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
     end
 
     %% Topolots PSD
-    FigH3 = figure('Position', get(0, 'Screensize'));
-    cmap = colormap(cmap);
-
-    if length(groups)>1 && length(pipelines)==1
-        if length(groups)==2 && ~isempty(dataset)
-            if isempty(filename)
-                tiledlayout(length(groups)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+    if chanloc_present
+        FigH3 = figure('Position', get(0, 'Screensize'));
+        cmap = colormap(cmap);
+        if length(groups)>1 && length(pipelines)==1
+            if length(groups)==2 && ~isempty(dataset)
+                if isempty(filename)
+                    tiledlayout(length(groups)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+                else
+                    tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+                end
             else
                 tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
             end
-        else
-            tiledlayout(length(groups),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
-        end
-    elseif length(groups)==1 && length(pipelines)>1
-        if length(pipelines)==2 && ~isempty(dataset)
-            if isempty(filename)
-                tiledlayout(length(pipelines)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+        elseif length(groups)==1 && length(pipelines)>1
+            if length(pipelines)==2 && ~isempty(dataset)
+                if isempty(filename)
+                    tiledlayout(length(pipelines)+1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+                else
+                    tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+                end
             else
                 tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
             end
-        else
-            tiledlayout(length(pipelines),length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
+        elseif length(groups)==1 && length(pipelines)==1
+            tiledlayout(1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
         end
-    elseif length(groups)==1 && length(pipelines)==1
-        tiledlayout(1,length(ind_f)-1, 'Padding', 'compact', 'TileSpacing', 'tight');
-    end
-
-    % Extract Max-Min for Topoplot-Colormap
-    minPSD = (10^20)*ones(1,length(ind_f)-1);
-    maxPSD = (-10^20)*ones(1,length(ind_f)-1); 
-
-    for j=1:length(groups)
-        for i=1:length(ind_f)-1
-            
-            [TEST, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i); 
-            mA = mean(TEST,1);
-            minPSD(i) = min([minPSD(i),min(mA)]);
-            maxPSD(i) = max([maxPSD(i),max(mA)]);
+    
+        % Extract Max-Min for Topoplot-Colormap
+        minPSD = (10^20)*ones(1,length(ind_f)-1);
+        maxPSD = (-10^20)*ones(1,length(ind_f)-1); 
+    
+        for j=1:length(groups)
+            for i=1:length(ind_f)-1
+                
+                [TEST, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i); 
+                mA = mean(TEST,1);
+                minPSD(i) = min([minPSD(i),min(mA)]);
+                maxPSD(i) = max([maxPSD(i),max(mA)]);
+            end
         end
-    end
-
-    % Plot Topography
-    for j=1:length(groups)
-        chanloc = eval(['chanloc_' groups{j}]);
-        for i=1:length(ind_f)-1
-            [TEST_A, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
-            mA = mean(TEST_A,1);
-            plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j, minPSD(i), maxPSD(i), norm_cbar_topo, cmap, i, false, '',font, verbose);
+    
+        % Plot Topography
+        for j=1:length(groups)
+            chanloc = eval(['chanloc_' groups{j}]);
+            for i=1:length(ind_f)-1
+                [TEST_A, ~] = band_content(eval(['Pxx_' groups{j}]),eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
+                mA = mean(TEST_A,1);
+                plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j, minPSD(i), maxPSD(i), norm_cbar_topo, cmap, i, false, '',font, verbose);
+            end
         end
-    end
-
-    %% Permutation t-test
-    if length(groups)==2 && isempty(filename) && ~isempty(dataset)
-        for i=1:length(ind_f)-1
-
-            [TEST_A, ~] = band_content(eval(['Pxx_' groups{1}]),eval(['paf_mean_' groups{1}]),paf,ind_f,F,i);
-            [TEST_B, ~] = band_content(eval(['Pxx_' groups{2}]),eval(['paf_mean_' groups{2}]),paf,ind_f,F,i);
-            
-            [ ~, ~, T_FDR, string_topoplot] = group_statistics(TEST_A, TEST_B, pth, test_parametric, FDR_correction, nperms);
-
-            maxPSD = max([abs(min(T_FDR)),abs(max(T_FDR))]);
-            % if maxPSD == 0
-            %     maxPSD = 1;
-            % end
-            minPSD = -maxPSD;
-            chanloc = eval(['chanloc_' groups{1}]);
-            plot_topography(ind_f, groups, T_FDR, chanloc, band_name, F, pipelines, j, minPSD, maxPSD, norm_cbar_topo, cmap, i, true, string_topoplot, font, verbose);
-
+    
+        %% Permutation t-test
+        if length(groups)==2 && isempty(filename) && ~isempty(dataset)
+            for i=1:length(ind_f)-1
+    
+                [TEST_A, ~] = band_content(eval(['Pxx_' groups{1}]),eval(['paf_mean_' groups{1}]),paf,ind_f,F,i);
+                [TEST_B, ~] = band_content(eval(['Pxx_' groups{2}]),eval(['paf_mean_' groups{2}]),paf,ind_f,F,i);
+                
+                [ ~, ~, T_FDR, string_topoplot] = group_statistics(TEST_A, TEST_B, pth, test_parametric, FDR_correction, nperms);
+    
+                maxPSD = max([abs(min(T_FDR)),abs(max(T_FDR))]);
+                % if maxPSD == 0
+                %     maxPSD = 1;
+                % end
+                minPSD = -maxPSD;
+                chanloc = eval(['chanloc_' groups{1}]);
+                plot_topography(ind_f, groups, T_FDR, chanloc, band_name, F, pipelines, j, minPSD, maxPSD, norm_cbar_topo, cmap, i, true, string_topoplot, font, verbose);
+    
+            end
         end
     end
-
     % if isempty(filename)
     %     if length(gint)==1
     %         sgtitle([dataset ' - Group: ' pipelines{1} ' | Topography Comparison']);
@@ -500,16 +517,16 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
         % Load Correct Files
         if length(gint)==1 && length(pint)>1
             for i=1:length(pint)
-                path = [folder gint{1} '_' pint{i} '/' filename '.set'];
+                path = [folder '/' dataset gint{1} '_' pint{i} '/' filename '.set'];
                 evalc(['EEG_' pint{i} '= pop_loadset(path)']);
             end
         elseif length(gint)>1 && length(pint)==1
             for i=1:length(gint)
-                path = [folder gint{i} '_' pint{1} '/' filename '.set'];
+                path = [folder '/' dataset  gint{i} '_' pint{1} '/' filename '.set'];
                 evalc(['EEG_' gint{i} '= pop_loadset(path)']);
             end
         else
-            path = [folder gint{1} '_' pint{1} '/' filename '.set'];
+            path = [folder '/' dataset gint{1} '_' pint{1} '/' filename '.set'];
             evalc(['EEG_' gint{1} '= pop_loadset(path)']);
         end
 
@@ -562,8 +579,12 @@ function groups_visualization(folder, filename, save_img, git_path, dataset, gro
 
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_chansPSD.png']);
-        saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
-        saveas(FigH3,[save_img dataset '_' pipelines{1} '_topoplot.png'])
+        if isempty(filename)
+            saveas(FigH2,[save_img dataset '_' pipelines{1} '_boxplot.png']);
+        end
+        if chanloc_present
+            saveas(FigH3,[save_img dataset '_' pipelines{1} '_topoplot.png'])
+        end
         if ~isempty(filename)
             saveas(FigH4,[save_img dataset '_' pipelines{1} '_timechan.png']);
         end

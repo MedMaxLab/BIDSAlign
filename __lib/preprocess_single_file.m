@@ -55,7 +55,7 @@ function [EEG,L, obj_info] = preprocess_single_file(L, obj_info, data_info, para
         try
             if verbose
                 [EEG] = pop_importevent(EEG,'event', obj_info.event_filename, ...
-                    'timeunit',1/EEG.srate);
+                         'timeunit',1/EEG.srate);
             else
                 cmd2run = "pop_importevent(EEG,'event', " + ...
                     "obj_info.event_filename,'timeunit',1/EEG.srate);";
@@ -109,6 +109,29 @@ function [EEG,L, obj_info] = preprocess_single_file(L, obj_info, data_info, para
             end
         end
     
+        %% Fix Issues in xmax, pnts, and srate
+        if isempty(obj_info.SamplingFrequency)
+            if data_info.samp_rate ~= EEG.srate
+                % if mod(EEG.srate, 1) ~= 0
+                %     %This is useful when the sampling rate in the file is
+                %     %corrupted, but the sampling rate expected is known.
+                EEG.srate = data_info.samp_rate;
+                %end
+                warning('EEG srate in struct, differs from EEG srate in dataset info file. EEG.srate overwritten.')
+            end
+        else
+            if obj_info.SamplingFrequency ~= EEG.srate
+                % if mod(EEG.srate, 1) ~= 0
+                %     %This is useful when the sampling rate in the file is
+                %     %corrupted, but the sampling rate expected is known.
+                EEG.srate = obj_info.SamplingFrequency;
+                % end
+                warning('EEG srate in struct, differs from EEG srate in json file. EEG.srate overwritten.')
+            end
+        end
+        EEG.pnts = length(EEG.data);
+        EEG.xmax = (EEG.pnts-1)/EEG.srate;
+
         %% Remove Channels
         [EEG] = prepstep_removechannels(EEG, data_info, params_info, verbose);
 
@@ -129,6 +152,7 @@ function [EEG,L, obj_info] = preprocess_single_file(L, obj_info, data_info, para
         %% Resampling 
         [EEG] = prepstep_resampling(EEG, data_info, params_info, obj_info, verbose);
 
+        disp(['-------' num2str(length(EEG.data)) '--------']);
         %% Filtering
         [EEG] = prepstep_filtering(EEG, params_info, verbose);
 
@@ -168,6 +192,8 @@ function [EEG,L, obj_info] = preprocess_single_file(L, obj_info, data_info, para
 
         %% FINAL ICA DECOMPOSITION
         [EEG] = prepstep_ICA(EEG, params_info, false, verbose);
+
+        disp(['-------' num2str(length(EEG.data)) '--------']);
 
         %% Save the .set file 
         if save_info.save_set

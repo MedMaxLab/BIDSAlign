@@ -68,5 +68,4 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
         error('ERROR: UNSUPPORTED EEG FILE EXTENSION');
     end
 
-
 end
