@@ -13,8 +13,7 @@ function [EEG] = prepstep_resampling(EEG, data_info, params_info, obj_info, verb
     %   - params_info (struct): Struct containing preprocessing parameters, 
     %                           including the target sampling rate.
     %   - obj_info (struct): Struct containing information about the EEG data file.
-    %   - verbose (logical): Verbosity flag indicating whether 
-    %                        to display information during processing.
+    %   - verbose (logical): Setting the verbosity level.
     %
     % Output:
     %   - EEG (struct): Processed EEG data structure.

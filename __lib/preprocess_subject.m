@@ -10,11 +10,11 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, ...
     %                                           path_info, obj_info, verbose)
     %
     % Input:
-    %   - data_info: Dataset information.
-    %   - save_info: Save settings information.
-    %   - params_info: Preprocessing parameters information.
-    %   - path_info: Paths information.
-    %   - obj_info: Object information.
+    %   - data_info (struct): Dataset information.
+    %   - save_info (struct): Save settings information.
+    %   - params_info (struct): Preprocessing parameters information.
+    %   - path_info (struct): Paths information.
+    %   - obj_info (struct): Object information.
     %   - verbose: Flag to display warnings (optional, default is false).
     %
     % Output:

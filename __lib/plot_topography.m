@@ -10,7 +10,7 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     % Input:
     %   - ind_f (numeric array): Indices of frequency bands.
     %   - groups (cell array): groups or condition names.
-    %   - m (numeric array): Mean PSD values.
+    %   - mA (numeric array): Mean PSD values.
     %   - chanloc (struct array): Channel locations.
     %   - band_name (cell array): Names of frequency bands.
     %   - F (numeric array): Frequency vector.
@@ -18,12 +18,13 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     %   - j (numeric): Index of the groups or condition to plot.
     %   - minPSD (double): Minimum value of PSD for groups, for each frequency band.
     %   - maxPSD (double): Maximum value of PSD for groups, for each frequency band.
-    %   - cmap: Colormap used for the topoplots.
     %   - norm (char array): Normalization option for colorbar in the topoplot.
+    %   - cmap: Colormap used for the topoplots.
+    %   - i (numeric): Index of selected frequency.
     %   - fdr_plot (logical): Boolean indicating if fdr plot.
     %   - string_topoplot (char array): Topoplot FDR custom title.
     %   - font (structure): Structure of font sizes.
-    %   - verbose: Boolean setting the verbosity level.
+    %   - verbose (logical): Setting the verbosity level.
     %
     % Author: [Andrea Zanola]
     % Date: [23/02/2024]
@@ -42,7 +43,6 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     else
         electrode_mode = 'labels';
     end
-    electrode_mode = 'labels';
 
     if isempty(norm)
         range = [minPSD maxPSD];

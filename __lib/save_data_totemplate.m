@@ -33,20 +33,6 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     % Author: [Andrea Zanola]
     % Date: [25/01/2024]
     %
-    % Subfunctions:
-    %   - [listB] = list_chan_systems(B, channel_system, template_info, channel_systems)
-    %
-    % Subfunction Description:
-    %   - Lists channels based on the specified channel system.
-    %
-    % Subfunction Input:
-    %   - B: Structure containing information about channel locations.
-    %   - channel_system: Current EEG channel system.
-    %   - template_info: Structure containing template information.
-    %   - channel_systems: Cell array containing supported channel systems.
-    %
-    % Subfunction Output:
-    %   - listB: List of channels based on the specified channel system.
 
     if nargin < 9
         verbose = false;
@@ -60,26 +46,9 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     [listB] = list_chan_systems(B,data_info.channel_system, ...
                                 template_info,data_info.channel_systems, false);
 
-    %% Handle Old Reference
-    % if isempty(intersect(convertCharsToStrings(obj_info.old_reference),listB))
-    %     old_reference_registered = false;
-    % else
-    %     old_reference_registered = true;
-    % end
-
     %% Check number of missing channels and save who 
     pad_interpol_channels = false(chans_DATA_MATRIX,1);
     [val,pos] = setdiff(template_info.template_matrix,listB);
-    % ref_ind = [];
-    % for i=1:length(val)
-    %     if isequal(val(i),obj_info.old_reference)
-    %         ref_ind = i;
-    %     end
-    % end
-    % if ~isempty(ref_ind)
-    %     val(ref_ind) = [];
-    %     pos(ref_ind) = [];
-    % end
     pad_interpol_channels(pos) = 1;
     number_miss_ch = length(val);
 
@@ -104,12 +73,6 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
 
     B1 = EEG1.chanlocs;
     [listB1] = list_chan_systems(B1,data_info.channel_system, template_info,data_info.channel_systems, false);
-       
-    %% Set the standard ref channel as a vector of zeros 
-    %Here if Cz is not present, is also interpolated, so then Cz should be 0.
-    % if ~isequal(standard_ref_ch,'COMMON')
-    %     EEG1.data(listB==standard_ref_ch,:) = zeros(1,length(EEG.data));
-    % end
 
     %% Select only channels in the template 
     mask_ch = zeros(chans_DATA_MATRIX,1);
@@ -134,8 +97,6 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
         end
     end
 
-    %% Convert from uV to mV
-    %DATA_MATRIX = EEG1.data(mask_ch,:)/1000;
     DATA_MATRIX = EEG1.data(mask_ch,:);
 
     %% Save and Create Tensor or Save Matrix standard template 

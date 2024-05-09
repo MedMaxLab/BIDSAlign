@@ -1,5 +1,5 @@
 
-function [EEG,L, obj_info] = preprocess_single_file(L, obj_info, data_info, params_info, ...
+function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, params_info, ...
     path_info, template_info, save_info, verbose)
     % FUNCTION: preprocess_single_file
     %
@@ -21,7 +21,7 @@ function [EEG,L, obj_info] = preprocess_single_file(L, obj_info, data_info, para
     %
     % Output:
     %   - EEG: EEG data structure after preprocessing.
-    %   - L: Updated structure containing information about channel locations.
+    %   - L: Structure containing information about channel locations.
     %   - obj_info: Updated structure containing information about the EEG data file.
     %
     % Notes:

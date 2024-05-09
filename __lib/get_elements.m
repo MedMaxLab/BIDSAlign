@@ -1,6 +1,5 @@
 
-function [vec_list, list] = get_elements(list, index_i, index_f, select_files, ...
-    folder_level, verbose)
+function [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level, verbose)
     % FUNCTION: get_elements
     %
     % Description: Retrieves a subset of elements from a list based on specified criteria.
@@ -16,6 +15,7 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, .
     %                   based on file names (optional).
     %   - folder_level: String specifying the folder level for filtering
     %                   (e.g., 'SUBJECTS').
+    %   - verbose (logical): Flag to control verbosity of output.
     %
     % Output:
     %   - vec_list: List of selected indices from the original list.

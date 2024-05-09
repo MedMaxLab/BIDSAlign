@@ -10,8 +10,7 @@ function [EEG] = prepstep_2ASR(EEG, params_info, verbose)
     % Input:
     %   - EEG (struct): EEG data structure.
     %   - params_info (struct): Struct containing preprocessing parameters.
-    %   - verbose (logical): Verbosity flag indicating whether to display 
-    %                        information during processing.
+    %   - verbose (logical): Setting the verbosity level.
     %
     % Output:
     %   - EEG (struct): Processed EEG data structure.

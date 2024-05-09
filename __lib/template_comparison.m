@@ -1,4 +1,4 @@
-function template_comparison(filename, folder, mat_folder, dataset, groups, pipelines, git_path, save_img, channel_system, paf, verbose)
+    function template_comparison(filename, folder, mat_folder, dataset, groups, pipelines, git_path, save_img, channel_system, paf, verbose)
     % template_comparison: Compares EEG power spectral density (PSD) between a dataset and a template.
     %
     % Input:

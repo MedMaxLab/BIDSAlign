@@ -12,8 +12,7 @@ function [EEG] = prepstep_removesegments(EEG, params_info, verbose)
     %   - EEG (struct): EEG data structure.
     %   - params_info (struct): Struct containing preprocessing parameters, 
     %                           including segment removal durations.
-    %   - verbose (logical): Verbosity flag indicating whether 
-    %                        to display information during processing.
+    %   - verbose (logical): Setting the verbosity level.
     %
     % Output:
     %   - EEG (struct): Processed EEG data structure.

@@ -12,8 +12,7 @@ function [EEG] = prepstep_ICA(EEG, params_info, ica_case, verbose)
     %   - EEG (struct): EEG data structure.
     %   - params_info (struct): Struct containing preprocessing parameters.
     %   - ica_case (logical): Indicates which step should be performed.
-    %   - verbose (logical): Verbosity flag indicating whether 
-    %                        to display information during processing.
+    %   - verbose (logical): Setting the verbosity level.
     %
     % Output:
     %   - EEG (struct): Processed EEG data structure.

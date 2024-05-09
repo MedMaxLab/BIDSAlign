@@ -12,8 +12,7 @@ function [EEG] = prepstep_interpolation(EEG, params_info, B, nchan_preASR, verbo
     %   - params_info (struct): Struct containing preprocessing parameters.
     %   - B (matrix): Interpolation matrix.
     %   - nchan_preASR (numeric): Number of channels before ASR.
-    %   - verbose (logical): Verbosity flag indicating whether 
-    %                        to display information during processing.
+    %   - verbose (logical): Setting the verbosity level.
     %
     % Output:
     %   - EEG (struct): Processed EEG data structure.

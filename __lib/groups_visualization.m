@@ -23,7 +23,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     %   - test_parametric (logical): Indicates if the t-test should be
     %   parametric or not. In second cases it uses an external function,
     %   othwerise the MATLAB function ttest2.
-    %   - verbose: Boolean setting the verbosity level.
+    %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
     %   None

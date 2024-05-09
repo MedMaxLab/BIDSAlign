@@ -13,8 +13,7 @@ function [EEG] = prepstep_removechannels(EEG, data_info, params_info, verbose)
     %   - data_info (struct): Struct containing information about data, 
     %                         including channels to remove.
     %   - params_info (struct): Struct containing preprocessing parameters.
-    %   - verbose (logical): Verbosity flag indicating whether 
-    %                        to display information during processing.
+    %   - verbose (logical): Setting the verbosity level.
     %
     % Output:
     %   - EEG (struct): Processed EEG data structure.
