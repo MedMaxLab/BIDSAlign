@@ -63,9 +63,9 @@ In the current version of the library, the following preprocessing steps are ava
 
 Please note that EEG data are assumed to be saved in $\mu V$.
 
-## Saving and Visualization
-In order to use the visualization functions, please save the set folders by specifing save_info.set_label as *group* _ *pipeline*; for example group could be 'A' indicating Alzheimer and pipeline could be 'ICA' indicating the preprocessing step done.
-BIDSAling provides three main function for visualization of the results:
+## Saving and Visualisation
+In order to use the visualisation functions, please save the set folders by specifing save_info.set_label as *group* _ *pipeline*; for example group could be 'A' indicating Alzheimer and pipeline could be 'ICA' indicating the preprocessing step done.
+BIDSAling provides three main function for visualisation of the results:
 1. groups_visualization: you can compare more groups for a single pipeline, or viceversa; you can also specify the single filename to be visualized. Please see the associated paper in order to see which plots can be produced.
 2. ERP_visualization: you can see the average ERP a group of patients or for a single one, for multiple event names. If there is only one event, scalp topographies of channels activation in time is shown.
 3. template_comparison: you can see the differences between the topographies obtained from two channel location, and the effects of the conversion file. 
@@ -83,7 +83,7 @@ The library was written in MATLAB 2023b, EEGLAB 2023.0, and requires the followi
 - "firfilt" v2.7.1
 - "eegstats" v2.7.1
 
-Moreover interally it uses two functions for the non-parametric permutation t-test https://github.com/eglerean/hfASDmodules/tree/master and the iaf calculations https://github.com/corcorana/restingIAF. If you want to avoid downloading these external packages, please set iaf_correction=false and test_parametric = true whenever required.
+Moreover interally it uses two functions for the non-parametric permutation t-test https://github.com/eglerean/hfASDmodules/tree/master and the iaf calculations https://github.com/corcorana/restingIAF. If you want to avoid downloading these external packages, please set paf=false and test_parametric = true when using the visualisation function groups_visualization.
 
 
 
