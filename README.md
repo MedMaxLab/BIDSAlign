@@ -7,14 +7,13 @@ For the use of the GUI please see the attached detailed documentation.
 In order to successfully use BIDSAlign, check the following steps.
 
 ### Datasets List
-You have to create a folder where you will store all the datasets present in DATASET_INFO.tsv. 
-DATASET_INFO.csv is a file structured in the following way:
+You have to create a folder where you will store all the datasets present in DATASET_INFO.tsv, file structured in the following way:
 | dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate |
 |--------------------------|------------------|--------------|---------------------------|----------------|-------------------|-------------------|--------------------|-----------|
 | 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | 500       |
 | 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       |
 
-Please remember that the name of the folder where the dataset is stored must corresponds to *dataset_code* in DATASET_INFO.csv. 
+Please remember that the name of the folder where the dataset is stored must corresponds to *dataset_code* in DATASET_INFO.tsv . 
 
 ### BIDS Format
 This library can preprocess datasets structured with both BIDS and non-BIDS format. Thus is expected in input a dataset structured as shown in [https://bids.neuroimaging.io/](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html) .
