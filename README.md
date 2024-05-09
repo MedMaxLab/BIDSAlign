@@ -1,6 +1,10 @@
 # BIDSAlign
 This is the reference repository for the paper < >.
 BIDSAlign preprocess public datasets saved in both BIDS and non-BIDS structure, uniforming the outputs to a common template.
+Thus BIDSAlign can be used as initial step in a deep-learning project involving EEG data.
+The library can load, preprocess and align EEG recordings to a common template, i.e. a set of ordered channels. Each file of the selected datasets will have the same channels, even if data 
+comes from different channel systems, with different numbers of electrodes. 
+The preprocessed and template-aligned files can then be imported and used into DL frameworks such as PyTorch.
 For the use of the GUI please see the attached detailed documentation.
 
 ## Preparation Steps
