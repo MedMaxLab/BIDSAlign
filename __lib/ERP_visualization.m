@@ -45,9 +45,9 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     channels = ["C3","FCZ","C4"];
     colors = {'k','g','r','m','k','c','y'};
     cmap = 'turbo';
-    title_size = 16;%26;
-    labels_size = 14;%24;
-    ticks_size = 12;%22;
+    title_size = 16;
+    labels_size = 14;
+    ticks_size = 12;
     ax_size = 2;
 
     
@@ -220,21 +220,6 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
                 cbar.FontSize = labels_size;
             end
         end
-
-        
-        % if length(groups)==2
-        %     for j=1:length(times)
-        %         m = squeeze(mean(eval(['ERP_' groups{1}])-eval(['ERP_' groups{2}]),2));
-        %         [~,ind_t] = min(abs(EEG.times-times(j)));
-        %         nexttile;
-        %         topoplot(m(ind_t,:),EEG.chanlocs,'electrodes',electrode_mode,'maplimits','minmax','colormap',cmap,'verbose',verb);
-        %         title([num2str(EEG.times(ind_t)) ' ms | Discrepancy ' groups{1} ' - ' groups{2}],'FontSize',14);
-        % 
-        %         cbar = colorbar;
-        %         cbar.Label.String = '\muV';
-        %         cbar.FontSize = 10;
-        %     end
-        % end
         
         % if isempty(filename)
         %     if length(gint)==1
@@ -283,8 +268,6 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
                 xlabel('Time [ms]','FontSize',labels_size);
                 cmap = colormap('jet');
                 title(titl,'FontSize',title_size);
-                %evalc(['ax' num2str(count)  ' = gca']);    
-                %evalc(['EEG_' groups{i} '=EEG']);
 
                 ax = gca;
                 ax.LineWidth = ax_size;
@@ -298,17 +281,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
                 count = count+1;
             end
         end
-    
-        % for i=1:length(groups)*length(channels)
-        %     ax = eval(['ax' num2str(i)]);
-        %     ax.LineWidth = 1.1;
-        %     ax.FontSize = 12;
-        %     ax.XTick = linspace(epoch_lims(1),epoch_lims(2),5)*1000;
-        %     %cbar = colorbar(ax);
-        %     %set(cbar, 'ylim', [minPSD maxPSD]);
-        % end
-    
-    
+   
         for j=1:length(channels)
             nexttile;
             [channel_index, ~] = get_indexch(listB, channels(j));
