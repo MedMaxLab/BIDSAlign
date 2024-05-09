@@ -73,8 +73,8 @@ Please note that EEG data are assumed to be saved in $\mu V$.
 ## Saving and Visualisation
 In order to use the visualisation functions, please save the set folders by specifing save_info.set_label as *group* _ *pipeline*; for example group could be 'A' indicating Alzheimer and pipeline could be 'ICA' indicating the preprocessing step done.
 BIDSAling provides three main function for visualisation of the results:
-1. groups_visualization: you can compare more groups for a single pipeline, or viceversa; you can also specify the single filename to be visualized. Please see the associated paper in order to see which plots can be produced.
-2. ERP_visualization: you can see the average ERP a group of patients or for a single one, for multiple event names. If there is only one event, scalp topographies of channels activation in time is shown.
+1. groups_visualization: you can compare more groups for a single pipeline, or viceversa; you can also specify the single filename to be visualised. Please see the associated paper in order to see which plots can be produced.
+2. ERP_visualization: you can plot the average and grand-average ERP for a group of patients, for multiple event names. If there is only one event, scalp topographies of channels activation in time are shown.
 3. template_comparison: you can see the differences between the topographies obtained from two channel location, and the effects of the conversion file. 
 
 ## Compatibility
