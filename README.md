@@ -42,7 +42,7 @@ You have to specify the dataset. In this case you can process the entire dataset
 single_file = false;
 dataset_name = ['UC_SD'];
 ```
-3. Preprocess all the datasets contained in DATASET_INFO
+3. Preprocess all the datasets contained in DATASET_INFO.tsv
 You have to left empty the dataset name and set single file as false.
 ```
 single_file = false;
@@ -56,9 +56,10 @@ In the current version of the library, the following preprocessing steps are ava
 3. Baseline removal
 4. Resampling
 5. Filtering
-6. Rereference
-7. Independent Component Analysis and Automatic IC rejection with MARA and ICLabel
-8. ASR, that can be used independently in two ways: for removing bad channels or for removing/reconstructing bad time windows.
+6. Independent Component Analysis and Automatic IC rejection with MARA or ICLabel
+7. ASR, that can be used independently in two ways: for removing bad channels or for removing/reconstructing bad time windows.
+8. Interpolation of previously removed bad channels.
+8. Rereference.
 
 Please note that EEG data are assumed to be saved in $\mu V$.
 
