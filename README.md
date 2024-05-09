@@ -88,7 +88,7 @@ The library was written in MATLAB 2023b, EEGLAB 2023.0, and requires the followi
 - "clean_rawdata" v2.91
 - "dipfit" v5.3
 - "firfilt" v2.7.1
-- "eegstats" v2.7.1
+- "eegstats" v1.2
 
 Moreover interally it uses two functions for the non-parametric permutation t-test https://github.com/eglerean/hfASDmodules/tree/master and the iaf calculations https://github.com/corcorana/restingIAF. If you want to avoid downloading these external packages, please set paf=false and test_parametric = true when using the visualisation function groups_visualization.
 
