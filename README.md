@@ -28,7 +28,7 @@ You have to create a folder where you will store all the datasets present in the
 
 The library already comes with all the information needed for processing 20 public datasets.
 
-Please remember that the name of the folder where the dataset is stored must corresponds to th value in column *dataset_code*. 
+Please remember that the name of the folder where the dataset is stored must corresponds to the value in column *dataset_code*. 
 
 ### BIDS Format
 This library can preprocess datasets structured with both BIDS and non-BIDS format. Thus is expected in input a dataset structured as shown in [BIDS-EEG](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html).
