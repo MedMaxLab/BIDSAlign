@@ -110,13 +110,10 @@ Moreover interally it uses two functions:
 If you want to avoid downloading these external packages, please set paf=false and test_parametric=true when using the visualisation function groups_visualization.
 
 ## Contributors:
-M.Sc. Andrea Zanola
-
-Eng. Federico Del Pup
-
-Prof. Camillo Porcaro
-
-Prof. Manfredo Atzori
+* M.Sc. Andrea Zanola
+* Eng. Federico Del Pup
+* Prof. Camillo Porcaro
+* Prof. Manfredo Atzori
 
 
 
