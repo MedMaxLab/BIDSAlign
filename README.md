@@ -31,7 +31,7 @@ The library already comes with all the information needed for 20 public dataset.
 Please remember that the name of the folder where the dataset is stored must corresponds to th value in column *dataset_code*. 
 
 ### BIDS Format
-This library can preprocess datasets structured with both BIDS and non-BIDS format. Thus is expected in input a dataset structured as shown in [https://bids.neuroimaging.io/](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html).
+This library can preprocess datasets structured with both BIDS and non-BIDS format. Thus is expected in input a dataset structured as shown in [BIDS-EEG](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html).
 However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset.
 As specified by the BIDS format, *participants.tsv* is recommended and should be stored in the dataset folder.
 
@@ -107,7 +107,8 @@ The library was written in MATLAB 2023b, EEGLAB 2023.0, and requires the followi
 Moreover interally it uses two functions:
 - For the non-parametric permutation t-test [hfASDmodules: Reorganization of functionally connected subnetworks in autism](https://zenodo.org/records/44657).
 - For the iaf calculation: [restingIAF](https://zenodo.org/records/2575868)
-If you want to avoid downloading these external packages, please set paf=false and test_parametric=true when using the visualisation function groups_visualization.
+
+If you want to avoid downloading these additional packages, please set paf=false and test_parametric=true when using the visualisation function groups_visualization.
 
 ## Contributors:
 * M.Sc. Andrea Zanola
