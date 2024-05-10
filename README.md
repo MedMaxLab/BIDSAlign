@@ -111,8 +111,11 @@ If you want to avoid downloading these external packages, please set paf=false a
 
 ## Contributors:
 M.Sc. Andrea Zanola
+
 Eng. Federico Del Pup
+
 Prof. Camillo Porcaro
+
 Prof. Manfredo Atzori
 
 
