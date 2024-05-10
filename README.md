@@ -4,9 +4,8 @@
         style="display: block; margin: 0 auto" />
 
 ## What can you do?
-The library can load, preprocess, and align EEG recordings to a common template, i.e. a set of ordered channels. Each file of the selected datasets will have the same channels, even if data 
-comes from different channel systems, with different numbers of electrodes.
-The preprocessed and template-aligned files can then be imported and used in Deep Learning frameworks such as PyTorch thus, BIDSAlign is thought to be used as an initial step in a deep-learning project involving EEG data.
+The library allows you to load and preprocess EEG recordings and align them to a common template, i.e. a set of ordered channels. Each file of the selected datasets will have the same channels, even if data comes from different channel systems, with different numbers of electrodes.
+The preprocessed and template-aligned files can then be imported and used in Deep Learning frameworks such as PyTorch, thus BIDSAlign is thought to be used as an initial step in a deep-learning project involving EEG data.
 
 
 Channel systems currently supported are:
@@ -26,14 +25,14 @@ You have to create a folder where you will store all the datasets present in the
 | 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | 500       |
 | 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       |
 
-The library already comes with all the information needed for processing 20 public datasets.
+Please remember that the name of the folder where the dataset is stored must corresponds to the value in column *dataset_code*.
 
-Please remember that the name of the folder where the dataset is stored must corresponds to the value in column *dataset_code*. 
+The library already comes with all the information needed for processing 20 public datasets. Some of them are large and commonly used in deep learning such as the Healthy Brain Network [HBN EO/EC](https://openneuro.org/datasets/ds004186/versions/2.0.0), the Two Decades–Brainclinics Research Archive for Insights in Neurophysiology [TDBRAIN](https://brainclinics.com/resources/) and the Max Planck Institute LEMON dataset [MPI-LEMON](https://fcon_1000.projects.nitrc.org/indi/retro/MPI_LEMON.html).
 
 ### BIDS Format
-This library can preprocess datasets structured with both BIDS and non-BIDS format. Thus is expected in input a dataset structured as shown in [BIDS-EEG](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html).
+This library can preprocess datasets structured with both BIDS and non-BIDS format, thus is expected in input a dataset structured as shown in [BIDS-EEG](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html).
 However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset.
-As specified by the BIDS format, *participants.tsv* is recommended and should be stored in the dataset folder.
+As specified by the BIDS format, the *participants.tsv* file is recommended and should be stored inside the dataset folder.
 
 Here an example of how the folder structure and the workflow can be organized.
 
@@ -44,7 +43,7 @@ Here an example of how the folder structure and the workflow can be organized.
 
 
 ### Channel Location
-Many times the channel location is absent or even wrong when downloading public data. BIDSAlign helps you, by setting the column *channel_location_filename*, in the following way,:
+Many times the channel location is absent or even wrong when downloading public data. BIDSAlign helps you, setting the column *channel_location_filename*, in the following way:
 - If a specific channel location should be used for the entire dataset, please enter the filename.
 - If the eeg files have already the channel coordinates inside the EEG structure, please enter 'loaded'.
 - If the default channel location can be used for the dataset, please enter 'default' and it will use the default channel locations present in EEGLAB.
@@ -74,7 +73,7 @@ dataset_name = [];
 ```
 
 ## Preprocessing
-In the current version of the library, the following preprocessing steps are available:
+The following preprocessing steps are currently available in BIDSAlign:
 1. Channels removal.
 2. Segment removal (first and last specified seconds).
 3. Baseline removal.
@@ -83,7 +82,7 @@ In the current version of the library, the following preprocessing steps are ava
 6. Independent Component Analysis (ICA) and Automatic IC rejection with MARA or ICLabel.
 7. Artifact Subspace Reconstruction (ASR) can be used independently in two ways: for removing bad channels and/or for removing/reconstructing bad time windows.
 8. Interpolation of previously removed bad channels.
-8. Rereference.
+9. Rereference.
 
 Please note that EEG data are assumed to be saved in $\mu V$.
 
@@ -98,7 +97,7 @@ The library comes with three functions:
 3. template_comparison: you can see the differences between the topographies obtained from two channel location and the effects of the conversion file. 
 
 ## Compatibility
-The library was written in MATLAB 2023b, EEGLAB 2023.0, and requires the following plug-in:
+The library was written in MATLAB 2023b, EEGLAB 2023.0 and requires the following plug-in:
 - "Biosig" v3.8.3
 - "FastICA" v25
 - "Fileio" v20240111
@@ -110,7 +109,7 @@ The library was written in MATLAB 2023b, EEGLAB 2023.0, and requires the followi
 - "firfilt" v2.7.1
 - "eegstats" v1.2
 
-Moreover interally it uses two functions:
+Moreover interally it uses two libraries:
 - For the non-parametric permutation t-test [hfASDmodules: Reorganization of functionally connected subnetworks in autism](https://zenodo.org/records/44657).
 - For the iaf calculation: [restingIAF](https://zenodo.org/records/2575868)
 
