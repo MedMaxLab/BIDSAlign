@@ -1,4 +1,4 @@
-function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,event_name,epoch_lims,exclude_subj,verbose)
+function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,event_name,epoch_lims,exclude_subj,times,channels,verbose)
     % ERP_visualization: Visualizes event-related potentials (ERPs) for a group of subjects.
     %
     % Description: Visualization function, that allows to shows average and
@@ -6,7 +6,8 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     % one event, scalp topography is plotted at various time steps.
     %
     % Syntax:
-    %   ERP_visualization(folder, dataset, groups, pipelines, filename, save_img, event_name, epoch_lims, exclude_subj, verbose)
+    %   ERP_visualization(folder, dataset, groups, pipelines, filename, save_img, 
+    %                     event_name, epoch_lims, exclude_subj, times, channels, verbose)
     %
     % Input:
     %   - folder (string): Path to the folder containing EEG data files.
@@ -16,8 +17,10 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     %   - filename (string): Name of the EEG data file.
     %   - save_img (string): Optional. Path to save the generated images.
     %   - event_name (string): Name of the event marker.
-    %   - epoch_lims (vector): Epoch limits [start_time, end_time].
+    %   - epoch_lims (array): Epoch limits [start_time, end_time].
     %   - exclude_subj (cell array of strings): List of subjects to exclude from analysis.
+    %   - times (array): Time steps in which display scalp topographies.
+    %   - channels (list): List of channels to visualize ERP.
     %   - verbose (logical): Flag indicating whether to display progress messages.
     %
     % Output: None.
@@ -37,15 +40,15 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     % exclude_subj = {};
     % event_name = {'S  6'}; %S 5 standard, S 7 deviant, S 6 target
     % epoch_lims = [-0.2 1];
+    % times = [65 110 180];
+    % channels = ["C3","FCZ","C4"];
     %
-    % ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,event_name,epoch_lims,exclude_subj,verbose);
+    % ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,event_name,epoch_lims,exclude_subj,times,channels,verbose);
     %
 
     %% Optional Inputs
     smooth = 5;
-    dt = 0.1; %Xticks
-    times = [65 110 180];
-    channels = ["C3","FCZ","C4"];
+    Nticks = 5;
     colors = {'k','g','r','m','k','c','y'};
     cmap = 'turbo';
     title_size = 16;
@@ -53,7 +56,6 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     ticks_size = 12;
     ax_size = 2;
 
-    
     %% Load First Example
     folder = [folder '/' dataset];
     group = [groups{1} '_' pipelines{1}];
@@ -118,7 +120,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
             lgd.Location ='northeast';
             lgd.FontSize = ticks_size;
             ax = gca;
-            ax.XTick = (epoch_lims(1):dt:epoch_lims(2))*1000;
+            ax.XTick = linspace(epoch_lims(1),epoch_lims(2),Nticks)*1000;
             ax.LineWidth = ax_size;
             ax.FontSize = ticks_size;
             xlim([epoch_lims(1) epoch_lims(2)]*1000);
@@ -165,7 +167,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
             lgd.Location ='northeast';
             lgd.FontSize = labels_size;
             ax = gca;
-            ax.XTick = (epoch_lims(1):dt:epoch_lims(2))*1000;
+            ax.XTick = linspace(epoch_lims(1),epoch_lims(2),Nticks)*1000;
             ax.LineWidth = ax_size;
             ax.FontSize = ticks_size;
             xlim([epoch_lims(1) epoch_lims(2)]*1000);
