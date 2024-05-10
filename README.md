@@ -26,7 +26,7 @@ You have to create a folder where you will store all the datasets present in the
 | 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | 500       |
 | 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       |
 
-The library already comes with all the information needed for 20 public dataset.
+The library already comes with all the information needed for processing 20 public datasets.
 
 Please remember that the name of the folder where the dataset is stored must corresponds to th value in column *dataset_code*. 
 
