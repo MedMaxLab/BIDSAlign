@@ -1,6 +1,6 @@
 <img src="images/logo_wo_white.png"
         alt="Picture"
-        width="300"
+        width="400"
         style="display: block; margin: 0 auto" />
 
 ## What can you do?
@@ -39,6 +39,7 @@ Here an example of how the folder structure and the workflow can be organized.
 
 <img src="images/folder_structure.png"
         alt="Picture"
+        width="800"
         style="display: block; margin: 0 auto" />
 
 
