@@ -1,4 +1,7 @@
-# BIDSAlign
+<img src="logo_wo_white.png"
+        alt="Picture"
+        width="300"
+        style="display: block; margin: 0 auto" />
 This is the reference repository for the paper < >.
 
 BIDSAlign preprocess public datasets saved in both BIDS and non-BIDS structure, uniforming the outputs to a common template.
