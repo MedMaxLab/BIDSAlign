@@ -14,11 +14,10 @@ function [B] = rename_channels(B, data_info, EEG_history, EEG)
     %   - EEG (struct): EEG data structure.
     %
     % Output:
-    %   - B: Updated structure with renamed channel labels.
+    %   - B (struct): Updated structure with renamed channel labels.
     %
     % Notes:
-    %   - This function changes channel names 
-    %     to uppercase and removes dots or double dots.
+    %   - This function changes channel names to uppercase and removes dots or double dots.
     %   - It also standardizes the nomenclature for certain channels.
     %
     % Author: [Andrea Zanola]

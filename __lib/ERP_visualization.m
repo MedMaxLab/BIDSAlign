@@ -1,6 +1,10 @@
 function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,event_name,epoch_lims,exclude_subj,verbose)
     % ERP_visualization: Visualizes event-related potentials (ERPs) for a group of subjects.
     %
+    % Description: Visualization function, that allows to shows average and
+    % grand-average ERP, for multiple channels and events. If there is only
+    % one event, scalp topography is plotted at various time steps.
+    %
     % Syntax:
     %   ERP_visualization(folder, dataset, groups, pipelines, filename, save_img, event_name, epoch_lims, exclude_subj, verbose)
     %
@@ -16,8 +20,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     %   - exclude_subj (cell array of strings): List of subjects to exclude from analysis.
     %   - verbose (logical): Flag indicating whether to display progress messages.
     %
-    % Output:
-    %   None
+    % Output: None.
     %
     % Author: [Andrea Zanola]
     % Date: [08/03/2024]

@@ -13,7 +13,7 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
     %   - verbose (logical): (Optional) Boolean setting the verbosity level.
     %
     % Output:
-    %   - EEG: EEG data structure loaded from the specified file. If loading fails
+    %   - EEG (struct): EEG data structure loaded from the specified file. If loading fails
     %          or the file format is unsupported, EEG will be an empty array ([]).
     %
     % Supported EEG File Formats:
@@ -21,11 +21,9 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
     %   - .vhdr: EEG data is loaded using 'pop_loadbv' from EEGLAB.
     %   - .edf or .bdf: EEG data is loaded using 'pop_biosig' from EEGLAB.
     %
-    % Note: Make sure EEGLAB is installed and configured properly 
-    %       in your MATLAB environment.
-    
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
+    %
 
     if nargin < 3
         verbose = false;

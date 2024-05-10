@@ -1,7 +1,8 @@
 function [EEG] = prepstep_1ASR(EEG, params_info, verbose)
+    % FUNCTION: prepstep_1ASR
+    %
     % Description: Applies automatic bad-channel channel removal. Internally
-    % it calls functions such as clean_flatlines, clean_drifts and
-    % clean_channels.
+    % it calls functions such as clean_flatlines, clean_drifts and clean_channels.
     %
     % Syntax:
     %   [EEG] = prepstep_1ASR(EEG, params_info, verbose)

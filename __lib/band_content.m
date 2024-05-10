@@ -37,7 +37,9 @@ function [ar, ind_f_iaf] = band_content(m,paf_v,paf,ind_f,F,i)
     if paf
         ind_f_iaf = zeros(numberSubjects,length(ind_f));
         for k=1:numberSubjects
-            if isnan(paf_v(k))
+            if isnan(paf_v(k)) 
+                %If restingIAF does not find the alpha frequency load the
+                %standard one
                 if ~isempty(m) && length(s)==2
                     mr = m(k,ind_f(i):ind_f(i+1))';
                     dF = F(ind_f(i):ind_f(i+1));
@@ -51,6 +53,8 @@ function [ar, ind_f_iaf] = band_content(m,paf_v,paf,ind_f,F,i)
             else
 
                 %Frequency Range based on IAF
+                %Implementation from the paper: "Intensive Training Induces
+                %Longitudinal Changes in Meditation State-related EEG Oscillatory Activity"
                 [~,ind_04IAF] = min(abs(F-0.4*paf_v(k)));
                 [~,ind_06IAF] = min(abs(F-0.6*paf_v(k)));
                 [~,ind_12IAF] = min(abs(F-1.2*paf_v(k)));

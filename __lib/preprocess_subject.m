@@ -1,13 +1,11 @@
 
-function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, ...
-    params_info, path_info, obj_info, verbose)
+function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose)
     % FUNCTION: preprocess_subject
     %
     % Description: Preprocesses EEG data for a single subject.
     %
     % Syntax:
-    %   [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info,
-    %                                           path_info, obj_info, verbose)
+    %   [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, params_info, path_info, obj_info, verbose)
     %
     % Input:
     %   - data_info (struct): Dataset information.
@@ -18,8 +16,8 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, ...
     %   - verbose (logical): Flag to display warnings (optional, default is false).
     %
     % Output:
-    %   - EEG: Processed EEG data.
-    %   - DATA_STRUCT: Processed data structure.
+    %   - EEG (struct): Processed EEG data.
+    %   - DATA_STRUCT (struct): Processed data structure.
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]

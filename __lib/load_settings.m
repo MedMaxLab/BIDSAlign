@@ -8,16 +8,16 @@ function varargout = load_settings( setting_name, info_type )
     %   varargout = load_settings(setting_name, info_type)
     %
     % Input:
-    %   - setting_name: Name of the stored settings folder.
-    %   - info_type: Type of information to load 
-    %                ('path', 'preprocess', 'selection', 'save', or 'all').
+    %   - setting_name (char): Name of the stored settings folder.
+    %   - info_type (char): Type of information to load ('path', 'preprocess', 'selection', 'save', or 'all').
     %
     % Output:
-    %   - varargout: Cell array containing the loaded settings information.
+    %   - varargout (cell array): Cell array containing the loaded settings information.
     %
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]
     %
+
     filePath = mfilename('fullpath');
     filePath = filePath(1:length(filePath)-13);
     if nargin<2

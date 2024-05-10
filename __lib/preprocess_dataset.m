@@ -8,8 +8,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
     % structure or matrix format.
     %
     % Syntax:
-    %   [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params_info,
-    %                                           path_info, selection_info, verbose)
+    %   [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, params_info, path_info, selection_info, verbose)
     %
     % Input:
     %   - dataset_info (struct): Structure containing dataset-specific information.
@@ -21,8 +20,8 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
     %             warnings and other disp print.
     %
     % Output:
-    %   - EEG: EEG data structure after preprocessing.
-    %   - DATA_STRUCT: Structure containing preprocessed data information.
+    %   - EEG (struct): EEG data structure after preprocessing.
+    %   - DATA_STRUCT (struct): Structure containing preprocessed data information.
     %
     % Notes:
     %   - This function preprocesses all the EEG data for a specified dataset,

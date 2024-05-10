@@ -4,12 +4,15 @@ function create_dataset_architecture(path, def_sess_name, def_eeg_name)
     %
     % Description: Organizes EEG dataset files into a BIDS-compliant
     % directory structure. By default it creates a structure of folders
-    % with three levels: subject/session/eeg/...
+    % with three levels: subject/session/eeg/...; It changes in-place the
+    % structure of the dataset saved in path.
     %
     % Input:
     %   - path (char): The path to the main directory containing EEG dataset files.
     %   - def_sess_name (char): Default name of session folder if absent.
     %   - def_eeg_name (char): Default name of eeg folder if absent.
+    %
+    % Output: None.
     %
     % Author: [Andrea Zanola]
     % Date: [27/01/2024]

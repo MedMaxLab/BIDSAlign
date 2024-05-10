@@ -19,10 +19,7 @@ function [EEG] = rereference(EEG, data_info, params_info, obj_info, ...
     %   - verbose (logical): (Optional) Boolean setting the verbosity level.
     %
     % Output:
-    %   - EEG: Updated EEG data structure after rereferencing.
-    %
-    % Notes:
-    %   - This function performs rereferencing based on specified parameters.
+    %   - EEG (struct): Updated EEG data structure after rereferencing.
     %
     % Author: [Andrea Zanola, Federico Del Pup]
     % Date: [25/01/2024]

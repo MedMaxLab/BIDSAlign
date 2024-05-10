@@ -1,5 +1,11 @@
-    function template_comparison(filename, folder, mat_folder, dataset, groups, pipelines, git_path, save_img, channel_system, paf, verbose)
-    % template_comparison: Compares EEG power spectral density (PSD) between a dataset and a template.
+
+function template_comparison(filename, folder, mat_folder, dataset, groups, pipelines, git_path, save_img, channel_system, paf, verbose)
+    % FUNCTION: template_comparison
+    % 
+    % Description: Compares EEG power spectral density (PSD) between a dataset and a template.
+    %
+    % Syntax:
+    %   template_comparison(filename, folder, mat_folder, dataset, groups, pipelines, git_path, save_img, channel_system, paf, verbose)
     %
     % Input:
     %   - filename (string): Name of the EEG data file.
@@ -14,8 +20,7 @@
     %   - paf (logical): Flag indicating whether to compute Peak Alpha Frequency (PAF).
     %   - verbose (logical): Flag indicating whether to display progress messages.
     %
-    % Output:
-    %   None
+    % Output: None.
     %
     % Author: [Andrea Zanola]
     % Date: [11/03/2024]

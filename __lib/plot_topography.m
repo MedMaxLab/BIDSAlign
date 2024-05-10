@@ -5,7 +5,7 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     % Description: Plot topographic maps of mean power spectral density (PSD) for specified frequency bands.
     %
     % Syntax:
-    %   plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j, minPSD, maxPSD, norm, cmap, i, verbose)
+    %   plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j, minPSD, maxPSD, norm, cmap, i, fdr_plot, string_topoplot, font, verbose)
     %
     % Input:
     %   - ind_f (numeric array): Indices of frequency bands.
@@ -26,6 +26,8 @@ function plot_topography(ind_f, groups, mA, chanloc, band_name, F, pipelines, j,
     %   - font (structure): Structure of font sizes.
     %   - verbose (logical): Setting the verbosity level.
     %
+    % Output: None.
+    %   
     % Author: [Andrea Zanola]
     % Date: [23/02/2024]
     %

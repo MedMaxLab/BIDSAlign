@@ -5,7 +5,7 @@ function [minPSD, maxPSD] = plot_channels_PSD(m,s,norm_factor, color, F, minPSD,
     % Description: Plot power spectral density (PSD) with shaded error bars representing standard deviation.
     %
     % Syntax:
-    %   [minPSD, maxPSD] = plot_channels_PSD(m, s, norm_factor, color, group, F, minPSD, maxPSD)
+    %   [minPSD, maxPSD] = plot_channels_PSD(m, s, norm_factor, color, F, minPSD, maxPSD)
     %
     % Input:
     %   - m (numeric array): Mean PSD.

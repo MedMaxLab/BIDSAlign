@@ -2,20 +2,19 @@
 function [obj_info] = extract_filenames(obj_info, path_info, data_info, template_info)
     % FUNCTION: extract_filenames
     %
-    % Description: Extracts filenames related to EEG data, 
-    %              including channels, electrodes, and event files.
+    % Description: Extracts filenames related to EEG data, including channels, electrodes and event files.
     %
     % Syntax:
     %   [obj_info] = extract_filenames(obj_info, path_info, data_info)
     %
     % Input:
-    %   - obj_info: Structure containing information about the EEG data file.
-    %   - path_info: Structure containing paths for saving preprocessed data.
-    %   - data_info: Structure containing information about the EEG dataset.
-    %   - template_info: Structure containing template information.
+    %   - obj_info (struct): Structure containing information about the EEG data file.
+    %   - path_info (struct): Structure containing paths for saving preprocessed data.
+    %   - data_info (struct): Structure containing information about the EEG dataset.
+    %   - template_info (struct): Structure containing template information.
     %
     % Output:
-    %   - obj_info: Updated structure with filenames extracted.
+    %   - obj_info (struct): Updated structure with filenames extracted.
     %
     % Notes:
     %   - This function checks for the presence of channel, electrodes,

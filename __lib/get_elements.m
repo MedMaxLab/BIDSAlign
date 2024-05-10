@@ -21,13 +21,13 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, f
     %   - verbose (logical): Flag to control verbosity of output.
     %
     % Output:
-    %   - vec_list: List of selected indices from the original list.
-    %   - list: Updated list after applying the specified selection criteria.
+    %   - vec_list (numeric array): List of selected indices from the original list.
+    %   - list (list): Updated list after applying the specified selection criteria.
     %
     % Notes:
     %   - This function allows the user to filter a list of elements
-    %     based on various criteria,
-    %     including index range, file name filtering, and folder level.
+    %     based on various criteria, including index range, file name 
+    %     filtering, and folder level.
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]

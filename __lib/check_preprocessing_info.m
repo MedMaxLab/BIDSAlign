@@ -8,10 +8,9 @@ function [] = check_preprocessing_info(params_info)
     %   check_preprocessing_info(params_info)
     %
     % Input:
-    %   - params_info: Structure containing parameters for preprocessing.
+    %   - params_info (struct): Structure containing parameters for preprocessing.
     %
-    % Output: 
-    %   - None. It throws an error if any parameter is invalid.
+    % Output: None
     %
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]

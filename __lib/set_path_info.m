@@ -29,12 +29,13 @@ function path_info = set_path_info(varargin)
     %                               store the settings (default: false).
     %   - setting_name (char): Name of the setting if storing settings 
     %                          (default: 'default').
-    %   - root_data_path: for know to avoid error during function transition
-    %   - current_path: current path, it will be used to call the final cd 
-    %   - raw_filepath: path to the single eeg file to preprocess
-    %   - lib_path: path to the __lib folder of the BIDSAlign library
-    %   - git_path: path to the BIDSAlign library
-    %   - root_folder_path: alias to the root folder path (TO DO)
+    %   - root_data_path (char): for know to avoid error during function
+    %   transition.
+    %   - current_path (char): current path, it will be used to call the final cd 
+    %   - raw_filepath (char): path to the single eeg file to preprocess.
+    %   - lib_path (char): path to the __lib folder of the BIDSAlign
+    %   library.
+    %   - git_path (char): path to the BIDSAlign library.
     %
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]

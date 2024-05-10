@@ -7,7 +7,9 @@ function [] = remove_settings( setting_to_remove)
     %   remove_settings(setting_to_remove)
     %
     % Input:
-    %   - setting_to_remove: Name or cell array of names of the settings to be removed.
+    %   - setting_to_remove (cell array_: Name or cell array of names of the settings to be removed.
+    %
+    % Output: None.
     %
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]

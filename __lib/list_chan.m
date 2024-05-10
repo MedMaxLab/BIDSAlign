@@ -17,6 +17,7 @@ function [NchanB,listB] = list_chan(B)
     % Author: [Andrea Zanola]
     % Date: [25/01/2024]
     %
+    
     NchanB = length(B);
     listB = strings(NchanB,1);
     for t = 1:NchanB

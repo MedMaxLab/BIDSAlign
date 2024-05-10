@@ -7,13 +7,13 @@ function [H] = shadedErrorBar(x,y,errBar,lineProps)
     %   [H] = shadedErrorBar(x, y, errBar, lineProps)
     %
     % Input:
-    %   - x (vector): x-axis values.
-    %   - y (vector or matrix): y-axis values.
+    %   - x (array): x-axis values.
+    %   - y (arrayor matrix): y-axis values.
     %   - errBar (matrix): Error bar values.
     %   - lineProps (cell array): Properties of the main line (e.g., color, line style).
     %
     % Output:
-    %   - H (structure): Structure containing handles for the main line, shaded region, and edge lines.
+    %   - H (struct): Structure containing handles for the main line, shaded region, and edge lines.
     %
     % Author: [Andrea Zanola]
     % Date: [06/03/2024]

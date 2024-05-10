@@ -9,6 +9,7 @@ function [] = reset_default_settings( empty_path )
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]
     %
+    
     if nargin < 1
         empty_path = false;
     end

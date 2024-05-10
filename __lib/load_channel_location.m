@@ -10,18 +10,18 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     %       data_info, obj_info, L, template_info, verbose)
     %
     % Input:
-    %   - EEG: EEG data structure.
-    %   - data_info: Structure containing general information about the dataset.
-    %   - obj_info: Structure containing information about the EEG data file.
-    %   - L: Structure containing information about channel locations (optional).
-    %   - template_info: Structure containing template information.
-    %   - verbose: Boolean setting the verbosity level.
+    %   - EEG (struct): EEG data structure.
+    %   - data_info (struct): Structure containing general information about the dataset.
+    %   - obj_info (struct): Structure containing information about the EEG data file.
+    %   - L (struct): Structure containing information about channel locations (optional).
+    %   - template_info (struct): Structure containing template information.
+    %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
-    %   - EEG: Updated EEG data structure with loaded or generated channel locations.
-    %   - L: Updated structure containing information about channel locations.
-    %   - channel_location_file_extension: File extension of the loaded channel location
-    %   - B: Structure containing loaded or generated channel locations.
+    %   - EEG (struct): Updated EEG data structure with loaded or generated channel locations.
+    %   - L (struct): Updated structure containing information about channel locations.
+    %   - channel_location_file_extension (char): File extension of the loaded channel location
+    %   - B (struct): Structure containing loaded or generated channel locations.
     %
     % Notes:
     %   - This function either loads channel locations from a file, generates them based
@@ -29,6 +29,7 @@ function [EEG, L, channel_location_file_extension, B] = load_channel_location(EE
     %
     % Author: [Andrea Zanola]
     % Date: [25/01/2024]
+    
     if nargin < 6
         verbose = false;
     end

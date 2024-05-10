@@ -2,7 +2,7 @@
 function [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file(folder, exclude_subj, freq_vec, srate)
     % FUNCTION: get_info_file
     %
-    % Description: : Extracts information from an EEG data file.
+    % Description: Extracts information from an EEG data file.
     %
     % Syntax:
     %   [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file(folder, exclude_subj, freq_vec, srate)

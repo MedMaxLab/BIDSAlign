@@ -18,16 +18,15 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
-    %   - data_info: Updated structure containing EEG dataset information.
-    %   - path_info: Updated structure containing paths.
-    %   - template_info: Structure containing template information for channel selection.
-    %   - T: Table containing participant information.
+    %   - data_info (struct): Updated structure containing EEG dataset information.
+    %   - path_info (struct): Updated structure containing paths.
+    %   - template_info (struct): Structure containing template information for channel selection.
+    %   - T (table): Table containing participant information.
     %
     % Author: [Andrea Zanola]
     % Date: [11/12/2023]
     
     %% Verbose
-    
     if nargin < 5
         verbose =  false;
     end

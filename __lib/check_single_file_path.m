@@ -5,7 +5,7 @@ function [raw_filepath, dataset_name, path_info] = check_single_file_path(path_i
     
     % if raw_filepath isempty return an error
     if isempty(path_info.raw_filepath)
-        error("cannot process a single file without knowing its name or path." + ...
+        error("Cannot process a single file without knowing its name or path." + ...
             "Please give a proper file name as char or string using the " + ...
             " 'raw_filename' argument or set it in the presaved path_info struct");
     
@@ -36,7 +36,7 @@ function [raw_filepath, dataset_name, path_info] = check_single_file_path(path_i
                     dataset_name = dataset_name{1};
                     raw_filepath = path_info.raw_filepath;
                 else
-                    error(['incompatibility with datasets_name and extracted dataset_code.' ...
+                    error(['Incompatibility with datasets_name and extracted dataset_code.' ...
                         ' Please check that paths are correct.'])
                 end
 
@@ -45,7 +45,7 @@ function [raw_filepath, dataset_name, path_info] = check_single_file_path(path_i
                 dataset_name_check = dataset_info{rows,"dataset_name"};
                 dataset_name_check = dataset_name_check{1};
                 if ~isequal( dataset_name_check,dataset_name)
-                    error( ['file not included in the selected dataset. File was found in ' ...
+                    error( ['File not included in the selected dataset. File was found in ' ...
                         dataset_name_check ' dataset.'])
                 else
                     raw_filepath = path_info.raw_filepath;
@@ -54,10 +54,5 @@ function [raw_filepath, dataset_name, path_info] = check_single_file_path(path_i
 
         end
     end
-
-
-
-
-
 
 end

@@ -12,7 +12,7 @@ function selection_info = set_selection_info(varargin)
     %                          for customizing the selection information.
     %
     % Output:
-    %   - selection_info: A struct containing the selection information.
+    %   - selection_info (struct): A struct containing the selection information.
     %
     % Parameters:
     %   - sub_i (integer): Start index for subject selection.

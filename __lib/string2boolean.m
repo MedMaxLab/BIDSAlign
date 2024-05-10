@@ -7,10 +7,10 @@ function [output]=string2boolean(str)
     %   output = string2boolean(string)
     %
     % Input:
-    %   - string: String representation of a boolean ('true' or 'false').
+    %   - str (string): String representation of a boolean ('true' or 'false').
     %
     % Output:
-    %   - output: Logical value corresponding to the input string.
+    %   - output (logical): Logical value corresponding to the input string.
     %
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]

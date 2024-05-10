@@ -7,7 +7,7 @@ function [] = check_loaded_table(dataset_info)
     %   check_loaded_table(dataset_info)
     %
     % Input:
-    %   - dataset_info: Table containing information about EEG datasets.
+    %   - dataset_info (table): Table containing information about EEG datasets.
     %
     % Notes:
     %   - This function verifies that the input table has the correct structure,

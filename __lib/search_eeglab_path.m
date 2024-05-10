@@ -17,12 +17,14 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
     %   search_eeglab_path(verbose)
     %
     % Input:
-    %   - verbose (optional): A boolean flag indicating whether to display 
+    %   - verbose (logical): (optional) A boolean flag indicating whether to display 
     %           additional information (default: false).
-    %   - forcestart (optional): A boolean indicating whether to try to
+    %   - forcestart (logical): (optional) A boolean indicating whether to try to
     %           actually run the command "eeglab" or not. (default: true)
-    %   - nogui_launch (optional): A boolean indicating whether to try to
+    %   - nogui_launch (logical): (optional) A boolean indicating whether to try to
     %           launch eeglab with the nogui option or not. (default: true)
+    %
+    % Output: None.
     %
     % Author: [Federico Del Pup]
     % Date: [25/01/2024]

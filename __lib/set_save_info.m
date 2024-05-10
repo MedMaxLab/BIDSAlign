@@ -11,7 +11,7 @@ function save_info = set_save_info(varargin)
     %                          the save information.
     %
     % Output:
-    %   - save_info: A struct containing the save information.
+    %   - save_info (struct): A struct containing the save information.
     %
     % Parameters:
     %   - save_data (logical): A flag indicating whether to save data (default: true).

@@ -20,9 +20,9 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
     %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
-    %   - EEG: EEG data structure after preprocessing.
-    %   - L: Structure containing information about channel locations.
-    %   - obj_info: Updated structure containing information about the EEG data file.
+    %   - EEG (struct): EEG data structure after preprocessing.
+    %   - L (struct): Structure containing information about channel locations.
+    %   - obj_info (struct): Updated structure containing information about the EEG data file.
     %
     % Notes:
     %   - This function performs various preprocessing steps on a single EEG data file,

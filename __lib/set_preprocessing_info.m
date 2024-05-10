@@ -12,7 +12,7 @@ function params_info = set_preprocessing_info(varargin)
     %                          the preprocessing parameters.
     %
     % Output:
-    %   - params_info: A struct containing the preprocessing parameters.
+    %   - params_info (struct): A struct containing the preprocessing parameters.
     %
     % Parameters:
     %   - low_freq (scalar): Low-pass filter frequency(default: 0.1 Hz).
@@ -34,7 +34,7 @@ function params_info = set_preprocessing_info(varargin)
     %                                  'iclabel' (default: 'iclabel')
     %   - mara_thresholds (scalar): scalar with the MARA's rejection threshold 
     %                               (default: 0.5)
-    %   - iclabel_thresholds: 7x2 array with threshold values with limits to include 
+    %   - iclabel_thresholds (matrix): 7x2 array with threshold values with limits to include 
     %                         for selection as artifacts
     %   - dt_i (scalar): Start time for segment removal (default: 0 s).
     %   - dt_f (scalar): End time for segment removal (default: 0 s).
