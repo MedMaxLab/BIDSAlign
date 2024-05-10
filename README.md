@@ -3,18 +3,14 @@
         width="300"
         style="display: block; margin: 0 auto" />
 
-This is the reference repository for the paper < >.
-
-BIDSAlign preprocess public datasets saved in both BIDS and non-BIDS structure, uniforming the outputs to a common template.
-Thus BIDSAlign is thought to be used as initial step in a deep-learning project involving EEG data.
-
-### What can you do?
-The library can load, preprocess and align EEG recordings to a common template, i.e. a set of ordered channels. Each file of the selected datasets will have the same channels, even if data 
-comes from different channel systems, with different numbers of electrodes. 
-The preprocessed and template-aligned files can then be imported and used into DL frameworks such as PyTorch.
-
-
-For the use of the GUI please see the attached detailed documentation.
+## What can you do?
+The library can load, preprocess, and align EEG recordings to a common template, i.e. a set of ordered channels. Each file of the selected datasets will have the same channels, even if data 
+comes from different channel systems, with different numbers of electrodes.
+The preprocessed and template-aligned files can then be imported and used in Deep Learning frameworks such as PyTorch thus, BIDSAlign is thought to be used as an initial step in a deep-learning project involving EEG data.
+Channel systems currently supported are:
+- HydroCel Geodesic Sensor Net (128,129,256,257 channels).
+- Standard 10-20, 10-10, 10-5 systems (up to 344 channels).
+It comes with a dedicated GUI, please see the attached detailed documentation.
 
 ## Preparation Steps
 In order to successfully use BIDSAlign, check the following steps.
