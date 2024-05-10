@@ -12,7 +12,7 @@ The preprocessed and template-aligned files can then be imported and used in Dee
 Channel systems currently supported are:
 - HydroCel Geodesic Sensor Net (128,129,256,257 channels).
 - Standard 10-20, 10-10, 10-5 systems (up to 344 channels).
-- 
+
 
 It comes with a dedicated GUI, please see the attached detailed documentation.
 
