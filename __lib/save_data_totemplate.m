@@ -11,15 +11,15 @@ function [EEG, DATA_STRUCT] = save_data_totemplate(EEG, obj_info, template_info,
     %                             params_info, subj_info, verbose)
     %
     % Input:
-    %   - EEG: EEG data structure.
-    %   - obj_info: Structure containing information about the EEG data file.
-    %   - template_info: Structure containing template information.
-    %   - save_info: Structure specifying the data saving options.
-    %   - path_info: Structure containing paths to datasets and libraries.
-    %   - data_info: Structure containing information about the EEG dataset.
-    %   - params_info: Structure containing preprocessing parameters.
-    %   - subj_info: Structure containing participant information.
-    %   - verbose: Boolean setting the verbosity level.
+    %   - EEG (struct): EEG data structure.
+    %   - obj_info (struct): Structure containing information about the EEG data file.
+    %   - template_info (struct): Structure containing template information.
+    %   - save_info (struct): Structure specifying the data saving options.
+    %   - path_info (struct): Structure containing paths to datasets and libraries.
+    %   - data_info (struct): Structure containing information about the EEG dataset.
+    %   - params_info (struct): Structure containing preprocessing parameters.
+    %   - subj_info (struct): Structure containing participant information.
+    %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
     %   - EEG: Updated EEG data structure.

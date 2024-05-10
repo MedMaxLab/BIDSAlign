@@ -10,13 +10,13 @@ function [EEG] = rereference(EEG, data_info, params_info, obj_info, ...
     %                       channel_location_file_extension, B, verbose)
     %
     % Input:
-    %   - EEG: EEG data structure.
-    %   - data_info: Structure containing information about the EEG dataset.
-    %   - params_info: Structure containing preprocessing parameters.
-    %   - obj_info: Structure containing information about the EEG data file.
-    %   - channel_location_file_extension: File extension for channel location file.
-    %   - B: List of available channels.
-    %   - verbose: (Optional) Boolean setting the verbosity level.
+    %   - EEG (struct): EEG data structure.
+    %   - data_info (struct): Structure containing information about the EEG dataset.
+    %   - params_info (struct): Structure containing preprocessing parameters.
+    %   - obj_info (struct): Structure containing information about the EEG data file.
+    %   - channel_location_file_extension (char): File extension for channel location file.
+    %   - B (struct): Channel location structure.
+    %   - verbose (logical): (Optional) Boolean setting the verbosity level.
     %
     % Output:
     %   - EEG: Updated EEG data structure after rereferencing.

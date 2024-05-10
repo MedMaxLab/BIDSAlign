@@ -2,15 +2,16 @@
 function [ar, ind_f_iaf] = band_content(m,paf_v,paf,ind_f,F,i)
     % FUNCTION: band_content
     %
-    % Description: Calculate the Mean value of the PSD within the specified frequency interval.
+    % Description: Calculate the mean value of the PSD within the specified frequency interval.
     %
     % Syntax:
     %   [ar] = band_content(m, paf_v, paf, ind_f, F, i)
     %
     % Input:
-    %   - m (numeric array): Mean PSD values.
+    %   - m (numeric array): PSD values, organized in tensor [subjects x
+    %   frequency x channels] or in matrix [frequency x channels].
     %   - paf_v (numeric array): Vector of peak alpha frequency (PAF) for each subject.
-    %   - paf (logical): Flag indicating whether to consider PAF.
+    %   - paf (logical): Flag indicating whether to consider IAF or not.
     %   - ind_f (numeric array): Indices of frequency bands.
     %   - F (numeric array): Frequency vector.
     %   - i (numeric): Index of the frequency band to consider.

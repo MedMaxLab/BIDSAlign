@@ -23,6 +23,7 @@ function [minPSD, maxPSD] = plot_channels_PSD(m,s,norm_factor, color, F, minPSD,
     % Author: [Andrea Zanola]
     % Date: [23/02/2024]
     %
+    % See also: shadedErrorBar
 
     upper = m + s*norm_factor;
     lower = m - s*norm_factor;

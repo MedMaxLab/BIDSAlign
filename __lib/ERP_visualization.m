@@ -195,16 +195,10 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
     else
         electrode_mode = 'labels';
     end
-    electrode_mode = 'labels';
-    
+
     if length(event_name)==1
         FigH3 = figure('Position', get(0, 'Screensize'));
         cmap = colormap(cmap);
-        % if length(groups)==2
-        %     tiledlayout(length(groups)+1,length(times), 'Padding', 'compact', 'TileSpacing', 'tight');
-        % else
-        %     tiledlayout(length(groups),length(times), 'Padding', 'compact', 'TileSpacing', 'tight');
-        % end
         tiledlayout(length(groups),length(times), 'Padding', 'compact', 'TileSpacing', 'tight');
         
         for i=1:length(groups)
@@ -307,7 +301,7 @@ function ERP_visualization(folder,dataset,groups,pipelines,filename,save_img,eve
         %sgtitle([filename ' event: ' event_name{1} ' | ERP Comparison'],'Interpreter','none');
     end
     
-
+    %% Save Imgs
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_AVGERP.png']);
         saveas(FigH2,[save_img dataset '_events_AVGERP.png']);

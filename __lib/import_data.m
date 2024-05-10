@@ -8,9 +8,9 @@ function EEG = import_data(raw_filename, raw_filepath, verbose)
     %   EEG = import_data(raw_filename, raw_filepath, verbose)
     %
     % Input:
-    %   - raw_filename: Name of the EEG data file (including the file extension).
-    %   - raw_filepath: Path to the directory where the EEG data file is located.
-    %   - verbose: (Optional) Boolean setting the verbosity level.
+    %   - raw_filename (char): Name of the EEG data file (including the file extension).
+    %   - raw_filepath (char): Path to the directory where the EEG data file is located.
+    %   - verbose (logical): (Optional) Boolean setting the verbosity level.
     %
     % Output:
     %   - EEG: EEG data structure loaded from the specified file. If loading fails

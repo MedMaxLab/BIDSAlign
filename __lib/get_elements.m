@@ -2,18 +2,21 @@
 function [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level, verbose)
     % FUNCTION: get_elements
     %
-    % Description: Retrieves a subset of elements from a list based on specified criteria.
+    % Description: Retrieves a subset of elements from a list based on
+    % specified criteria. From the list of files, it first select those
+    % matching the select_files, and then select those matching index_i and
+    % index_f.
     %
     % Syntax:
     %   [vec_list, list] = get_elements(list, index_i, index_f, select_files, folder_level, verbose)
     %
     % Input:
-    %   - list: List of elements to select from.
-    %   - index_i: Starting index for selection (optional).
-    %   - index_f: Ending index for selection (optional).
-    %   - select_files: Cell array of strings to filter the list
+    %   - list (list): List of elements to select from.
+    %   - index_i (numeric): Starting index for selection (optional).
+    %   - index_f (numeric): Ending index for selection (optional).
+    %   - select_files (cell array): Cell array of strings to filter the list
     %                   based on file names (optional).
-    %   - folder_level: String specifying the folder level for filtering
+    %   - folder_level (char): String specifying the folder level for selection
     %                   (e.g., 'SUBJECTS').
     %   - verbose (logical): Flag to control verbosity of output.
     %
@@ -34,6 +37,7 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, f
         verbose =  false;
     end
     
+    %Select by folder_level
     if ~isempty(select_files)
         z_list = [];
         for z = 1:length(list)
@@ -46,7 +50,7 @@ function [vec_list, list] = get_elements(list, index_i, index_f, select_files, f
                 end
             end
             if mask 
-                z_list = [z_list, z]; %#ok
+                z_list = [z_list, z];
             end
         end
         if isempty(z_list)

@@ -8,10 +8,10 @@ function [B] = rename_channels(B, data_info, EEG_history, EEG)
     %   [B] = rename_channels(B, data_info, EEG_history, EEG)
     %
     % Input:
-    %   - B: Structure containing information about channel locations.
-    %   - data_info: Structure containing general information about the dataset.
-    %   - EEG_history: Boolean indicating whether to update EEG.history.
-    %   - EEG: EEG data structure (optional).
+    %   - B (struct): Structure containing information about channel locations.
+    %   - data_info (struct): Structure containing general information about the dataset.
+    %   - EEG_history (logical): Boolean indicating whether to update EEG.history.
+    %   - EEG (struct): EEG data structure.
     %
     % Output:
     %   - B: Updated structure with renamed channel labels.

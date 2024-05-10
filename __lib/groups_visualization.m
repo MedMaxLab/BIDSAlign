@@ -50,7 +50,6 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     %
     % See also: get_group_metric, plot_channels_PSD, plot_topography
     %
-    %
     % Note:
     %   Interally it uses two functions:
     %   - For the non-parametric permutation t-test [hfASDmodules: https://zenodo.org/records/44657].
@@ -133,7 +132,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
 
     elseif length(pipelines)>1 && length(groups)==1
         for i=1:length(pipelines)
-            setting = load([settings_path lower(pipelines{i}) '/preprocessing_info.mat']);
+            load([settings_path lower(pipelines{i}) '/preprocessing_info.mat']);
             srate = params_info.sampling_rate;
 
             [listB, chanloc, NFFT, WINDOW, Nch, ind_f, Lf] = get_info_file([folder dataset groups{1} '_' pipelines{i}], exclude_subj, freq_vec, srate);
@@ -582,6 +581,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     %sgtitle([filename ' | Time Comparison'],'Interpreter','none');
     end
 
+    %% Save Imgs
     if ~isempty(save_img)
         saveas(FigH1,[save_img dataset '_' pipelines{1} '_chansPSD.png']);
         if isempty(filename)

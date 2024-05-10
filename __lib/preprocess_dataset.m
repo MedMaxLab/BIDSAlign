@@ -12,12 +12,12 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
     %                                           path_info, selection_info, verbose)
     %
     % Input:
-    %   - dataset_info: Structure containing dataset-specific information.
-    %   - save_info: Structure specifying the data saving options.
-    %   - params_info: Structure containing preprocessing parameters.
-    %   - path_info: Structure containing necessary paths.
-    %   - selection_info: Structure containing selection parameters.
-    %   - verbose: Boolean setting the verbosity level. False will suppress
+    %   - dataset_info (struct): Structure containing dataset-specific information.
+    %   - save_info (struct): Structure specifying the data saving options.
+    %   - params_info (struct): Structure containing preprocessing parameters.
+    %   - path_info (struct): Structure containing necessary paths.
+    %   - selection_info (struct): Structure containing selection parameters.
+    %   - verbose (logical): Boolean setting the verbosity level. False will suppress
     %             warnings and other disp print.
     %
     % Output:

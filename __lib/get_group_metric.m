@@ -19,8 +19,9 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
     %   - exclude_subj (cell array): List of subjects to exclude from analysis.
     %   - iav (logical): Flag indicating whether to compute IAF metrics.
     %   - norm (logical): Standardize channels.
-    %   - modality (char): IAF calculation modality: 
-    %   - verbose: Boolean setting the verbosity level.
+    %   - modality (char): IAF calculation modality: center of gravity
+    %   'cog' or peak alpha frequency 'paf'.
+    %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
     %   - Pxx_group (numeric array): Power spectral density tensor for each group.

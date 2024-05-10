@@ -2,7 +2,7 @@
 function [EEG, obj_info] = get_reference(EEG, data_info, obj_info, verbose)
     % FUNCTION: get_reference
     %
-    % Description: Check and update the EEG reference based on information from JSON reference.
+    % Description: Check and update the EEG reference based on information from dataset_infot.tsv and JSON files.
     %
     % Syntax:
     %   [EEG] = get_reference(EEG, data_info, obj_info, verbose)

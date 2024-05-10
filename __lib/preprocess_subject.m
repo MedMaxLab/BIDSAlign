@@ -15,7 +15,7 @@ function [EEG, DATA_STRUCT] = preprocess_subject(data_info, save_info, ...
     %   - params_info (struct): Preprocessing parameters information.
     %   - path_info (struct): Paths information.
     %   - obj_info (struct): Object information.
-    %   - verbose: Flag to display warnings (optional, default is false).
+    %   - verbose (logical): Flag to display warnings (optional, default is false).
     %
     % Output:
     %   - EEG: Processed EEG data.

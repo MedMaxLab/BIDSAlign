@@ -2,7 +2,8 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
     % FUNCTION: prepstep_ICArejection
     %
     % Description: Applies Independent Component Analysis (ICA) rejection 
-    %              based on specified method and thresholds.
+    %              based on specified method and thresholds. ICLabel and
+    %              MARA are both supported.
     %
     % Syntax:
     %   [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
@@ -33,10 +34,10 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
                     end
                     
                 else
-                    [~, EEG] = evalc("iclabel(EEG);"); %#ok
+                    [~, EEG] = evalc("iclabel(EEG);");
                     [~, EEG] = evalc("pop_icflag(EEG,params_info.iclabel_thresholds);");
                     ics = 1:length(EEG.reject.gcompreject);
-                    rejected_comps = ics(EEG.reject.gcompreject); %#ok
+                    rejected_comps = ics(EEG.reject.gcompreject); 
                     if length(rejected_comps) == length(ics)
                         [~] = evalc("warning('ALL COMPONENTS HAVE BEEN REJECTED. IC rejection skipped.');");
                     else
@@ -65,7 +66,7 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
         elseif isequal(params_info.ic_rej_type,'mara')
             try
                 if verbose
-                    [rejected_comps, info] = MARA(EEG); %#ok
+                    [rejected_comps, info] = MARA(EEG);
                     ics = 1:length(info.posterior_artefactprob);
                     rejected_comps = ics( info.posterior_artefactprob > ...
                         params_info.mara_threshold);
@@ -75,10 +76,10 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
                         [EEG] = pop_subcomp(EEG, rejected_comps);
                     end
                 else
-                    [~, rejected_comps, info] = evalc("MARA(EEG);"); %#ok
+                    [~, rejected_comps, info] = evalc("MARA(EEG);");
                     ics = 1:length(info.posterior_artefactprob);
                     rejected_comps = ics( info.posterior_artefactprob > ...
-                        params_info.mara_threshold); %#ok
+                        params_info.mara_threshold);
                     if length(rejected_comps) == length(ics)
                         [~] = evalc("warning('ALL COMPONENTS HAVE BEEN REJECTED. IC rejection skipped.');");
                     else

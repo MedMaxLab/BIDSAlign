@@ -2,7 +2,7 @@ function [EEG] = prepstep_2ASR(EEG, params_info, verbose)
     % FUNCTION: prepstep_2ASR
     %
     % Description: Applies Artifact Subspace Reconstruction (ASR) 
-    %              for EEG artifact correction with window removal.
+    %              for EEG artifact correction with window correction/removal.
     %
     % Syntax:
     %   [EEG] = prepstep_2ASR(EEG, params_info, verbose)

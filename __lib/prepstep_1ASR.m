@@ -1,6 +1,7 @@
 function [EEG] = prepstep_1ASR(EEG, params_info, verbose)
-    % Description: Applies Artifact Subspace Reconstruction (ASR) 
-    %              for EEG artifact correction.
+    % Description: Applies automatic bad-channel channel removal. Internally
+    % it calls functions such as clean_flatlines, clean_drifts and
+    % clean_channels.
     %
     % Syntax:
     %   [EEG] = prepstep_1ASR(EEG, params_info, verbose)

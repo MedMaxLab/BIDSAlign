@@ -11,11 +11,11 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     %   [data_info, path_info, template_info, T] = load_info(data_info, path_info, params_info, save_info, verbose)
     %
     % Input:
-    %   - data_info: Structure containing information about the EEG dataset.
-    %   - path_info: Structure containing paths to datasets and libraries.
-    %   - params_info: Structure containing preprocessing parameters.
-    %   - save_info: Structure containing information about saving preprocessed data.
-    %   - verbose: Boolean setting the verbosity level.
+    %   - data_info (structure): Structure containing information about the EEG dataset.
+    %   - path_info (structure): Structure containing paths to datasets and libraries.
+    %   - params_info (structure): Structure containing preprocessing parameters.
+    %   - save_info (structure): Structure containing information about saving preprocessed data.
+    %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
     %   - data_info: Updated structure containing EEG dataset information.
