@@ -256,6 +256,7 @@
     plotchans3d([[EEG.chanlocs.X]' [EEG.chanlocs.Y]' [EEG.chanlocs.Z]'],{ EEG.chanlocs.labels });
     title([channel_system ' Template Channel Location'],'FontSize',title_size);
 
+    %% Save Imgs
     if ~isempty(save_img)
         saveas(FigH1,[save_img filename '_topoplot_template.png']);
         saveas(FigH2,[save_img filename '_chanlocs.png']);
