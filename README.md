@@ -105,8 +105,8 @@ The library was written in MATLAB 2023b, EEGLAB 2023.0, and requires the followi
 - "eegstats" v1.2
 
 Moreover interally it uses two functions:
-- For the non-parametric permutation t-test [https://github.com/eglerean/hfASDmodules/tree/master](https://zenodo.org/records/44657).
-- For the iaf calculation: [https://github.com/corcorana/restingIAF](https://zenodo.org/records/2575868).
+- For the non-parametric permutation t-test [hfASDmodules: Reorganization of functionally connected subnetworks in autism](https://zenodo.org/records/44657).
+- For the iaf calculation: [restingIAF](https://zenodo.org/records/2575868)
 If you want to avoid downloading these external packages, please set paf=false and test_parametric=true when using the visualisation function groups_visualization.
 
 ## Contributors:
