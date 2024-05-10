@@ -1,4 +1,4 @@
-<img src="logo_wo_white.png"
+<img src="images/logo_wo_white.png"
         alt="Picture"
         width="300"
         style="display: block; margin: 0 auto" />
@@ -35,6 +35,11 @@ This library can preprocess datasets structured with both BIDS and non-BIDS form
 However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset.
 As specified by the BIDS format, *participants.tsv* is recommended and should be stored in the dataset folder.
 
+Here an example of how the folder structure and the workflow can be organized.
+<img src="images/folder_structure.png"
+        alt="Picture"
+        width="300"
+        style="display: block; margin: 0 auto" />
 
 
 ### Channel Location
