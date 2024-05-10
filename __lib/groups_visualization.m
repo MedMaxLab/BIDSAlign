@@ -20,9 +20,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     %   - paf (logical): Indicates whether to calculate and plot Peak Alpha Frequency (PAF) or not.
     %   - exclude_subj (cell array): File names of subject to exclude from visualization.
     %   - channel_system (char): Channel system used in the dataset.
-    %   - test_parametric (logical): Indicates if the t-test should be
-    %   parametric or not. In second cases it uses an external function,
-    %   othwerise the MATLAB function ttest2.
+    %   - test_parametric (logical): Indicates if the t-test should be parametric or not. If not is uses the MATLAB's function ttest2.
     %   - verbose (logical): Boolean setting the verbosity level.
     %
     % Output:
@@ -37,7 +35,6 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     % save_img = '/Users/.../_png_group_comp/';
     % git_path = '/Users/.../BIDSAlign/';
     % settings_path = '/Users/.../BIDSAlign/__lib/default_settings/';
-
     % dataset = 'ds002778';
     % group_hill = {'C','POFF'};
     % groups_to_plot = {'PIPEF'};
@@ -52,6 +49,14 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     %                     iaf_correction, exclude_subj, channel_system, test_parametric, verbose);
     %
     % See also: get_group_metric, plot_channels_PSD, plot_topography
+    %
+    %
+    % Note:
+    %   Interally it uses two functions:
+    %   - For the non-parametric permutation t-test [hfASDmodules: https://zenodo.org/records/44657].
+    %   - For the iaf calculation: [restingIAF:
+    %   https://zenodo.org/records/2575868]
+    % If you want to avoid downloading these additional packages, please set paf=false and test_parametric=true when using the visualisation function groups_visualization.
     %
 
     if length(groups)>1 && length(pipelines)>1
