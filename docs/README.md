@@ -71,7 +71,7 @@ If you want to select files from the whole dataset, set "select_subjects" as tru
 
 <img src="set_selectinfo.png"
         alt="Picture"
-	width = 500
+	width = 400
         style="display: block; margin: 0 auto" />
 
 Notice that the three fields named "_totake", check if the given string is present inside the folder and file name, thus before setting these fields check the dataset's folder names.
@@ -91,8 +91,7 @@ In this example, we want to save only the preprocessed .set files.
 	width = 400
         style="display: block; margin: 0 auto" />
 
-"set_label" is useful if you want to use the visualisation functions provided by BIDSAlign, which needs folder names saved as:
-					$$\text{dataset \_code + group + \_ + pipeline}$$
+"set_label" is useful if you want to use the visualisation functions provided by BIDSAlign, which needs folder names saved as "dataset_code + group + _ + pipeline".
      
 Here you have to put in "set_label" only the "group_pipeline" part.
 Here we want to perform only filtering, thus the pipeline is called "FILT".
@@ -103,7 +102,7 @@ Remember to give the EEGLAB path, if is not made globally available to MATLAB.
 
 <img src="paths.png"
         alt="Picture"
-	width="250"
+	width="500"
         style="display: block; margin: 0 auto" />
 	
 #### 5) Run the preprocessing
@@ -112,7 +111,7 @@ Indeed, after the preprocessing, you will have the OutputOfBIDSAlign folder, str
 
 <img src="OutputOfBIDSAlign.png"
         alt="Picture"
-	width="250"
+	width="400"
         style="display: block; margin: 0 auto" />
 	
 #### 6) Conclusions
