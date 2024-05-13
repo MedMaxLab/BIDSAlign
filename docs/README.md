@@ -3,7 +3,9 @@ Before starting, you should check the Compatibility section in the README of BID
 Thus you should have EEGLAB installed in your PC and all the plug-in required.
 ## Get BIDSAlign and set working directory
 1) Get a copy of BIDSAlign on your PC, using the Git command line:
-		`git clone https://github.com/MedMaxLab/BIDSAlign.git`
+
+`git clone https://github.com/MedMaxLab/BIDSAlign.git`
+
 2) Create: *YourWorkingDirectory* folder.
 3) Put inside *YourWorkingDirectory* the BIDSAlign's code example preprocess_all_script.m
 4) Copy from BIDSAlign or create your own DATASET_INFO.tsv file and put it inside *YourWorkingDirectory*.
@@ -23,6 +25,7 @@ The required steps to take are:
 1) Create the folder where you will store the dataset, here *EEG_Datasets*
 2) Download the dataset inside the folder, with your preferred method.
 If you want to use AWS, make sure to have it installed; for instance, you can do it easily with conda. For downloading, the following command line can be used:
+
 `aws s3 sync --no-sign-request s3://openneuro.org/ds002778 dataset_folder_name/`
 
 A typical suggested *dataset_folder_name* is the code of the dataset (here: ds002778).
