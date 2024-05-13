@@ -35,8 +35,8 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     % git_path = '/Users/.../BIDSAlign/';
     % settings_path = '/Users/.../BIDSAlign/__lib/default_settings/';
     % dataset = 'ds002778';
-    % group_hill = {'C','POFF'};
-    % groups_to_plot = {'PIPEF'};
+    % groups = {'C','POFF'};
+    % pipelines = {'PIPEF'};
     % filename = [];
     % verbose = false;
     % channel_system = '10_10';
@@ -44,7 +44,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     % iaf_correction = false;
     % test_parametric = false;
     % 
-    % groups_visualization(folder, filename, save_img, git_path, settings_path, dataset, group_hill, groups_to_plot,...
+    % groups_visualization(folder, filename, save_img, git_path, settings_path, dataset, groups, pipelines,...
     %                     iaf_correction, exclude_subj, channel_system, test_parametric, verbose);
     %
     % See also: get_group_metric, plot_channels_PSD, plot_topography

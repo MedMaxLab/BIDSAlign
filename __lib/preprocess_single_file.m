@@ -152,7 +152,7 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
         %% Resampling 
         [EEG] = prepstep_resampling(EEG, data_info, params_info, obj_info, verbose);
 
-        disp(['-------' num2str(length(EEG.data)) '--------']);
+        disp(['------- Initial Data Length:' num2str(length(EEG.data)) '--------']);
         %% Filtering
         [EEG] = prepstep_filtering(EEG, params_info, verbose);
 
@@ -193,7 +193,7 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
         %% FINAL ICA DECOMPOSITION
         [EEG] = prepstep_ICA(EEG, params_info, false, verbose);
 
-        disp(['-------' num2str(length(EEG.data)) '--------']);
+        disp(['------- Final Data Length:' num2str(length(EEG.data)) '--------']);
 
         %% Save the .set file 
         if save_info.save_set
