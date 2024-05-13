@@ -112,7 +112,7 @@ Indeed, after the preprocessing, you will have the OutputOfBIDSAlign folder, str
 
 <img src="OutputOfBIDSAlign.png"
         alt="Picture"
-	width="500"
+	width="700"
         style="display: block; margin: 0 auto" />
 	
 #### 6) Conclusions
