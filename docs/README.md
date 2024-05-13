@@ -13,7 +13,7 @@ Thus you should have EEGLAB installed in your PC and all the plug-in required.
 
 After these 5 steps *YourWorkingDirectory* should appear like this:
 
-<img src="docs/YourWorkingDirectory.png"
+<img src="YourWorkingDirectory.png"
         alt="Picture"
         width="250"
         style="display: block; margin: 0 auto" />
@@ -31,7 +31,7 @@ If you want to use AWS, make sure to have it installed; for instance, you can do
 A typical suggested *dataset_folder_name* is the code of the dataset (here: ds002778).
 The dataset has the following folder structure:
 
-<img src="docs/UC_SD_structure.png"
+<img src="UC_SD_structure.png"
         alt="Picture"
         style="display: block; margin: 0 auto" />
 
@@ -47,7 +47,7 @@ You can get this information in several ways:
 
 The information for this example dataset is already inside the DATASET_INFO.tsv file provided by BIDSAlign (dataset number 8).
 
-<img src="docs/bidsaling1to8_datasetinfo.png"
+<img src="bidsaling1to8_datasetinfo.png"
         alt="Picture"
         style="display: block; margin: 0 auto" />
 
@@ -57,7 +57,7 @@ The most important thing is that the dataset_code of one dataset is the *dataset
 #### 1) Set the modality 
 In order to keep things simple, you set the modality as 'local', and set the dataset name that should match the dataset_name field inside DATASET_INFO.tsv, in this case 'UC_SD'.
 
-<img src="docs/set_modality.png"
+<img src="set_modality.png"
         alt="Picture"
         style="display: block; margin: 0 auto" />
 
@@ -69,7 +69,7 @@ If you want to select files from the whole dataset, set "select_subjects" as tru
 2) Select only the off-session, meaning that without medication (session_totake = {{'ses-off'}})
 3) In order to keep things quick, we want to preprocess only the first 5 subjects from the previous selected ones. (sub_i = 1, sub_f=5).
 
-<img src="docs/set_selectinfo.png"
+<img src="set_selectinfo.png"
         alt="Picture"
 	width = 500
         style="display: block; margin: 0 auto" />
@@ -77,7 +77,7 @@ If you want to select files from the whole dataset, set "select_subjects" as tru
 Notice that the three fields named "_totake", check if the given string is present inside the folder and file name, thus before setting these fields check the dataset's folder names.
 This dataset is structured in the following way:
 
-<img src="docs/UC_SD_structure_on.png"
+<img src="UC_SD_structure_on.png"
         alt="Picture"
 	width = 300
         style="display: block; margin: 0 auto" />
@@ -86,13 +86,13 @@ This dataset is structured in the following way:
 With the struct "save_info" you can decide the output of BIDSAlign.
 In this example, we want to save only the preprocessed .set files.
 
-<img src="docs/set_saveinfo.png"
+<img src="set_saveinfo.png"
         alt="Picture"
 	width = 400
         style="display: block; margin: 0 auto" />
 
 "set$\_$label" is useful if you want to use the visualisation functions provided by BIDSAlign, which needs folder names saved as:
-					$$\text{dataset} \_ \text{code} + \text{group} + \_ +  \text{pipeline}$$
+					$$\text{dataset_code + group + _ + pipeline}$$
 Here you have to put in "set_label" only the "group_pipeline" part.
 Here we want to perform only filtering, thus the pipeline is called "FILT".
 
@@ -100,7 +100,7 @@ Here we want to perform only filtering, thus the pipeline is called "FILT".
 Finally, since at the beginning we set the modality as 'local', we set the needed paths.
 Remember to give the EEGLAB path, if is not made globally available to MATLAB.
 
-<img src="docs/paths.png"
+<img src="paths.png"
         alt="Picture"
         style="display: block; margin: 0 auto" />
 	
@@ -108,7 +108,7 @@ Remember to give the EEGLAB path, if is not made globally available to MATLAB.
 Everything is set to make BIDSAlign work!
 Indeed, after the preprocessing, you will have the OutputOfBIDSAlign folder, structured in the following way:
 
-<img src="docs/OutputOfBIDSAlign.png"
+<img src="OutputOfBIDSAlign.png"
         alt="Picture"
         style="display: block; margin: 0 auto" />
 	
