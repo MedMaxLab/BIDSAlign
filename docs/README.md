@@ -59,6 +59,7 @@ In order to keep things simple, you set the modality as 'local', and set the dat
 
 <img src="set_modality.png"
         alt="Picture"
+	width = 400
         style="display: block; margin: 0 auto" />
 
 #### 2) Choose which files you want to preprocess
@@ -102,7 +103,7 @@ Remember to give the EEGLAB path, if is not made globally available to MATLAB.
 
 <img src="paths.png"
         alt="Picture"
-	width="500"
+	width="600"
         style="display: block; margin: 0 auto" />
 	
 #### 5) Run the preprocessing
@@ -111,7 +112,7 @@ Indeed, after the preprocessing, you will have the OutputOfBIDSAlign folder, str
 
 <img src="OutputOfBIDSAlign.png"
         alt="Picture"
-	width="400"
+	width="500"
         style="display: block; margin: 0 auto" />
 	
 #### 6) Conclusions
