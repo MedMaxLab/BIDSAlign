@@ -91,8 +91,9 @@ In this example, we want to save only the preprocessed .set files.
 	width = 400
         style="display: block; margin: 0 auto" />
 
-"set$\_$label" is useful if you want to use the visualisation functions provided by BIDSAlign, which needs folder names saved as:
-					$$\text{dataset_code + group + _ + pipeline}$$
+"set_label" is useful if you want to use the visualisation functions provided by BIDSAlign, which needs folder names saved as:
+					$$\text{dataset \_code + group + \_ + pipeline}$$
+     
 Here you have to put in "set_label" only the "group_pipeline" part.
 Here we want to perform only filtering, thus the pipeline is called "FILT".
 
@@ -102,6 +103,7 @@ Remember to give the EEGLAB path, if is not made globally available to MATLAB.
 
 <img src="paths.png"
         alt="Picture"
+	width="250"
         style="display: block; margin: 0 auto" />
 	
 #### 5) Run the preprocessing
@@ -110,6 +112,7 @@ Indeed, after the preprocessing, you will have the OutputOfBIDSAlign folder, str
 
 <img src="OutputOfBIDSAlign.png"
         alt="Picture"
+	width="250"
         style="display: block; margin: 0 auto" />
 	
 #### 6) Conclusions
