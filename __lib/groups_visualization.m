@@ -98,7 +98,8 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     band_name = {'\delta','\theta','\alpha','\beta','\gamma'};
     colors = {'r','b','g','m','k','c','y'};
     cmap = 'turbo';
-    jitter = 0.05;
+    jitter = 0.05; %jitter in scatter-plot
+    coeff = 4.5;   %for p-values overbar vertical spacing
     
     %% Import Data and Get PSD, ERP matrix per group
     chanloc_present = true;
@@ -277,7 +278,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
             set(lines, 'Color', 'k');
             set(bo,{'linew'},{2});
             ax = gca;
-            ax.FontSize = 12;
+            ax.FontSize = font.labels_size;
             
             for j=1:length(groups)
                 scatter(g(size_groups(j)+1:size_groups(j+1)),x(size_groups(j)+1:size_groups(j+1)),colors{j},'filled','jitter','on','JitterAmount',jitter);
@@ -295,7 +296,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
         
             bandmax = max(x,[],'all');
             bandmin = min(x,[],'all');
-            coeff = 1.5;
+
             yt = 0.8*bandmax;
             ylim([bandmin*0.8  bandmax*coeff]);
             yspace = linspace(0.2, coeff-1.1, length(groups)*(length(groups)-1)/2);

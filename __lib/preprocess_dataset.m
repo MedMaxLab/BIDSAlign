@@ -50,18 +50,39 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
     % 
     % else
 
-    if xor(isempty(selection_info.label_name),isempty(selection_info.label_value))
-        error("ONE BETWEEN LABEL NAME AND LABEL VALUE IS EMPTY.");
+    if length(selection_info.label_name) ~= length(selection_info.label_value)
+        error('SELECTION BY LABEL: LABELS AND VALUES MISMATCH.')
     end
 
-    if selection_info.select_subjects && ~isempty(selection_info.label_name) && ~isempty(selection_info.label_value)
+    for i=1:length(selection_info.label_name)
+        if xor(isempty(selection_info.label_name{i}),isempty(selection_info.label_value{i}))
+            error("ONE BETWEEN LABEL NAME AND LABEL VALUE IS EMPTY.");
+        end
+    end
+
+    if selection_info.select_subjects
         if ~isempty(T)
             idx_column = linspace(1,width(T),width(T));
-            I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name));
+
             subj_list = T.(1); % first column always ID
             all_subj_list = subj_list; % to avoid errors if T is empty (no participant file)
-            
-            mask = strcmp(T.(I), selection_info.label_value);                                     
+
+            mask = true(length(subj_list),1);
+            for i=1:length(selection_info.label_name)
+                if ~isempty(selection_info.label_name{i}) && ~isempty(selection_info.label_value{i})
+                    I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name{i}));
+                    if isnumeric(T.(I))
+                        for j=1:length(selection_info.label_value{i})
+                            maskI = eval(['T.(' num2str(I) ')' selection_info.label_value{i}{j}]);
+                            mask = mask & maskI;
+                        end
+                    else
+                        maskI = strcmp(T.(I), selection_info.label_value{i}); 
+                        mask = mask & maskI;
+                    end
+                end
+            end
+
             subj_list = subj_list(mask,:);
             Tr = T(mask,:);
         else
