@@ -72,14 +72,11 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
                 if ~isempty(selection_info.label_name{i}) && ~isempty(selection_info.label_value{i})
                     I = idx_column(ismember(T.Properties.VariableNames, selection_info.label_name{i}));
                     if isnumeric(T.(I))
-                        for j=1:length(selection_info.label_value{i})
-                            maskI = eval(['T.(' num2str(I) ')' selection_info.label_value{i}{j}]);
-                            mask = mask & maskI;
-                        end
+                        maskI = eval(['T.(' num2str(I) ')' selection_info.label_value{i}]);
                     else
                         maskI = strcmp(T.(I), selection_info.label_value{i}); 
-                        mask = mask & maskI;
                     end
+                    mask = mask & maskI;
                 end
             end
 
