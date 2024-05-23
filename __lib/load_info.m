@@ -64,13 +64,13 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     template_tensor = upper(template_tensor.tensor_channel_template);
     
     % Load the conversion files based on the channel system
-    conversion_folder         = [path_info.lib_path  filesep 'template' filesep ...
+    conversion_folder         = [path_info.lib_path 'template' filesep ...
         'template_channel_conversion' filesep];
     conv_GSN129_1010_filename = 'conv_GSN129_1010.mat';
     conv_GSN257_1010_filename = 'conv_GSN257_1010.mat';
     
     % Load standard channel location file from templates
-    channel_location_folder = [path_info.lib_path filesep 'template' filesep ...
+    channel_location_folder = [path_info.lib_path 'template' filesep ...
         'template_channel_location' filesep];
     
     if isequal(data_info.channel_system,data_info.channel_systems{4})

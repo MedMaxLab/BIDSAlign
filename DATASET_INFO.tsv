@@ -5,7 +5,7 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nos
 4	MPI_LEMON	MPI_LEMON			10_10	FCZ	VEOG	.vhdr	2500
 5	EEG_3Stim	ds003490			10_10	CPZ	VEOG,X,Y,Z	.set	500
 6	TDBRAIN	TDBRAIN			10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500
-7	FEP_CTL2	ds003947			10_10	M1	VEOG,Misc,ECG,M2	.vhdr	1000
+7	FEP_CTL2	ds003947			10_10	TP9	VEOG,Misc,ECG,M2	.vhdr	1000
 8	UC_SD	ds002778			10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512
 9	EEG_Med	ds001787			10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256
 10	EEG_Alz	ds004504	loaded		10_20	A1-A2		.set	500
@@ -18,5 +18,5 @@ dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nos
 17	HDEEG1	ds003420	default		GSN257	CZ		.vhdr	1000
 18	HDEEG2	ds003421	default		GSN257	CZ		.vhdr	1000
 19	PD_EO	ds004584	loaded		10_10	PZ		.set	500
-20	SleepDep	ds004902			10_10	FCZ		.set	500	
+20	SleepDep	ds004902			10_10	FCZ		.set	500
 25	EEG_MMI	ds004362	loaded		10_10	A1-A2		.set	180

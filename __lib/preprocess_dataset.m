@@ -91,7 +91,7 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
         dfolders = d([d(:).isdir]);
 
         %exclude some folders
-        untouchable_folders = {'.','..','code','stimuli','derivatives','sourcedata','.datalad'};
+        untouchable_folders = {'.','..','code','stimuli','derivatives','sourcedata','.datalad','phenotypes'};
         dfolders = dfolders(~ismember({dfolders(:).name},[untouchable_folders path_info.diagnostic_folder_name]));
         subj_list = {dfolders.name};
         %if isempty(T)

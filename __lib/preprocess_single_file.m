@@ -117,7 +117,10 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
                 %     %corrupted, but the sampling rate expected is known.
                 EEG.srate = data_info.samp_rate;
                 %end
-                warning('EEG srate in struct, differs from EEG srate in dataset info file. EEG.srate overwritten.')
+                if verbose
+                    warning('EEG srate in struct, differs from EEG srate in dataset info file. EEG.srate overwritten.')
+            
+                end
             end
         else
             if obj_info.SamplingFrequency ~= EEG.srate
@@ -126,7 +129,10 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
                 %     %corrupted, but the sampling rate expected is known.
                 EEG.srate = obj_info.SamplingFrequency;
                 % end
-                warning('EEG srate in struct, differs from EEG srate in json file. EEG.srate overwritten.')
+                if verbose
+                    warning('EEG srate in struct, differs from EEG srate in json file. EEG.srate overwritten.')
+            
+                end
             end
         end
         EEG.pnts = length(EEG.data);
