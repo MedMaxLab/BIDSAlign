@@ -136,8 +136,12 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info, template
             if ~isequal(jsonData.EEGReference,'n/a')
                 obj_info.EEGReference       = jsonData.EEGReference;
             end
-            if ~isequal(jsonData.SamplingFrequency,'n/a') %&& mod(jsonData.SamplingFrequency, 1) == 0
-                obj_info.SamplingFrequency  = jsonData.SamplingFrequency;
+            if ~isequal(jsonData.SamplingFrequency,'n/a') 
+                if mod(jsonData.SamplingFrequency, 1) == 0
+                    obj_info.SamplingFrequency = jsonData.SamplingFrequency;
+                else
+                    obj_info.SamplingFrequency = round(jsonData.SamplingFrequency);
+                end
             end
             if ~isequal(jsonData.PowerLineFrequency,'n/a')
                 obj_info.PowerLineFrequency = jsonData.PowerLineFrequency;

@@ -140,32 +140,15 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     end
 
     %% Import diagnostic test
-    path_info.diagnostic_folder_path = [path_info.dataset_path ...
-        path_info.diagnostic_folder_name];
-    
-    S = dir(fullfile(path_info.diagnostic_folder_path,'*'));
-    N = setdiff({S([S.isdir]).name},{'.','..'}); % list of subfolders of _test
+    path_info.diagnostic_folder_path = [path_info.dataset_path path_info.diagnostic_folder_name];
+    path_info.phenotype_folder_path  = [path_info.dataset_path 'phenotype'];
 
-    for ii = 1:numel(N)
-        
-        K1 = dir(fullfile(path_info.diagnostic_folder_path,N{ii},'*.tsv'));
-        K2 = dir(fullfile(path_info.diagnostic_folder_path,N{ii},'*.csv'));
-        K = [K1,K2];
-        C = {K(~[K.isdir]).name}; % .tsv/.csv files in subfolder.
+    if isfolder(path_info.diagnostic_folder_path)
+        [T] = AddSubjInfo(T,path_info.diagnostic_folder_path,'diagnostic_folder');
+    end
 
-        for jj = 1:numel(C)
-            F = fullfile(path_info.diagnostic_folder_path,N{ii},C{jj});
-            
-            T_new = readtable(F,'FileType','text');
-            emptyCells = cellfun(@isempty,T_new.Var1); %remove rows with no subjID
-            T_new(emptyCells,:) = [];
-
-            if ~isempty(T)
-                T = outerjoin(T,T_new,'Keys',{'Var1'},'MergeKeys',true); %join tables
-            else
-                T = T_new;
-            end
-        end
+    if isfolder(path_info.phenotype_folder_path)
+        [T] = AddSubjInfo(T,path_info.phenotype_folder_path,'phenotype');
     end
 
     %% Check if folder already exist otherwise create set_preprocessed folder
@@ -187,3 +170,58 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
 
 
 end
+
+
+function [T] = AddSubjInfo(T,folder_path,mode)
+
+    if isequal(mode,'diagnostic_folder')
+        S = dir(fullfile(folder_path,'*'));
+        N = setdiff({S([S.isdir]).name},{'.','..'}); % list of subfolders of _test
+
+        for ii = 1:numel(N)
+            
+            K1 = dir(fullfile(folder_path,N{ii},'*.tsv'));
+            K2 = dir(fullfile(folder_path,N{ii},'*.csv'));
+            K = [K1,K2];
+            C = {K(~[K.isdir]).name}; % .tsv/.csv files in subfolder.
+    
+            for jj = 1:numel(C)
+                F = fullfile(folder_path,N{ii},C{jj});
+                
+                T_new = readtable(F,'FileType','text');
+                emptyCells = cellfun(@isempty,T_new.(1)); %remove rows with no subjID
+                T_new(emptyCells,:) = [];
+    
+                if ~isempty(T)
+                    T = outerjoin(T,T_new,'Keys',{'Var1'},'MergeKeys',true); %join tables
+                else
+                    T = T_new;
+                end
+            end
+        end
+    elseif isequal(mode,'phenotype')
+
+        K1 = dir(fullfile(folder_path,'*.tsv'));
+        K2 = dir(fullfile(folder_path,'*.csv'));
+        K = [K1,K2];
+        C = {K(~[K.isdir]).name}; % .tsv/.csv files in subfolder.
+
+        for jj = 1:numel(C)
+            F = fullfile(folder_path,C{jj});
+            
+            T_new = readtable(F,'FileType','text');
+            emptyCells = cellfun(@isempty,T_new.(1)); %remove rows with no subjID
+            T_new(emptyCells,:) = [];
+
+            if ~isempty(T)
+                T = outerjoin(T,T_new,'Keys',{'participant_id'},'MergeKeys',true); %join tables
+            else
+                T = T_new;
+            end
+        end
+    end
+
+
+end
+
+

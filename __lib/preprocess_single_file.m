@@ -121,6 +121,10 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
                     warning('EEG srate in struct, differs from EEG srate in dataset info file. EEG.srate overwritten.')
             
                 end
+            
+                EEG.pnts  = length(EEG.data);
+                EEG.xmax  = (EEG.pnts-1)/EEG.srate;
+                EEG.times = 0:1/EEG.srate:EEG.xmax;
             end
         else
             if obj_info.SamplingFrequency ~= EEG.srate
@@ -133,10 +137,12 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
                     warning('EEG srate in struct, differs from EEG srate in json file. EEG.srate overwritten.')
             
                 end
+            
+                EEG.pnts  = length(EEG.data);
+                EEG.xmax  = (EEG.pnts-1)/EEG.srate;
+                EEG.times = 0:1/EEG.srate:EEG.xmax;
             end
         end
-        EEG.pnts = length(EEG.data);
-        EEG.xmax = (EEG.pnts-1)/EEG.srate;
 
         %% Remove Channels
         [EEG] = prepstep_removechannels(EEG, data_info, params_info, verbose);
