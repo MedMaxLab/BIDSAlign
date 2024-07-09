@@ -183,6 +183,9 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
         end
         [EEG] = prepstep_ICArejection(EEG, params_info, verbose);
 
+        %% Notch Filtering
+        [EEG] = prepstep_notchfiltering(EEG, params_info, data_info, obj_info, verbose);
+
         %% 1˚ ASR channel correction
         nchan_preASR = EEG.nbchan;
         [EEG] = prepstep_1ASR(EEG, params_info, verbose);

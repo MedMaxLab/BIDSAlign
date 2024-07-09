@@ -23,9 +23,9 @@ function [] = check_loaded_table(dataset_info)
         error('wrong input class. Please give a table as input argument')
     end
 
-    % check that table has 10 columns with the right format
-    if size(dataset_info,2) ~= 10
-        error('dataset info table must have 10 columns')
+    % check that table has 11 columns with the right format
+    if size(dataset_info,2) ~= 11
+        error('dataset info table must have 11 columns')
     end
     
     % check that table has the right column names
@@ -38,7 +38,8 @@ function [] = check_loaded_table(dataset_info)
                                             ["channel_reference", "char"]; ...
                                             ["channel_to_remove", "char"]; ...
                                             ["eeg_file_extension","char"]; ...
-                                            ["samp_rate", "double"] ...
+                                            ["samp_rate", "double"]; ...
+                                            ["line_noise", "double"]; ...
                                            ]; 
     variable_names = dataset_info.Properties.VariableNames;
     if ~isempty( setdiff(variable_names_types(:,1), variable_names) )
@@ -47,7 +48,7 @@ function [] = check_loaded_table(dataset_info)
     
     % check that table has the right types per columns
     for i= 1:size(variable_names_types,1)
-        if i == 1 || i==10
+        if i == 1 || i==10 || i==11
             if ~isscalar( dataset_info.(variable_names_types(i,1))(1) )
                 error('wrong type detected')
             end

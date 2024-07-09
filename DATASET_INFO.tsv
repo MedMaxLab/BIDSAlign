@@ -1,22 +1,22 @@
-dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nose_direction	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate
-1	HBN_EO_EC	ds004186	loaded		GSN129	CZ		.set	500
-2	Test_Retest_Rest	ds004148		+Y	10_10	FCZ		.vhdr	500
-3	SRM_Rest	ds003775			10_10	COMMON		.edf	1024
-4	MPI_LEMON	MPI_LEMON			10_10	FCZ	VEOG	.vhdr	2500
-5	EEG_3Stim	ds003490			10_10	CPZ	VEOG,X,Y,Z	.set	500
-6	TDBRAIN	TDBRAIN			10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500
-7	FEP_CTL2	ds003947			10_10	TP9	VEOG,Misc,ECG,M2	.vhdr	1000
-8	UC_SD	ds002778			10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512
-9	EEG_Med	ds001787			10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256
-10	EEG_Alz	ds004504	loaded		10_20	A1-A2		.set	500
-11	EEG_Music	ds002721			10_20	FCZ		.edf	1000
-12	BMI_HDEEG_1	ds004444			GSN129	CZ		.edf	1000
-13	BMI_HDEEG_2	ds004446			GSN129	CZ		.edf	1000
-14	BMI_HDEEG_3	ds004447			GSN129	CZ		.edf	1000
-15	BMI_HDEEG_4	ds004448			GSN129	CZ		.edf	1000
-16	Nencki_Sym	ds004621			10_5	FCZ		.vhdr	1000
-17	HDEEG1	ds003420	default		GSN257	CZ		.vhdr	1000
-18	HDEEG2	ds003421	default		GSN257	CZ		.vhdr	1000
-19	PD_EO	ds004584	loaded		10_10	PZ		.set	500
-20	SleepDep	ds004902			10_10	FCZ		.set	500
-25	EEG_MMI	ds004362	loaded		10_10	A1-A2		.set	180
+dataset_number_reference	dataset_name	dataset_code	channel_location_filename	nose_direction	channel_system	channel_reference	channel_to_remove	eeg_file_extension	samp_rate	line_noise
+1	HBN_EO_EC	ds004186	loaded		GSN129	CZ		.set	500	
+2	Test_Retest_Rest	ds004148		+Y	10_10	FCZ		.vhdr	500	
+3	SRM_Rest	ds003775			10_10	COMMON		.edf	1024	
+4	MPI_LEMON	MPI_LEMON			10_10	FCZ	VEOG	.vhdr	2500	50
+5	EEG_3Stim	ds003490			10_10	CPZ	VEOG,X,Y,Z	.set	500	
+6	TDBRAIN	TDBRAIN			10_20	A1-2	VPVA,VNVB,HPHL,HNHR,Erbs,OrbOcc,Mass	.vhdr	500	50
+7	FEP_CTL2	ds003947			10_10	TP9	VEOG,Misc,ECG,M2	.vhdr	1000	
+8	UC_SD	ds002778			10_10	CMS-DRL	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8	.bdf	512	
+9	EEG_Med	ds001787			10_10	COMMON	EXG1,EXG2,EXG3,EXG4,EXG5,EXG6,EXG7,EXG8,GSR1,GSR2,Erg1,Erg2,Resp,Plet,Temp	.bdf	256	
+10	EEG_Alz	ds004504	loaded		10_20	A1-A2		.set	500	
+11	EEG_Music	ds002721			10_20	FCZ		.edf	1000	
+12	BMI_HDEEG_1	ds004444			GSN129	CZ		.edf	1000	
+13	BMI_HDEEG_2	ds004446			GSN129	CZ		.edf	1000	
+14	BMI_HDEEG_3	ds004447			GSN129	CZ		.edf	1000	
+15	BMI_HDEEG_4	ds004448			GSN129	CZ		.edf	1000	
+16	Nencki_Sym	ds004621			10_5	FCZ		.vhdr	1000	
+17	HDEEG1	ds003420	default		GSN257	CZ		.vhdr	1000	
+18	HDEEG2	ds003421	default		GSN257	CZ		.vhdr	1000	
+19	PD_EO	ds004584	loaded		10_10	PZ		.set	500	
+20	SleepDep	ds004902			10_10	FCZ		.set	500	
+25	EEG_MMI	ds004362	loaded		10_10	A1-A2		.set	180	

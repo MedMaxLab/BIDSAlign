@@ -143,8 +143,10 @@ function [obj_info] = extract_filenames(obj_info, path_info, data_info, template
                     obj_info.SamplingFrequency = round(jsonData.SamplingFrequency);
                 end
             end
-            if ~isequal(jsonData.PowerLineFrequency,'n/a')
+            if ~isequal(jsonData.PowerLineFrequency,'n/a') && (jsonData.PowerLineFrequency>0)
                 obj_info.PowerLineFrequency = jsonData.PowerLineFrequency;
+            else
+                obj_info.PowerLineFrequency = nan;
             end
             if ~isequal(jsonData.SoftwareFilters,'n/a')
                 obj_info.SoftwareFilters    = jsonData.SoftwareFilters;

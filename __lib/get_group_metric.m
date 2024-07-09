@@ -6,7 +6,7 @@ function [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, 
     % Description: Computes group-level metrics from EEG data.
     %
     % Syntax:
-    %   [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, srate, NFFT, WINDOW, Lf, Nch, exclude_subj, iav, norm, modality verbose)
+    %   [Pxx_group, F, paf_mean, paf_std] = get_group_metric(folder, filename, srate, NFFT, WINDOW, Lf, Nch, exclude_subj, iav, norm, modality, verbose)
     %
     % Input:
     %   - folder (char): Path to the folder containing EEG data.

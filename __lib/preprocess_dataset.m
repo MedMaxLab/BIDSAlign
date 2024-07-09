@@ -36,7 +36,6 @@ function [EEG, DATA_STRUCT] = preprocess_dataset(dataset_info, save_info, ...
         verbose =  false;
     end
     
-    
     %% Load Dataset Informations
     [data_info, path_info, template_info, T] = load_info(dataset_info, path_info, ...
         params_info, save_info, verbose);

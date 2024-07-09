@@ -33,13 +33,26 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
 
     %% Check if the imported data has correct values
 
+    %sampling rate
     if data_info.samp_rate < 0 || mod(data_info.samp_rate, 1) ~= 0
         error('ERROR: NEGATIVE OR NON-INTEGER SAMPLING RATE');
     end
+
     %filter frequencies
     if params_info.low_freq>params_info.high_freq || ...
             params_info.low_freq<0 || params_info.high_freq<0
         error('ERROR: CHECK THE FREQUENCIES FOR THE FILTER');
+    end
+
+    %notch filter
+    if ~isnan(data_info.line_noise) && data_info.line_noise<0
+        error('ERROR: NEGATIVE FREQUENCY OF THE LINE NOISE');
+    end
+    if params_info.notchfreq<0
+        error('ERROR: NEGATIVE FREQUENCY OF THE NOTCH FILTER');
+    end
+    if (params_info.notchfreq_bw<0) || (params_info.notchfreq_bw/2>params_info.notchfreq)
+        error('ERROR: CHECK THE NOTCH FILTER BANDWIDTH, NEGATIVE or TOO HIGH');
     end
     
     %% Set Folder/Files Path

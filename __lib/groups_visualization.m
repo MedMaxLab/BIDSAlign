@@ -69,6 +69,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
     FDR_correction = true;
     nperms = 20000;
     modality = 'cog';
+    kernel = 'normal';
 
     font.title_size  = 20;
     font.labels_size = 18;
@@ -261,16 +262,21 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
                 [ m, ~, ~] = get_metrics(eval(['Pxx_' groups{j}]), [], [], [3]);
                 [ar, ~] = band_content(m,eval(['paf_mean_' groups{j}]),paf,ind_f,F,i);
                 evalc(['ar' num2str(j) '=ar;']);
+
                 g = [g; j*ones(length(ar),1)];
                 x = [x; ar];
                 size_groups = [size_groups length(x)];
             end
+
+            bandmax = max(x,[],'all');
+            bandmin = min(x,[],'all');
     
             if verbose
                 bo = boxplot(x, g, 'Labels',groups,'Symbol',''); 
             else
                 [~, bo] = evalc("boxplot(x, g, 'Labels', groups,'Symbol','');");
             end
+
             hold on;
             lines = findobj(gcf, 'type', 'line', 'Tag', 'Box');
             set(lines, 'Color', 'k');
@@ -282,6 +288,18 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
             
             for j=1:length(groups)
                 scatter(g(size_groups(j)+1:size_groups(j+1)),x(size_groups(j)+1:size_groups(j+1)),colors{j},'filled','jitter','on','JitterAmount',jitter);
+
+                %OPTION 1
+                % Create the violin plot for the current group
+                [density, value] = ksdensity(log10(x(g==j)), 'Function', 'pdf','Kernel',kernel, ...
+                                            'Support',[log10(min(x(g==j))*0.9) log10(max(x(g==j))*1.1)]);
+
+                density = density*0.5/max(density); % Normalize the density
+                value = 10.^(value);
+                % Plot the single-sided (right) violin shape
+                fill([(j+0.15) * ones(size(density)), j+0.15 + density], [fliplr(value),value], colors{j}, ...
+                    'FaceAlpha', 0.2, 'EdgeColor', 'k');
+
             end
 
             chanloc = eval(['chanloc_' groups{j}]);
@@ -293,9 +311,6 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
             end
             title(['Mean PSD ' label_ch ' | ' band_name{i} ' ' sprintf('%0.1f',F(ind_f(i))) '-' sprintf('%0.1f',F(ind_f(i+1))) 'Hz'],'FontSize',font.title_size);
             ylabel('PSD [\muV^2/Hz]','FontSize',font.labels_size);
-        
-            bandmax = max(x,[],'all');
-            bandmin = min(x,[],'all');
 
             yt = 0.8*bandmax;
             ylim([bandmin*0.8  bandmax*coeff]);
@@ -329,6 +344,8 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
             ax.LineWidth = font.ax_size;
             ax.FontSize = font.ticks_size;
             grid on;
+            xlim([0 j+1]);
+    
         end
         
         if ~paf && ~isempty(save_img)
@@ -348,6 +365,9 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
                 x = [x; eval(['paf_mean_' groups{j}])];
                 size_groups = [size_groups length(x)];
             end
+
+            bandmax = max(x,[],'all');
+            bandmin = min(x,[],'all');      
             if verbose
                 bo = boxplot(x, g, 'Labels',groups,'Symbol','');
             else
@@ -363,10 +383,18 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
 
             for j=1:length(groups)
                 scatter(g(size_groups(j)+1:size_groups(j+1)),x(size_groups(j)+1:size_groups(j+1)),colors{j},'filled','jitter','on','JitterAmount',jitter);
+
+                                % Create the violin plot for the current group
+                [density, value] = ksdensity(log10(x(g==j)), 'Function', 'pdf','Kernel',kernel, ...
+                                            'Support',[log10(min(x(g==j))*0.9) log10(max(x(g==j))*1.1)]);
+                density = density*0.5/ max(density); % Normalize the density
+                value = 10.^(value);
+                % Plot the single-sided (right) violin shape
+                fill([(j+0.15) * ones(size(density)), j+0.15 + density], [fliplr(value),value], colors{j}, ...
+                    'FaceAlpha', 0.2, 'EdgeColor', 'k');
+
             end
             
-            bandmax = max(x,[],'all');
-            bandmin = min(x,[],'all');
             yt = 0.8*bandmax;
             coeff = 1.5;
             ylim([bandmin*0.8  bandmax*coeff]);
@@ -401,6 +429,7 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
             title('Individual Alpha Frequency','FontSize',font.title_size);
             ylabel('IAF [Hz]','FontSize',font.labels_size);
             grid on;
+            xlim([0 j+1]);
         end
     
         % if isempty(filename)
@@ -518,19 +547,23 @@ function groups_visualization(folder, filename, save_img, git_path, settings_pat
         end
 
         % Load Correct Files
-        if length(gint)==1 && length(pint)>1
-            for i=1:length(pint)
-                path = [folder '/' dataset gint{1} '_' pint{i} '/' filename '.set'];
-                evalc(['EEG_' pint{i} '= pop_loadset(path)']);
+        try
+            if length(gint)==1 && length(pint)>1
+                for i=1:length(pint)
+                    path = [folder '/' dataset gint{1} '_' pint{i} '/' filename '.set'];
+                    evalc(['EEG_' pint{i} '= pop_loadset(path)']);
+                end
+            elseif length(gint)>1 && length(pint)==1
+                for i=1:length(gint)
+                    path = [folder '/' dataset  gint{i} '_' pint{1} '/' filename '.set'];
+                    evalc(['EEG_' gint{i} '= pop_loadset(path)']);
+                end
+            else
+                path = [folder '/' dataset gint{1} '_' pint{1} '/' filename '.set'];
+                evalc(['EEG_' gint{1} '= pop_loadset(path)']);
             end
-        elseif length(gint)>1 && length(pint)==1
-            for i=1:length(gint)
-                path = [folder '/' dataset  gint{i} '_' pint{1} '/' filename '.set'];
-                evalc(['EEG_' gint{i} '= pop_loadset(path)']);
-            end
-        else
-            path = [folder '/' dataset gint{1} '_' pint{1} '/' filename '.set'];
-            evalc(['EEG_' gint{1} '= pop_loadset(path)']);
+        catch
+            error('For individual plotting, .set is needed; check if .mat path was given.');
         end
 
         FigH4 = figure('Position', get(0, 'Screensize'));
