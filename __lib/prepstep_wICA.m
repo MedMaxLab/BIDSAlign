@@ -4,8 +4,9 @@ function [EEG] = prepstep_wICA(EEG, params_info, verbose)
     % Description: Applies Wavelet enhanced Independent Component Analysis (ICA) 
     %              for the suppression of independent component artifact.
     %              ICLabel or MARA must be run to flag noisy components to correct.
-    %              Note that Independent Components will not be overwritten with
-    %              corrected ones. It is suggested to run a new IC decomposition.
+    %              Note that original Independent Components decomposition will be
+    %              removed. It is suggested to run a new IC decomposition with the
+    %              cleaned data.
     %
     % Syntax:
     %   [EEG] = prepstep_wICA(EEG, params_info, verbose)
@@ -30,7 +31,8 @@ function [EEG] = prepstep_wICA(EEG, params_info, verbose)
         % =============================================
         %   Do IC flag with IC Label or MARA for wICA
         % =============================================
-        if isequal(params_info.ic_rej_type,'iclabel') 
+        if isequal(params_info.ic_rej_type,'iclabel')
+            flagger_type = 'ICLabel';
             if verbose
                 [EEG] = iclabel(EEG);
                 [EEG] = pop_icflag(EEG,params_info.iclabel_thresholds);
@@ -41,28 +43,28 @@ function [EEG] = prepstep_wICA(EEG, params_info, verbose)
             ics = 1:length(EEG.reject.gcompreject);
             rejected_comps = ics(EEG.reject.gcompreject);
             
-            EEG.history = [EEG.history newline 'ICLabel run for wICA.' ...
-                newline 'Thresholds applied: '];
+            EEG.history = [EEG.history newline 'Run ICLabel for wICA.' ...
+                newline '    Thresholds applied: '];
 
             labels_art = {'Brain', 'Muscle', 'Eye', 'Heart', ...
                 'Line Noise', 'Channel Noise', 'Other'};
             for i=1:length(labels_art)
-                EEG.history = [EEG.history labels_art{i} ': ' ...
+                EEG.history = [EEG.history newline '        ' labels_art{i} ': [' ...
                     num2str(params_info.iclabel_thresholds(i,1)) ' - ' ...
-                    num2str(params_info.iclabel_thresholds(i,2)) '; '];
+                    num2str(params_info.iclabel_thresholds(i,2)) ']; '];
             end 
 
         elseif isequal(params_info.ic_rej_type,'mara')
-            
-                if verbose
-                    [~, info] = MARA(EEG);
-                else
-                    [~, ~, info] = evalc("MARA(EEG);");
-                end
-                ics = 1:length(info.posterior_artefactprob);
-                rejected_comps = ics( info.posterior_artefactprob > ...
-                    params_info.mara_threshold);
-                EEG.history = [EEG.history newline 'MARA run for wICA.'];
+            flagger_type = 'MARA';
+            if verbose
+                [~, info] = MARA(EEG);
+            else
+                [~, ~, info] = evalc("MARA(EEG);");
+            end
+            ics = 1:length(info.posterior_artefactprob);
+            rejected_comps = ics( info.posterior_artefactprob > ...
+                params_info.mara_threshold);
+            EEG.history = [EEG.history newline 'Run MARA for wICA.'];
         else
             error([ 'CHECK params_info.ic_rej_type: ' ...
                 'METHOD NOT ALREADY IMPLEMENTED, MISPELLED or EMPTY']);
@@ -83,7 +85,7 @@ function [EEG] = prepstep_wICA(EEG, params_info, verbose)
         
         wIC = zeros(size(icaact_pad));
 
-        for i=find(rejected_comps)
+        for i=rejected_comps
             sw_sig = swt(icaact_pad(i,:), L, wavetype);
             [thresh, sorh, ~] = ddencmp('den', 'wv', icaact_pad(i,:));
             sw_sig_th = wthresh(sw_sig, sorh, thresh);
@@ -91,5 +93,19 @@ function [EEG] = prepstep_wICA(EEG, params_info, verbose)
         end
         
         EEG.data = EEG.icawinv*(EEG.icaact - wIC(:, 1:size(EEG.icaact, 2)));
+
+        if verbose
+            disp('wICA run successfully. Removing original ICA decomposition')
+        end
+        EEG.icaact    = [];
+        EEG.icawinv   = [];
+        EEG.icasphere = [];
+        EEG.icaweight = [];
+
+        EEG.history = [ ...
+            EEG.history newline ...
+            'wICA run on the following components flagged by ' flagger_type ...
+            ':' newline '    [' num2str(rejected_comps) ']' ...
+        ];
     end
 end

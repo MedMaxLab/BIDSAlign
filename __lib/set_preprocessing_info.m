@@ -17,6 +17,8 @@ function params_info = set_preprocessing_info(varargin)
     % Parameters:
     %   - low_freq (scalar): Low-pass filter frequency(default: 0.1 Hz).
     %   - high_freq (scalar): High-pass filter frequency (default: 49 Hz).
+    %   - notchfreq (scalar): Notch filter frequency (default: 50 Hz).
+    %   - notchfreq_bw (scalar): bandwidth of the notch filter
     %   - sampling_rate (scalar): EEG data sampling rate (default: 250 Hz).
     %   - standard_ref (char): Standard reference type (default: 'COMMON').
     %   - interpol_method (char): Interpolation method (default: 'spherical').
@@ -34,8 +36,8 @@ function params_info = set_preprocessing_info(varargin)
     %                                  'iclabel' (default: 'iclabel')
     %   - mara_thresholds (scalar): scalar with the MARA's rejection threshold 
     %                               (default: 0.5)
-    %   - iclabel_thresholds (matrix): 7x2 array with threshold values with limits to include 
-    %                         for selection as artifacts
+    %   - iclabel_thresholds (matrix): 7x2 array with threshold values with limits 
+    %                                  to include for selection as artifacts
     %   - dt_i (scalar): Start time for segment removal (default: 0 s).
     %   - dt_f (scalar): End time for segment removal (default: 0 s).
     %   - rmchannels (logical): Flag for channel removal (default: true).
@@ -43,10 +45,11 @@ function params_info = set_preprocessing_info(varargin)
     %   - rmbaseline (logical): Flag for baseline removal (default: true).
     %   - resampling (logical): Flag for resampling (default: true).
     %   - filtering (logical): Flag for filtering (default: true).
+    %   - notchfiltering (logical): Flag for an additional notch filter (default: true).
     %   - rereference (logical): Flag for rereferencing (default: true).
     %   - ICA (logical): Flag for performing ICA (default: false).
-    %   - ICrejection (logical): Flag for performing IC rejection via ICLabel 
-    %                            (default: false).
+    %   - ICrejection (logical): Flag for IC rejection via ICLabel (default: false).
+    %   - wICA (logical): Flag for IC correction via wICA (default: false).
     %   - ASR (logical): Flag for performing ASR (default: false).
     %   - store_settings (logical): Flag for storing settings (default: false).
     %   - setting_name (char): Name of the setting if storing settings 
@@ -58,6 +61,8 @@ function params_info = set_preprocessing_info(varargin)
 
     defaultFilterLow = 0.1;
     defaultFilterHigh = 49;
+    defaultNotch = 50;
+    defaultNotchBw = 4;
     defaultSamplingRate = 250;
     defaultStandardRef = 'COMMON';
     defaultInterpolation = 'spherical';
@@ -92,6 +97,7 @@ function params_info = set_preprocessing_info(varargin)
     defaultDoICA = false;
     defaultDoICrejection = false;
     defaultDowICA = false;
+    defaultDoNotch = false;
     defaultDoASR = false;
     
     defaultStoreSettings= false;
@@ -100,18 +106,21 @@ function params_info = set_preprocessing_info(varargin)
 
     
     p = inputParser;
-    validStringChar= @(x) isstring(x) || ischar(x);
-    validBool= @(x) islogical(x);
-    validScalar = @(x) isscalar(x);
-    validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
-    validStruct = @(x) isstruct(x);
-    validNumeric72= @(x) isnumeric(x) && isequal(size(x), [7 2]);
-    validICEntry = @(x) strcmpi(x, 'mara') || strcmpi(x, 'iclabel');
+    validStringChar = @(x) isstring(x) || ischar(x);
+    validBool       = @(x) islogical(x);
+    validScalar     = @(x) isscalar(x);
+    validScalarInt  = @(x) isscalar(x) && mod(x,1)==0;
+    validStruct     = @(x) isstruct(x);
+    validNumeric72  = @(x) isnumeric(x) && isequal(size(x), [7 2]);
+    validICEntry    = @(x) strcmpi(x, 'mara') || strcmpi(x, 'iclabel');
     
     p.addOptional('params_info',         defaultParamInfo,         validStruct);
     
     p.addParameter('low_freq',           defaultFilterLow,         validScalar);
     p.addParameter('high_freq',          defaultFilterHigh,        validScalar);
+    p.addParameter('notchfreq',          defaultNotch,             validScalar);
+    p.addParameter('notchfreq_bw',       defaultNotchBw,           validScalar);
+
     p.addParameter('sampling_rate',      defaultSamplingRate,      validScalar);
     p.addParameter('standard_ref',       defaultStandardRef,       validStringChar);
     p.addParameter('interpol_method',    defaultInterpolation,     validStringChar);
@@ -145,8 +154,9 @@ function params_info = set_preprocessing_info(varargin)
     p.addParameter('rereference',        defaultDoRereferencing,   validBool);
     p.addParameter('ICA',                defaultDoICA,             validBool);
     p.addParameter('ICrejection',        defaultDoICrejection,     validBool);
-    p.addParameter('ASR',                defaultDoASR,             validBool);
     p.addParameter('wICA',               defaultDowICA,            validBool);
+    p.addParameter('notchfiltering',     defaultDoNotch,           validBool);
+    p.addParameter('ASR',                defaultDoASR,             validBool);
     
     p.addParameter('store_settings',     defaultStoreSettings,     validBool);
     p.addParameter('setting_name',       defaultSettingName,       validStringChar);
@@ -167,8 +177,9 @@ function params_info = set_preprocessing_info(varargin)
             'rereference', ...
             'ICA', ...
             'ICrejection', ...
-            'ASR', ...
-            'wICA'
+            'wICA', ...
+            'notchfiltering', ...
+            'ASR'
         };
 
         param2set = setdiff( setdiff( p.Parameters, ...
@@ -185,39 +196,42 @@ function params_info = set_preprocessing_info(varargin)
         
     else
         params_info = struct( ...
-            'low_freq',                p.Results.low_freq,...           % filtering                              
-            'high_freq',               p.Results.high_freq , ...        % filtering
-            'sampling_rate',           p.Results.sampling_rate , ...    % resampling
-            'standard_ref',            p.Results.standard_ref , ...     % standardref
-            'interpol_method',         p.Results.interpol_method ,...   % interp
-            'flatlineC',               p.Results.flatlineC ,...         % 1 ASR
-            'channelC',                p.Results.channelC ,...          % 1 ASR
-            'lineC',                   p.Results.lineC , ...            % 1 ASR
-            'burstC',                  p.Results.burstC ,...            % 2 ASR
-            'windowC',                 p.Results.windowC ,...           % 2 ASR
-            'burstR',                  p.Results.burstR ,...            % 2 ASR
-            'th_reject',               p.Results.th_reject ,...         % ASR threshold
-            'ica_type',                p.Results.ica_type ,...          % ICA
-            'non_linearity',           p.Results.non_linearity ,...     % ICA
-            'n_ica',                   p.Results.n_ica ,...             % ICA
-            'ic_rej_type',             p.Results.ic_rej_type ,...       % ICA
-            'mara_threshold',          p.Results.mara_threshold, ...    % ICA
-            'iclabel_thresholds',      p.Results.iclabel_thresholds,... % ICA
-            'wavelet_type',            p.Results.wavelet_type, ...      % wICA
-            'wavelet_level',           p.Results.wavelet_level, ...     % wICA
-            'dt_i',                    p.Results.dt_i ,...              % start removal
-            'dt_f',                    p.Results.dt_f ,...              % end removal
-            'prep_steps', struct( ...  % preprocessing steps to do
-                       'rmchannels'  , p.Results.rmchannels ,...
-                       'rmsegments'  , p.Results.rmsegments ,...
-                       'rmbaseline'  , p.Results.rmbaseline ,...
-                       'resampling'  , p.Results.resampling ,...
-                       'filtering'   , p.Results.filtering,...
-                       'rereference' , p.Results.rereference,...
-                       'ICA'         , p.Results.ICA,...
-                       'ICrejection' , p.Results.ICrejection, ...
-                       'wICA'        , p.Results.wICA, ...  
-                       'ASR'         , p.Results.ASR ) ...
+            'low_freq',                  p.Results.low_freq,...           % filtering                              
+            'high_freq',                 p.Results.high_freq , ...        % filtering
+            'sampling_rate',             p.Results.sampling_rate , ...    % resampling
+            'standard_ref',              p.Results.standard_ref , ...     % standardref
+            'interpol_method',           p.Results.interpol_method ,...   % interp
+            'flatlineC',                 p.Results.flatlineC ,...         % 1 ASR
+            'channelC',                  p.Results.channelC ,...          % 1 ASR
+            'lineC',                     p.Results.lineC , ...            % 1 ASR
+            'burstC',                    p.Results.burstC ,...            % 2 ASR
+            'windowC',                   p.Results.windowC ,...           % 2 ASR
+            'burstR',                    p.Results.burstR ,...            % 2 ASR
+            'th_reject',                 p.Results.th_reject ,...         % ASR thresh
+            'ica_type',                  p.Results.ica_type ,...          % ICA
+            'non_linearity',             p.Results.non_linearity ,...     % ICA
+            'n_ica',                     p.Results.n_ica ,...             % ICA
+            'ic_rej_type',               p.Results.ic_rej_type ,...       % ICA
+            'mara_threshold',            p.Results.mara_threshold, ...    % ICA
+            'iclabel_thresholds',        p.Results.iclabel_thresholds,... % ICA
+            'wavelet_type',              p.Results.wavelet_type, ...      % wICA
+            'wavelet_level',             p.Results.wavelet_level, ...     % wICA
+            'notchfreq',                 p.Results.notchfreq, ...         % notch filt
+            'notchfreq_bw',              p.Results.notchfreq_bw, ...      % notch band
+            'dt_i',                      p.Results.dt_i ,...              % start removal
+            'dt_f',                      p.Results.dt_f ,...              % end removal
+            'prep_steps', struct( ...    % preprocessing steps to do
+                       'rmchannels',     p.Results.rmchannels ,...
+                       'rmsegments',     p.Results.rmsegments ,...
+                       'rmbaseline',     p.Results.rmbaseline ,...
+                       'resampling',     p.Results.resampling ,...
+                       'filtering',      p.Results.filtering,...
+                       'rereference',    p.Results.rereference,...
+                       'ICA',            p.Results.ICA,...
+                       'ICrejection',    p.Results.ICrejection, ...
+                       'wICA',           p.Results.wICA, ...
+                       'notchfiltering', p.Results.notchfiltering, ...
+                       'ASR',            p.Results.ASR ) ...
         );
     end
     

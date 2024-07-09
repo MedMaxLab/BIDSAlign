@@ -16,9 +16,12 @@ function [] = check_preprocessing_info(params_info)
     % Date: [25/01/2024]
     %
 
-    bool_args = { 'rmchannels', 'rmsegments', 'rmbaseline', ...
-                  'resampling', 'filtering',  'rereference', 'ICA', ...
-                  'ICrejection', 'ASR', 'wICA'};
+    bool_args = { 
+        'rmchannels',       'rmsegments',       'rmbaseline',       ...
+        'resampling',       'filtering',        'rereference',      ...
+        'ICA',              'ICrejection',      'wICA',             ...
+        'notchfiltering',   'ASR'                                   ...
+    };
     channel_list = load('full_channel_list.mat').all_channel_list;
 
     validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
@@ -52,6 +55,26 @@ function [] = check_preprocessing_info(params_info)
         end
     end
     
+    % check that notch filter params are ok
+    if ~isscalar(params_info.notchfreq)
+        error('notchfreq must be a positive scalar value')
+    else
+        if params_info.notchfreq<0
+            error('notchfreq must be a scalar value');
+        end
+    end
+
+    if ~isscalar(params_info.notchfreq_bw)
+        error('notchfreq_bw must be a positive scalar value')
+    else
+        if params_info.notchfreq_bw<0
+            error('notchfreq_bw must be a positive scalar value');
+        end
+        if (params_info.notchfreq_bw/2 > params_info.notchfreq)
+            error('notchfreq_bw/2 cannot be greater than notchfreq')
+        end
+    end
+
     % check that standar rereferencing is ok
     if ~validStringChar(params_info.standard_ref)
         error('standard_ref must be a string or a char array')

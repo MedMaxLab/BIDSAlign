@@ -48,12 +48,6 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
     if ~isnan(data_info.line_noise) && data_info.line_noise<0
         error('ERROR: NEGATIVE FREQUENCY OF THE LINE NOISE');
     end
-    if params_info.notchfreq<0
-        error('ERROR: NEGATIVE FREQUENCY OF THE NOTCH FILTER');
-    end
-    if (params_info.notchfreq_bw<0) || (params_info.notchfreq_bw/2>params_info.notchfreq)
-        error('ERROR: CHECK THE NOTCH FILTER BANDWIDTH, NEGATIVE or TOO HIGH');
-    end
     
     %% Set Folder/Files Path
     path_info.dataset_path = [path_info.datasets_path data_info.dataset_code '/' ];
@@ -114,10 +108,12 @@ function [data_info, path_info, template_info, T] = load_info(data_info, path_in
         error('ERROR: UNSUPPORTED CHANNEL SYSTEM');
     end
     
-    template_info = struct('template_matrix',template_matrix, ...
-                                       'template_tensor',template_tensor, ...
-                                       'conversion',conversion,...
-                                       'standard_chanloc',standard_chanloc); 
+    template_info = struct( ...
+        'template_matrix',template_matrix, ...
+        'template_tensor',template_tensor, ...
+        'conversion',conversion,...
+        'standard_chanloc',standard_chanloc ...
+    ); 
     
 
     %% Rename DATA INFO REFERENCE FOR GSN Systems

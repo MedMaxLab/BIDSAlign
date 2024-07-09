@@ -59,7 +59,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     % NOTE: this code was written using a monospace font (like it always should be)
     
     % --------------------------------------------------------------------------------
-    %                                   ARGUMENT PARSING
+    %                                ARGUMENT PARSING
     % --------------------------------------------------------------------------------
     
     % ------------------------------ setting defaults ------------------------------
@@ -240,7 +240,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
     end
 
     % --------------------------------------------------------
-    %    ADDITIONAL CHECKS ON GIVEN PATHS
+    %            ADDITIONAL CHECKS ON GIVEN PATHS
     % --------------------------------------------------------
     
     % add path to eeglab if given. If not given, check that 
@@ -324,7 +324,7 @@ function DATA_STRUCT = preprocess_all( dataset_info_filename, varargin)
         dataset_info = dataset_info_filename;
     else
         dataset_info = readtable(dataset_info_filename, ...
-            'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
+            'format','%f%s%s%s%s%s%s%s%s%f%f','filetype','text');
     end
     
     check_loaded_table(dataset_info);

@@ -48,15 +48,15 @@ function save_info = set_save_info(varargin)
     validBool= @(x) islogical(x);
     validStruct = @(x) isstruct(x);
     
-    p.addOptional('save_info', defaultSaveInfo, validStruct);
-    p.addParameter('save_data', defaultSaveData, validBool);
-    p.addParameter('save_data_as', defaultSaveType, validStringChar);
-    p.addParameter('save_set', defaultSaveSet, validBool);
-    p.addParameter('save_struct', defaultSaveStruct, validBool);
-    p.addParameter('save_marker', defaultSaveMarker, validBool);
-    p.addParameter('set_label', defaultSetLabel, validStringChar);
+    p.addOptional('save_info',       defaultSaveInfo,      validStruct);
+    p.addParameter('save_data',      defaultSaveData,      validBool);
+    p.addParameter('save_data_as',   defaultSaveType,      validStringChar);
+    p.addParameter('save_set',       defaultSaveSet,       validBool);
+    p.addParameter('save_struct',    defaultSaveStruct,    validBool);
+    p.addParameter('save_marker',    defaultSaveMarker,    validBool);
+    p.addParameter('set_label',      defaultSetLabel,      validStringChar);
     p.addParameter('store_settings', defaultStoreSettings, validBool);
-    p.addParameter('setting_name', defaultSettingName, validStringChar);
+    p.addParameter('setting_name',   defaultSettingName,   validStringChar);
     parse(p, varargin{:});
 
     % Create a struct to store the save information
@@ -70,13 +70,14 @@ function save_info = set_save_info(varargin)
     end     
 
     else
-        save_info = struct('save_data',p.Results.save_data, ...
-                           'save_data_as', p.Results.save_data_as, ...
-                           'save_set', p.Results.save_set,...
-                           'save_struct',p.Results.save_struct, ...
-                           'save_marker',p.Results.save_marker, ...
-                           'set_label', p.Results.set_label ...
-                           );
+        save_info = struct( ...
+            'save_data',    p.Results.save_data, ...
+            'save_data_as', p.Results.save_data_as, ...
+            'save_set',     p.Results.save_set,...
+            'save_struct',  p.Results.save_struct, ...
+            'save_marker',  p.Results.save_marker, ...
+            'set_label',    p.Results.set_label ...
+        );
     end
     
     if save_info.save_struct && ~save_info.save_data
