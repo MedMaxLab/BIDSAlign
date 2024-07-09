@@ -17,8 +17,8 @@ function [] = check_preprocessing_info(params_info)
     %
 
     bool_args = { 'rmchannels', 'rmsegments', 'rmbaseline', ...
-                            'resampling', 'filtering',  'rereference','ICA', ...
-                            'ICrejection', 'ASR'};
+                  'resampling', 'filtering',  'rereference', 'ICA', ...
+                  'ICrejection', 'ASR', 'wICA'};
     channel_list = load('full_channel_list.mat').all_channel_list;
 
     validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
@@ -184,13 +184,26 @@ function [] = check_preprocessing_info(params_info)
             end       
         end
     end
+
+    %check wICA args
+    if ~validScalarInt(params_info.wavelet_level)
+        error('wavelet_level must be a positive integer value')
+    else
+        if params_info.n_ica < 0
+            error(' wavelet_level must be greater than 0')
+        end
+    end
+
+    if ~validStringChar(params_info.wavelet_type)
+        error("wavelet_type must be a string with a valid wavelet name")
+    end
     
     %check segment removal arg
     if ~isscalar(params_info.dt_i)
         error('dt_i must be a scalar value')
     else
         if params_info.dt_i < 0
-            error(' dt_i must be bigger than 0')
+            error(' dt_i must be greater than 0')
         end
     end
     

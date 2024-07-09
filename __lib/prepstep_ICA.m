@@ -26,7 +26,7 @@ function [EEG] = prepstep_ICA(EEG, params_info, ica_case, verbose)
         verb = 'off';
     end
 
-    if params_info.prep_steps.ICrejection && ica_case
+    if (params_info.prep_steps.ICrejection || params_info.prep_steps.wICA) && ica_case
        
         switch params_info.ica_type
             case 'fastica'

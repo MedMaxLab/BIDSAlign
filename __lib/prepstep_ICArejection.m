@@ -66,7 +66,7 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
         elseif isequal(params_info.ic_rej_type,'mara')
             try
                 if verbose
-                    [rejected_comps, info] = MARA(EEG);
+                    [~, info] = MARA(EEG);
                     ics = 1:length(info.posterior_artefactprob);
                     rejected_comps = ics( info.posterior_artefactprob > ...
                         params_info.mara_threshold);
@@ -76,7 +76,7 @@ function [EEG] = prepstep_ICArejection(EEG, params_info, verbose)
                         [EEG] = pop_subcomp(EEG, rejected_comps);
                     end
                 else
-                    [~, rejected_comps, info] = evalc("MARA(EEG);");
+                    [~, ~, info] = evalc("MARA(EEG);");
                     ics = 1:length(info.posterior_artefactprob);
                     rejected_comps = ics( info.posterior_artefactprob > ...
                         params_info.mara_threshold);

@@ -21,7 +21,6 @@ function [] = check_selection_info(selection_info, raise_allempty)
     end
 
     validScalarInt = @(x) isscalar(x) && mod(x,1)==0;
-    validStringChar= @(x) isstring(x) || ischar(x);
 
     if raise_allempty && selection_info.select_subjects
         if isempty(selection_info.sub_i) && ...
@@ -133,13 +132,18 @@ function [] = check_selection_info(selection_info, raise_allempty)
         error('select_subjects must be a boolean')
     end
 
-    if ~validStringChar(selection_info.label_name)
-        error('label_name must be a string or char array')
+    if ~isempty(selection_info.label_name) || ...
+            ~isequal(selection_info.label_name, {{}})
+        if ~iscellstr( selection_info.label_name)
+            error('label_name must be a cell array with char vectors')
+        end
     end
-    
-    if ~(validStringChar(selection_info.label_value) || ...
-            isscalar(x))
-        error('label_value must be a string or char array or a valid scalar')
+
+    if ~isempty(selection_info.label_value) || ...
+            ~isequal(selection_info.label_value, {{}})
+        if ~iscellstr( selection_info.label_value)
+            error('label_value must be a cell array with char vectors')
+        end
     end
                               
     if ~isempty(selection_info.subjects_totake) || ...

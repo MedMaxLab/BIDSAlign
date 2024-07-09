@@ -175,13 +175,16 @@ function [EEG, L, obj_info] = preprocess_single_file(L, obj_info, data_info, par
         % ICA DECOMP
         [EEG] = prepstep_ICA(EEG, params_info, true, verbose);
 
-        % ICA REJ
+        % ICA REJ or wICA
         if isfield(EEG,'reject')
             if isfield(EEG.reject,'gcompreject')
                 EEG.reject.gcompreject = [];
             end
         end
+        % If for some reasons checks are bypassed and both rejection
+        % and wICA are set to true, only rejection will be done
         [EEG] = prepstep_ICArejection(EEG, params_info, verbose);
+        [EEG] = prepstep_wICA(EEG, params_info, verbose);
 
         %% Notch Filtering
         [EEG] = prepstep_notchfiltering(EEG, params_info, data_info, obj_info, verbose);
