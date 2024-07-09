@@ -20,10 +20,10 @@ In order to successfully use BIDSAlign, check the following steps.
 
 ### Datasets List
 You have to create a folder where you will store all the datasets present in the DATASET_INFO.tsv file, which is structured in the following way:
-| dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate |
-|--------------------------|------------------|--------------|---------------------------|----------------|-------------------|-------------------|--------------------|-----------|
-| 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | 500       |
-| 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       |
+| dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate | line_noise|
+|--------------------------|------------------|--------------|---------------------------|----------------|-------------------|-------------------|--------------------|-----------|-----------|
+| 1                        | HBN_EO_EC        | ds004186     | loaded                    | GSN129         | CZ                |                   | .set               | 500       | |
+| 2                        | Test_Retest_Rest | ds004148     |                           | 10_10          | FCZ               |                   | .vhdr              | 500       | |
 
 Please remember that the name of the folder where the dataset is stored must corresponds to the value in column *dataset_code*.
 
@@ -80,9 +80,10 @@ The following preprocessing steps are currently available in BIDSAlign:
 4. Resampling.
 5. Filtering.
 6. Independent Component Analysis (ICA) and Automatic IC rejection with MARA or ICLabel.
-7. Artifact Subspace Reconstruction (ASR) can be used independently in two ways: for removing bad channels and/or for removing/reconstructing bad time windows.
-8. Interpolation of previously removed bad channels.
-9. Rereference.
+7. Notch-Filtering.
+8. Artifact Subspace Reconstruction (ASR) can be used independently in two ways: for removing bad channels and/or for removing/reconstructing bad time windows.
+9. Interpolation of previously removed bad channels.
+10. Rereference.
 
 Please note that EEG data are assumed to be saved in $\mu V$.
 
