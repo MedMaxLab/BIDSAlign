@@ -78,6 +78,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         NextButton_3                   matlab.ui.control.Button
         BackButton_2                   matlab.ui.control.Button
         PreprocessingTab               matlab.ui.container.Tab
+        LineSwitch                     matlab.ui.control.Switch
+        PowerLineLabel                 matlab.ui.control.Label
         uVLabel                        matlab.ui.control.Label
         HzLabel_3                      matlab.ui.control.Label
         HzLabel_2                      matlab.ui.control.Label
@@ -85,7 +87,6 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         sLabel_2                       matlab.ui.control.Label
         sLabel                         matlab.ui.control.Label
         AlgorithmSwitch                matlab.ui.control.Switch
-        AlgorithmSwitchLabel           matlab.ui.control.Label
         MaraThresholdEditField         matlab.ui.control.NumericEditField
         MaraThresholdEditFieldLabel    matlab.ui.control.Label
         ChannelInterpolationLabel      matlab.ui.control.Label
@@ -143,13 +144,17 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         InterpolationMethodEditFieldLabel  matlab.ui.control.Label
         StandardReferenceEditField     matlab.ui.control.EditField
         StandardReferenceEditFieldLabel  matlab.ui.control.Label
-        HighFreqEditField              matlab.ui.control.NumericEditField
-        HighFreqEditFieldLabel         matlab.ui.control.Label
-        LowFreqEditField               matlab.ui.control.NumericEditField
-        LowFreqEditFieldLabel          matlab.ui.control.Label
+        HighFrequencyEditField         matlab.ui.control.NumericEditField
+        HighFrequencyEditFieldLabel    matlab.ui.control.Label
+        LowFrequencyEditField          matlab.ui.control.NumericEditField
+        LowFrequencyEditFieldLabel     matlab.ui.control.Label
         NextButton_4                   matlab.ui.control.Button
         BackButton_3                   matlab.ui.control.Button
         SelectionTab                   matlab.ui.container.Tab
+        LabelValuesTextArea            matlab.ui.control.TextArea
+        LabelValuesTextAreaLabel       matlab.ui.control.Label
+        LabelnamesTextArea             matlab.ui.control.TextArea
+        LabelTextAreaLabel             matlab.ui.control.Label
         SelectionStatus                matlab.ui.control.Lamp
         SelectionstatustocheckLabel    matlab.ui.control.Label
         SelectionGeneralHelp           matlab.ui.control.Button
@@ -162,10 +167,6 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         SessionsToTakeTextAreaLabel    matlab.ui.control.Label
         SubjectstoTakeTextArea         matlab.ui.control.TextArea
         SubjectstoTakeTextAreaLabel    matlab.ui.control.Label
-        LabelValueEditField            matlab.ui.control.EditField
-        LabelValueEditFieldLabel       matlab.ui.control.Label
-        LabelNameEditField             matlab.ui.control.EditField
-        LabelNameEditFieldLabel        matlab.ui.control.Label
         PerformSelectionSwitch         matlab.ui.control.Switch
         PerformSelectionSwitchLabel    matlab.ui.control.Label
         ObjectFinalEditField           matlab.ui.control.NumericEditField
@@ -183,6 +184,10 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         NextButton_5                   matlab.ui.control.Button
         BackButton_4                   matlab.ui.control.Button
         RunPreprocessingTab            matlab.ui.container.Tab
+        LineFilterSwitch               matlab.ui.control.Switch
+        LineFilterSwitchLabel          matlab.ui.control.Label
+        wICASwitch                     matlab.ui.control.Switch
+        wICASwitchLabel                matlab.ui.control.Label
         SingleFileDropDown             matlab.ui.control.DropDown
         SingleFileDropDownLabel        matlab.ui.control.Label
         RunGeneralHelp                 matlab.ui.control.Button
@@ -225,12 +230,14 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         SavematfilesSwitchLabel        matlab.ui.control.Label
         RunButton                      matlab.ui.control.Button
         StepstoPerformLabel            matlab.ui.control.Label
-        SaveoptionsLabel               matlab.ui.control.Label
+        SavingoptionsLabel             matlab.ui.control.Label
         BackButton_7                   matlab.ui.control.Button
     end
 
     
     properties (Access = public)
+        % Just a set of some public variables that make easy
+        % to control the library functionality
         
         % table variables
         dataset_info_filename = '';
@@ -264,6 +271,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
     methods (Access = private)
         
         function [] = SilenceSingleFile(app, reset_items)
+            % silence the single file selection component and updates
+            % its values if necessary
             
             if nargin<2
                 reset_items=true;
@@ -284,6 +293,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function [] = checkTableStatus(app)
+            % check the status of the table.If everything is ok
+            % the status lamp will be set to green
+
             if isempty(app.UITable.Data)
                 app.TableStatusLamp.Color = [1.0, 0.0, 0.0];
                 app.TableStatusemptyLabel.Text = 'Table Status: empty';
@@ -315,6 +327,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function [] = checkPreproStatus(app, struct2check)
+            % updates preprocessing tab Lamps based on the current list of values
+            % if everything is ok, lamp will be set to green, otherwise, to red
+
             switch struct2check
                 case 'path'
                     try
@@ -377,6 +392,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function [] = updateAllValues(app)
+            % update all components values based on the struct variables values
             
             % Paths values
             app.DatasetPathEditField.Value = app.path_info.datasets_path;
@@ -391,8 +407,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.InitialsegmentEditField.Value = app.preprocess_info.dt_i;
             app.FinalsegmentEditField.Value = app.preprocess_info.dt_f;
             app.SamplingRateEditField.Value = app.preprocess_info.sampling_rate;
-            app.LowFreqEditField.Value = app.preprocess_info.low_freq;
-            app.HighFreqEditField.Value = app.preprocess_info.high_freq;
+            app.LowFrequencyEditField.Value = app.preprocess_info.low_freq;
+            app.HighFrequencyEditField.Value = app.preprocess_info.high_freq;
             app.StandardReferenceEditField.Value = app.preprocess_info.standard_ref;
             app.TypeEditField.Value = app.preprocess_info.ica_type;
             app.NonLinearityEditField.Value = app.preprocess_info.non_linearity;
@@ -411,6 +427,11 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.BurstCriterionEditField.Value = app.preprocess_info.burstC;
             app.BurstRejectionSwitch.Value = regexprep(lower(app.preprocess_info.burstR),'(\<[a-z])','${upper($1)}');
             app.InterpolationMethodEditField.Value = app.preprocess_info.interpol_method;
+            if app.preprocess_info.notchfreq == 50
+                app.LineSwitch.Value = '50 Hz';
+            else
+                app.LineSwitch.Value = '60 Hz';
+            end
             app.BrainEditField.Value = app.preprocess_info.iclabel_thresholds(1,2);
             app.MuscleEditField.Value = app.preprocess_info.iclabel_thresholds(2,1);
             app.EyeEditField.Value = app.preprocess_info.iclabel_thresholds(3,1);
@@ -434,8 +455,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.ObjectInitialEditField.Value = ValueOrZero(app, app.selection_info.obj_i);
             app.ObjectFinalEditField.Value = ValueOrZero(app, app.selection_info.obj_f);
             app.PerformSelectionSwitch.Value = Bool2Value(app, app.selection_info.select_subjects, true);
-            app.LabelNameEditField.Value = app.selection_info.label_name;
-            app.LabelValueEditField.Value = app.selection_info.label_value;
+            app.LabelnamesTextArea.Value = emptycell4text(app, app.selection_info.label_name);
+            app.LabelValuesTextArea.Value = emptycell4text(app, app.selection_info.label_value);
             app.SubjectstoTakeTextArea.Value = emptycell4text( app, app.selection_info.subjects_totake);
             app.SessionsToTakeTextArea.Value = emptycell4text( app, app.selection_info.session_totake);
             app.ObjectsToTakeTextArea.Value = emptycell4text( app, app.selection_info.task_totake);
@@ -450,6 +471,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.ICADecompositionSwitch.Value = Bool2Value(app, app.preprocess_info.prep_steps.ICA, true);
             app.ICRejectionSwitch.Value = Bool2Value(app, app.preprocess_info.prep_steps.ICrejection, true);
             app.ASRSwitch.Value = Bool2Value(app, app.preprocess_info.prep_steps.ASR, true);
+            app.LineFilterSwitch.Value = Bool2Value(app, app.preprocess_info.prep_steps.notchfiltering, true);
+            app.wICASwitch.Value = Bool2Value(app, app.preprocess_info.prep_steps.wICA, true);
             
             if app.selection_info.select_subjects
                 enable4struct(app,'selection')
@@ -460,6 +483,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         
         
         function thresh2add = GetICLabelThresh(app, IClab, newthresh)
+            % Converts button values to the ICLabel threshold 7x2 array
+            % to pass to the params info struct variable
+
             switch IClab
                 case 'iclabel_threshold_brain'
                     thresh2add = [0 newthresh;
@@ -530,6 +556,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         
         
         function ComponentValue = Bool2Value( ~, value, onoff)
+            % Converts Boolean to Buttons string values
+
             if nargin <3
                 onoff = false;
             end
@@ -551,6 +579,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function [] = checkFinal(app)
+            % Check if preprocessing can be run or not. 
+            % If everything is ok, the run button will be enabled
             
             if isequal(app.AllSetStatus.Color, [0 1 0]) && ...
                     isequal(app.TableStatusLamp.Color, [0 1 0])
@@ -578,6 +608,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function regenerate_single_file_list(app, dataset_name, reset_value)
+            % Recreate the list of single files to select for single file mode
+            % This function operates when changes to the dataset info table are made
+
             if nargin< 3
                 reset_value = true;
             end
@@ -595,6 +628,14 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function manageModality(app)
+            % This function handles the modality in which BIDSAlign can operate
+            % according to the given setting.
+            % Modalities are
+            %
+            % multiple datasets    |    single dataset    |   single file
+            % 
+            % Based on the modality, some buttons are enabled or disabled
+            % and values are updated
             
             % if everything is ok but currently the dataset liss has only the All
             % item, we need to update the dropdown item list and start
@@ -703,6 +744,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         
         
         function value2add = ValueOrZero(~, value, reverse)
+            % converts empty to zero or viceversa
             
             if nargin<3
                 reverse = false;
@@ -725,6 +767,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         
         
         function enable4struct(app, struct_type)
+            % enable buttons when certain switches change values
+            % this solution provides additional feedbacks to the user
+            % and helps him understand which parameters are related to which steps
             
             if strcmp(struct_type, 'mara')
                 app.MaraThresholdEditField.Enable = 'on';
@@ -745,8 +790,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                 app.SessionFinalEditField.Enable = 'on';
                 app.ObjectInitialEditField.Enable = 'on';
                 app.ObjectFinalEditField.Enable = 'on';
-                app.LabelNameEditField.Enable = 'on';
-                app.LabelValueEditField.Enable = 'on';
+                app.LabelnamesTextArea.Enable = 'on';
+                app.LabelValuesTextArea.Enable = 'on';
                 app.SubjectstoTakeTextArea.Enable = 'on';
                 app.SessionsToTakeTextArea.Enable = 'on';
                 app.ObjectsToTakeTextArea.Enable = 'on';
@@ -755,6 +800,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function disable4struct(app, struct_type)
+            % disable buttons when certain switches change values
+            % this solution provides additional feedbacks to the user
+            % and helps him understand which parameters are related to which steps
             
             if strcmp(struct_type, 'mara')
                 app.MaraThresholdEditField.Enable = 'off';
@@ -775,8 +823,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                 app.SessionFinalEditField.Enable = 'off';
                 app.ObjectInitialEditField.Enable = 'off';
                 app.ObjectFinalEditField.Enable = 'off';
-                app.LabelNameEditField.Enable = 'off';
-                app.LabelValueEditField.Enable = 'off';
+                app.LabelnamesTextArea.Enable = 'off';
+                app.LabelValuesTextArea.Enable = 'off';
                 app.SubjectstoTakeTextArea.Enable = 'off';
                 app.SessionsToTakeTextArea.Enable = 'off';
                 app.ObjectsToTakeTextArea.Enable = 'off';
@@ -785,6 +833,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function cell2take = emptycell4text(~, cellinfo, reverse)
+            % avoids errors with empty textarea components 
             
             if nargin<3 
                 reverse = false;
@@ -806,6 +855,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
         
         function check_empty_selection(app)
+            % check if all selections text field and areas are empty and in case
+            % just put selection info struct field to false
 
             if app.selection_info.select_subjects
                 if isempty(app.selection_info.sub_i) && ...
@@ -823,9 +874,149 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                     app.selection_info.select_subjects = false;
     
                 end
+            end  
+        end
+
+
+        function changeSwitchColors(app, switch_mode)
+            % This horrible solution change label colors of some switches
+            % to give a feedback on what is turned on and what is turned off
+            %
+            % SAY THANKS TO MATLAB FOR NOT HAVING IMPLEMENTED COLORED SWITCH
+            %
+            % Just a big if else block
+
+            black = [0.00, 0.00, 0.00];
+            green = [0.01, 0.64, 0.18];
+            if strcmp(switch_mode, 'all') || strcmp(switch_mode, 'save')
+
+                if strcmp(app.SavematfilesSwitch.Value, 'Yes')
+                    app.SavematfilesSwitchLabel.FontColor = green;
+                else
+                    app.SavematfilesSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.SavesetfilesSwitch.Value, 'Yes')
+                    app.SavesetfilesSwitchLabel.FontColor = green;
+                else
+                    app.SavesetfilesSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.SavestructSwitch.Value, 'Yes')
+                    app.SavestructSwitchLabel.FontColor = green;
+                else
+                    app.SavestructSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.SaveMarkerfilesSwitch.Value, 'Yes')
+                    app.SaveMarkerfilesSwitchLabel.FontColor = green;
+                else
+                    app.SaveMarkerfilesSwitchLabel.FontColor = black;
+                end
+
+            end
+
+            if strcmp(switch_mode, 'all') || strcmp(switch_mode, 'steps')
+
+                if strcmp(app.ChannelRemovalSwitch.Value, 'On')
+                    app.ChannelRemovalLabel.FontColor = green;
+                else
+                    app.ChannelRemovalLabel.FontColor = black;
+                end
+
+                if strcmp(app.SegmentRemovalSwitch.Value, 'On')
+                    app.SegmentRemovalSwitchLabel.FontColor = green;
+                else
+                    app.SegmentRemovalSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.BaselineRemovalSwitch.Value, 'On')
+                    app.BaselineRemovalSwitchLabel.FontColor = green;
+                else
+                    app.BaselineRemovalSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.ResamplingSwitch.Value, 'On')
+                    app.ResamplingSwitchLabel.FontColor = green;
+                else
+                    app.ResamplingSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.FilteringSwitch.Value, 'On')
+                    app.FilteringSwitchLabel.FontColor = green;
+                else
+                    app.FilteringSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.ICRejectionSwitch.Value, 'On')
+                    app.ICRejectionSwitchLabel.FontColor = green;
+                else
+                    app.ICRejectionSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.wICASwitch.Value, 'On')
+                    app.wICASwitchLabel.FontColor = green;
+                else
+                    app.wICASwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.ASRSwitch.Value, 'On')
+                    app.ASRSwitchLabel.FontColor = green;
+                else
+                    app.ASRSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.LineFilterSwitch.Value, 'On')
+                    app.LineFilterSwitchLabel.FontColor = green;
+                else
+                    app.LineFilterSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.RereferencingSwitch.Value, 'On')
+                    app.RereferencingSwitchLabel.FontColor = green;
+                else
+                    app.RereferencingSwitchLabel.FontColor = black;
+                end
+
+                if strcmp(app.ICADecompositionSwitch.Value, 'On')
+                    app.ICADecompositionSwitchLabel.FontColor = green;
+                else
+                    app.ICADecompositionSwitchLabel.FontColor = black;
+                end
             end
             
+            if strcmp(switch_mode, 'all') || strcmp(switch_mode, 'parpool')
+                if strcmp(app.ParallelComputingSwitch.Value, 'On')
+                    app.ParallelComputingSwitchLabel.FontColor = green;
+                else
+                    app.ParallelComputingSwitchLabel.FontColor = black;
+                end
+            end
             
+            if strcmp(switch_mode, 'all') || strcmp(switch_mode, 'verbose')
+                if strcmp(app.VerboseSwitch.Value, 'On')
+                    app.VerboseSwitchLabel.FontColor = green;
+                else
+                    app.VerboseSwitchLabel.FontColor = black;
+                end
+            end
+
+            if strcmp(switch_mode, 'all') || strcmp(switch_mode, 'burst')
+                if strcmp(app.BurstRejectionSwitch.Value, 'On')
+                    app.BurstRejectionLabel.FontColor = green;
+                else
+                    app.BurstRejectionLabel.FontColor = black;
+                end
+            end
+
+            if strcmp(switch_mode, 'all') || strcmp(switch_mode, 'selection')
+                if strcmp(app.PerformSelectionSwitch.Value, 'On')
+                    app.PerformSelectionSwitchLabel.FontColor = green;
+                else
+                    app.PerformSelectionSwitchLabel.FontColor = black;
+                end
+            end
+
         end
     end
     
@@ -835,6 +1026,10 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Code that executes after component creation
         function startupFcn(app)
+            % Set all component tags to easily identify which parameter change in the
+            % BIDSAlign struct variables. Tags can be set on the component section
+            % in newer versions, here is done manually inline.
+            
             % SET HELP BUTTON TAG
             app.HelpButton_4.Tag = 'HelpIntro';
             app.HelpButton.Tag = 'HelpTable';
@@ -864,8 +1059,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.InitialsegmentEditField.Tag = 'dt_i';
             app.FinalsegmentEditField.Tag = 'dt_f';
             app.SamplingRateEditField.Tag = 'sampling_rate';
-            app.LowFreqEditField.Tag = 'low_freq';
-            app.HighFreqEditField.Tag = 'high_freq';
+            app.LowFrequencyEditField.Tag = 'low_freq';
+            app.HighFrequencyEditField.Tag = 'high_freq';
             app.StandardReferenceEditField.Tag = 'standard_ref';
             app.TypeEditField.Tag = 'ica_type';
             app.NonLinearityEditField.Tag = 'non_linearity';
@@ -887,6 +1082,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.LineNoiseEditField.Tag = 'iclabel_threshold_line';
             app.ChannelNoiseEditField.Tag = 'iclabel_threshold_chan';
             app.OtherEditField.Tag = 'iclabel_threshold_other';
+            app.LineSwitch.Tag = 'notchfreq';
             app.ChannelRemovalSwitch.Tag = 'rmchannels';
             app.SegmentRemovalSwitch.Tag = 'rmsegments';
             app.BaselineRemovalSwitch.Tag = 'rmbaseline';
@@ -896,6 +1092,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.ICADecompositionSwitch.Tag = 'ICA';
             app.ICRejectionSwitch.Tag = 'ICRejection';
             app.ASRSwitch.Tag = 'ASR';
+            app.LineFilterSwitch.Tag = 'notchfiltering';
+            app.wICASwitch.Tag = 'wICA';
             
             %SET SELECTION TAG
             app.SubjectInitialEditField.Tag = 'sub_i';
@@ -905,8 +1103,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.ObjectInitialEditField.Tag = 'obj_i';
             app.ObjectFinalEditField.Tag = 'obj_f';
             app.PerformSelectionSwitch.Tag = 'select_subjects';
-            app.LabelNameEditField.Tag = 'label_name';
-            app.LabelValueEditField.Tag = 'label_value';
+            app.LabelnamesTextArea.Tag = 'label_name';
+            app.LabelValuesTextArea.Tag = 'label_value';
             app.SubjectstoTakeTextArea.Tag = 'subjects_totake';
             app.SessionsToTakeTextArea.Tag = 'session_totake';
             app.ObjectsToTakeTextArea.Tag = 'task_totake';
@@ -943,12 +1141,16 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             checkPreproStatus(app,'preprocessing')
             checkPreproStatus(app, 'selection')
 
+            changeSwitchColors(app, 'all')
+
 
         end
 
         % Button pushed function: NextButton, NextButton_2, NextButton_3, 
         % ...and 3 other components
         function NextButtonPushed(app, event)
+            % change tab if next button is clicked
+
             switch app.TabGroup.SelectedTab.Title
                 case 'Intro'
                     app.TabGroup.SelectedTab = app.TableSelection;
@@ -968,6 +1170,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         % Button pushed function: BackButton, BackButton_2, BackButton_3, 
         % ...and 3 other components
         function BackButtonPushed(app, event)
+            % change tab if back is clicked
+
             switch app.TabGroup.SelectedTab.Title
                 case 'Table Selection'
                     app.TabGroup.SelectedTab = app.IntroTab;
@@ -986,6 +1190,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: SelectFileButton
         function SelectTable(app, event)
+            % open a selection window for the selection of a table file
+
             [fileName,filePath] = uigetfile('*.*');
             if isequal(fileName, 0)
                 if isempty(app.UITable.Data)
@@ -995,7 +1201,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             else
                 app.dataset_info_filename = strcat(filePath,fileName);
                 app.dataset_info=readtable(app.dataset_info_filename, 'format',...
-                    '%f%s%s%s%s%s%s%s%s%f', 'filetype','text');
+                    '%f%s%s%s%s%s%s%s%s%f%f', 'filetype','text');
                 app.UITable.Data = app.dataset_info;
                 checkTableStatus(app);
             end
@@ -1003,6 +1209,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: CreateButton
         function GenerateTable(app, event)
+            % generate a table based on the given specifications 
+            % the table can be empty or a subset of the current table
+
             if isempty(app.UITable.Data)
                 app.dataset_info = create_empty_table(app.DatasetNumberEditField.Value);
                 app.UITable.Data = app.dataset_info;
@@ -1018,6 +1227,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: EmptyButton
         function EmptyTable(app, event)
+            % delete the table and generate an empty one
+
             app.dataset_info = create_empty_table(app.DatasetNumberEditField.Value);
             app.UITable.Data = app.dataset_info;
             checkTableStatus(app)
@@ -1025,6 +1236,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: SaveButton
         function SaveTable(app, event)
+            % open a window to save the table in a csv file
+            
             % Get the name of the file that the user wants to save.
             startingFolder = pwd;
             defaultFileName = fullfile(startingFolder, '*.csv');
@@ -1043,10 +1256,12 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Cell edit callback: UITable
         function UITableCellEdit(app, event)
+            % edit a cell of the table
+
             indices = event.Indices;
             newData = event.NewData;
             try
-                if indices(2) == 1 || indices(2) == 10
+                if indices(2) == 1 || indices(2) == 10 || indices(2) == 11
                     app.UITable.Data{indices(1), indices(2)} = newData;
                 else
                     app.UITable.Data{indices(1), indices(2)} = {newData};
@@ -1064,7 +1279,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: LoadSettingButton
         function LoadSetting(app, event)
-            
+            % load a pre-configured set of preprocessing parameters
+
             % load new settings
             value = app.SettingListDropDown.Value;
             [pathinfo,preprocessinfo, selectioninfo, saveinfo] = load_settings(value);
@@ -1133,6 +1349,13 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                     disable4struct(app,'mara')
                     enable4struct(app,'iclabel')
                 end
+
+                if app.preprocess_info.prep_steps.wICA
+                    if app.preprocess_info.prep_steps.ICrejection
+                        app.preprocess_info.prep_steps.wICA = false;
+                        app.wICASwitch.Value = 'Off';
+                    end
+                end
                 
                 % update single_dataset / single_files dropdown list
                 if isempty(app.path_info) || is_datasetpath_changed
@@ -1148,6 +1371,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                 checkPreproStatus(app,'preprocessing')
                 checkPreproStatus(app,'selection')
                 checkPreproStatus(app,'save')
+
+                % change switch colors
+                changeSwitchColors(app, 'all')
                 
             catch
                 app.AllsettingstatustocheckLampLabel.Text = 'All setting status: to check';
@@ -1157,6 +1383,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: RemoveSetting
         function RemoveSet(app, event)
+            % removed a set of pre-configured preprocessing parameters
+
             value = app.RemoveSettingDropDown.Value;
             remove_settings(value)
             app.all_settings = get_stored_settings(true);
@@ -1167,6 +1395,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: SaveButton_2
         function SaveSet(app, event)
+            % save the current setting of parameters
+            % note that existing settings will be overwritten
+            
             new_custom_name = app.EditField.Value;
             if strcmpi(new_custom_name, 'input custom name')
                 return
@@ -1208,6 +1439,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Selection changed function: Settinginspect
         function InspectSetting(app, event)
+            % show a summary of the current parameters set in one of the 
+            % 4 BIDSAlign struct variables
+            
             selectedButton = app.Settinginspect.SelectedObject;
             if strcmpi(app.TextArea.HorizontalAlignment,'center') 
                 app.TextArea.HorizontalAlignment = 'left';
@@ -1235,6 +1469,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         % Button pushed function: SetDatasetPathButton, 
         % ...and 5 other components
         function SetPathButtonFnc(app, event)
+            % change components and struct values related to the path_info varable
+            % using a UI interactive window
+            
             path2add = uigetdir();
             if path2add == 0
                 return
@@ -1274,6 +1511,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: CheckEEGLabButton
         function CheckEEGLabLaunch(app, event)
+            % check if EEGLab can be opened or not. If EEGLab can be opened
+            % this button will be permanently disabled
+            
             if isequal(app.CheckEEGLabButton.FontColor, [0 1 0]) && ...
                     isequal(app.CheckEEGLabButton.Enable, 'off')
                 return
@@ -1296,6 +1536,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         % Value changed function: DatasetPathEditField, 
         % ...and 6 other components
         function SetPathEditFieldFnc(app, event)
+            % change components and struct values related to the path_info varable
+            % using the path written in the text area
+
             path2add = event.Source.Value;
             try
                 switch event.Source.Tag
@@ -1360,8 +1603,10 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         end
 
         % Value changed function: AlgorithmSwitch, BrainEditField, 
-        % ...and 24 other components
+        % ...and 25 other components
         function SetParamsFnc(app, event)
+            % change components and struct values related to the params_info varable
+
             param2add = event.Source.Value;
             try
                 switch event.Source.Tag
@@ -1376,10 +1621,10 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                         app.SamplingRateEditField.Value = app.preprocess_info.sampling_rate;
                     case 'low_freq'
                         app.preprocess_info = set_preprocessing_info(app.preprocess_info, 'low_freq', param2add);
-                        app.LowFreqEditField.Value = app.preprocess_info.low_freq;
+                        app.LowFrequencyEditField.Value = app.preprocess_info.low_freq;
                     case 'high_freq'
                         app.preprocess_info = set_preprocessing_info(app.preprocess_info, 'high_freq', param2add);
-                        app.HighFreqEditField.Value = app.preprocess_info.high_freq;
+                        app.HighFrequencyEditField.Value = app.preprocess_info.high_freq;
                     case 'standard_ref'
                         app.preprocess_info = set_preprocessing_info(app.preprocess_info, 'standard_ref', param2add);
                         app.StandardReferenceEditField.Value = app.preprocess_info.standard_ref;
@@ -1427,6 +1672,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                     case 'burstR'
                         app.preprocess_info = set_preprocessing_info(app.preprocess_info, 'burstR', lower(param2add));
                         app.BurstRejectionSwitch.Value = regexprep(lower(app.preprocess_info.burstR),'(\<[a-z])','${upper($1)}');
+                        changeSwitchColors(app, 'burst');
                     case 'interpol_method'
                         app.preprocess_info = set_preprocessing_info(app.preprocess_info, 'interpol_method', param2add);
                         app.InterpolationMethodEditField.Value = app.preprocess_info.interpol_method;
@@ -1452,9 +1698,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                     case 'sampling_rate'
                         app.SamplingRateEditField.Value = app.preprocess_info.sampling_rate;
                     case 'low_freq'
-                        app.LowFreqEditField.Value = app.preprocess_info.low_freq;
+                        app.LowFrequencyEditField.Value = app.preprocess_info.low_freq;
                     case 'high_freq'
-                        app.HighFreqEditField.Value = app.preprocess_info.high_freq;
+                        app.HighFrequencyEditField.Value = app.preprocess_info.high_freq;
                     case 'standard_ref'
                         app.StandardReferenceEditField.Value = app.preprocess_info.standard_ref;
                     case 'ica_type'
@@ -1510,6 +1756,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         % Value changed function: EEGformatSwitch, SaveMarkerfilesSwitch, 
         % ...and 3 other components
         function SetSaveFnc(app, event)
+            % change components and struct values related to the save_info varable
+            
             savingOpt = event.Source.Value;
             switch event.Source.Tag
                 case 'save_data'
@@ -1531,48 +1779,67 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                 case 'save_data_as'
                     app.save_info = set_save_info(app.save_info, 'save_data_as', savingOpt);                  
             end
+            changeSwitchColors(app, 'save')
         end
 
         % Value changed function: ASRSwitch, BaselineRemovalSwitch, 
-        % ...and 7 other components
+        % ...and 9 other components
         function Step2DoFnc(app, event)
+            % change components and struct values related to the params_info.prepsteps
+            % varable
+            
             step2do = event.Source.Value;
+            step2doBool = string2boolean(step2do);
             switch event.Source.Tag
                 case 'rmchannels'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rmchannels', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rmchannels', step2doBool);
                 case 'rmsegments'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rmsegments', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rmsegments', step2doBool);
                 case 'rmbaseline'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rmbaseline', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rmbaseline', step2doBool);
                 case 'resampling'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'resampling', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'resampling', step2doBool);
                 case 'filtering'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'filtering', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'filtering', step2doBool);
                 case 'rereference'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rereference', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'rereference', step2doBool);
                 case 'ICA'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'ICA', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'ICA', step2doBool);
                 case 'ICRejection'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'ICRejection', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'ICRejection', step2doBool);
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'wICA', not(step2doBool));
+                    app.wICASwitch.Value = 'Off';
                 case 'ASR'
-                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'ASR', string2boolean(step2do));
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'ASR', step2doBool);
+                case 'notchfiltering'
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'notchfiltering', step2doBool);
+                case 'wICA'
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'wICA', step2doBool);
+                    app.preprocess_info = set_preprocessing_info(app.preprocess_info,'ICRejection', not(step2doBool));
+                    app.ICRejectionSwitch.Value = 'Off';
             end
+            changeSwitchColors(app, 'steps');
         end
 
         % Value changed function: ParallelComputingSwitch
         function DoParpool(app, event)
+            % enable or disable parpool option
             addparpool = app.ParallelComputingSwitch.Value;
             app.use_parpool = string2boolean(addparpool);
+            changeSwitchColors(app, 'parpool');
         end
 
         % Value changed function: VerboseSwitch
         function AddVerbose(app, event)
+            %enable or disable verbosity
             addverbose = app.VerboseSwitch.Value;
             app.verbose = string2boolean(addverbose);
+            changeSwitchColors(app, 'verbose');
         end
 
         % Value changed function: DatasettoPreprocessDropDown
         function SingleDataset(app, event)
+            %silence the dataset selection button if something
             value = app.DatasettoPreprocessDropDown.Value;
             if strcmpi(value,'all')
                 SilenceSingleFile(app, false);
@@ -1590,6 +1857,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Value changed function: SingleFileDropDown
         function SingleFile(app, event)
+            % manage single file button values and interactivity
+
             file2add = app.SingleFileDropDown.Value;
             if strcmp(file2add, 'All files')
                 app.single_file = false;
@@ -1610,9 +1879,12 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             
         end
 
-        % Value changed function: LabelNameEditField, LabelValueEditField, 
+        % Value changed function: LabelValuesTextArea, LabelnamesTextArea, 
         % ...and 10 other components
         function SetSelectionFnc(app, event)
+            % change components and struct values related to the selction_invo
+            % varable
+
             SelValue = event.Source.Value;
             try
                 switch event.Source.Tag
@@ -1635,10 +1907,13 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                         else
                             disable4struct(app, 'selection')
                         end
+                        changeSwitchColors(app, 'selection')
                     case 'label_name'
-                        app.selection_info = set_selection_info(app.selection_info,'label_name', SelValue);
+                        app.selection_info = set_selection_info(app.selection_info,'label_name', ...
+                            emptycell4text(app, SelValue, true));
                     case 'label_value'
-                        app.selection_info = set_selection_info(app.selection_info,'label_value', SelValue);
+                        app.selection_info = set_selection_info(app.selection_info,'label_value', ...
+                            emptycell4text(app, SelValue, true));
                     case 'subjects_totake'
                         app.selection_info = set_selection_info(app.selection_info,'subjects_totake', ...
                             emptycell4text(app, SelValue, true));
@@ -1666,9 +1941,9 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
                     case 'select_subjects'
                         app.PerformSelectionSwitch.Value = Bool2Value(app, app.selection_info.select_subjects, true);
                     case 'label_name'
-                        app.LabelNameEditField.Value = app.selection_info.label_name;
+                        app.LabelnamesTextArea.Value = app.selection_info.label_name;
                     case 'label_value'
-                        app.LabelValueEditField.Value = app.selection_info.label_value;
+                        app.LabelValuesTextArea.Value = app.selection_info.label_value;
                     case 'subjects_totake'
                         app.SubjectstoTakeTextArea.Value = emptycell4text(app, app.selection_info.subjects_totake);
                     case 'session_totake'
@@ -1682,6 +1957,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
         % Button pushed function: RunButton
         function RunPreprocessing(app, event)
+            % Run the preprocessing with all the parameters set
+
             app.FinalcheckscontroltableLabel.Text = 'Final checks: Running preprocessing...';
             pause(0.5)
             current_path = pwd;
@@ -1713,6 +1990,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
         % Button pushed function: HelpButton, HelpButton_2, HelpButton_3, 
         % ...and 4 other components
         function HelpFnc(app, event)
+            % open an help page if needed
+
             switch event.Source.Tag
                 case 'HelpIntro'
                     web('GUI/General_help.html')
@@ -1809,7 +2088,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
             % Create UITable
             app.UITable = uitable(app.TableSelection);
-            app.UITable.ColumnName = {'dataset_number_reference'; 'dataset_name'; 'dataset_code'; 'channel_location_filename'; 'nose_direction'; 'channel_system'; 'channel_reference'; 'channel_to_remove'; 'eeg_file_extension'; 'samp_rate'};
+            app.UITable.ColumnName = {'dataset_number_reference'; 'dataset_name'; 'dataset_code'; 'channel_location_filename'; 'nose_direction'; 'channel_system'; 'channel_reference'; 'channel_to_remove'; 'eeg_file_extension'; 'samp_rate'; 'line_noise'};
             app.UITable.RowName = {};
             app.UITable.ColumnEditable = true;
             app.UITable.CellEditCallback = createCallbackFcn(app, @UITableCellEdit, true);
@@ -2246,31 +2525,31 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.NextButton_4.Position = [649 10 100 22];
             app.NextButton_4.Text = 'Next';
 
-            % Create LowFreqEditFieldLabel
-            app.LowFreqEditFieldLabel = uilabel(app.PreprocessingTab);
-            app.LowFreqEditFieldLabel.HorizontalAlignment = 'right';
-            app.LowFreqEditFieldLabel.Position = [66 125 56 22];
-            app.LowFreqEditFieldLabel.Text = 'Low Freq';
+            % Create LowFrequencyEditFieldLabel
+            app.LowFrequencyEditFieldLabel = uilabel(app.PreprocessingTab);
+            app.LowFrequencyEditFieldLabel.HorizontalAlignment = 'right';
+            app.LowFrequencyEditFieldLabel.Position = [24 194 87 22];
+            app.LowFrequencyEditFieldLabel.Text = 'Low Frequency';
 
-            % Create LowFreqEditField
-            app.LowFreqEditField = uieditfield(app.PreprocessingTab, 'numeric');
-            app.LowFreqEditField.Limits = [0 Inf];
-            app.LowFreqEditField.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
-            app.LowFreqEditField.Tooltip = {'The low frequency of the bandpass filter. Every frequency lower than this value will be filtered with a FIR filter'};
-            app.LowFreqEditField.Position = [137 125 52 22];
+            % Create LowFrequencyEditField
+            app.LowFrequencyEditField = uieditfield(app.PreprocessingTab, 'numeric');
+            app.LowFrequencyEditField.Limits = [0 Inf];
+            app.LowFrequencyEditField.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
+            app.LowFrequencyEditField.Tooltip = {'The low frequency of the bandpass filter. Every frequency lower than this value will be filtered with a FIR filter'};
+            app.LowFrequencyEditField.Position = [126 194 52 22];
 
-            % Create HighFreqEditFieldLabel
-            app.HighFreqEditFieldLabel = uilabel(app.PreprocessingTab);
-            app.HighFreqEditFieldLabel.HorizontalAlignment = 'right';
-            app.HighFreqEditFieldLabel.Position = [64 103 58 22];
-            app.HighFreqEditFieldLabel.Text = 'High Freq';
+            % Create HighFrequencyEditFieldLabel
+            app.HighFrequencyEditFieldLabel = uilabel(app.PreprocessingTab);
+            app.HighFrequencyEditFieldLabel.HorizontalAlignment = 'right';
+            app.HighFrequencyEditFieldLabel.Position = [21 172 90 22];
+            app.HighFrequencyEditFieldLabel.Text = 'High Frequency';
 
-            % Create HighFreqEditField
-            app.HighFreqEditField = uieditfield(app.PreprocessingTab, 'numeric');
-            app.HighFreqEditField.Limits = [0 Inf];
-            app.HighFreqEditField.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
-            app.HighFreqEditField.Tooltip = {'The low frequency of the bandpass filter. Every frequency greater than this value will be filtered with a FIR filter'};
-            app.HighFreqEditField.Position = [137 103 52 22];
+            % Create HighFrequencyEditField
+            app.HighFrequencyEditField = uieditfield(app.PreprocessingTab, 'numeric');
+            app.HighFrequencyEditField.Limits = [0 Inf];
+            app.HighFrequencyEditField.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
+            app.HighFrequencyEditField.Tooltip = {'The low frequency of the bandpass filter. Every frequency greater than this value will be filtered with a FIR filter'};
+            app.HighFrequencyEditField.Position = [126 172 52 22];
 
             % Create StandardReferenceEditFieldLabel
             app.StandardReferenceEditFieldLabel = uilabel(app.PreprocessingTab);
@@ -2444,7 +2723,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             % Create InitialsegmentEditFieldLabel
             app.InitialsegmentEditFieldLabel = uilabel(app.PreprocessingTab);
             app.InitialsegmentEditFieldLabel.HorizontalAlignment = 'right';
-            app.InitialsegmentEditFieldLabel.Position = [28 381 83 22];
+            app.InitialsegmentEditFieldLabel.Position = [28 383 83 22];
             app.InitialsegmentEditFieldLabel.Text = 'Initial segment';
 
             % Create InitialsegmentEditField
@@ -2452,12 +2731,12 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.InitialsegmentEditField.Limits = [0 Inf];
             app.InitialsegmentEditField.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
             app.InitialsegmentEditField.Tooltip = {'The number of seconds to remove from the start of each EEG.'; 'For example, 1 will remove the first second from each EEG record'};
-            app.InitialsegmentEditField.Position = [126 381 52 22];
+            app.InitialsegmentEditField.Position = [126 383 52 22];
 
             % Create FinalsegmentEditFieldLabel
             app.FinalsegmentEditFieldLabel = uilabel(app.PreprocessingTab);
             app.FinalsegmentEditFieldLabel.HorizontalAlignment = 'right';
-            app.FinalsegmentEditFieldLabel.Position = [30 359 81 22];
+            app.FinalsegmentEditFieldLabel.Position = [30 361 81 22];
             app.FinalsegmentEditFieldLabel.Text = 'Final segment';
 
             % Create FinalsegmentEditField
@@ -2465,12 +2744,12 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.FinalsegmentEditField.Limits = [0 Inf];
             app.FinalsegmentEditField.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
             app.FinalsegmentEditField.Tooltip = {'The number of seconds to remove at the end of each EEG.'; 'For example, 1 will remove the last second from each EEG record'};
-            app.FinalsegmentEditField.Position = [126 359 52 22];
+            app.FinalsegmentEditField.Position = [126 361 52 22];
 
             % Create SamplingRateLabel
             app.SamplingRateLabel = uilabel(app.PreprocessingTab);
             app.SamplingRateLabel.HorizontalAlignment = 'right';
-            app.SamplingRateLabel.Position = [32 240 84 22];
+            app.SamplingRateLabel.Position = [27 276 84 22];
             app.SamplingRateLabel.Text = 'Sampling Rate';
 
             % Create SamplingRateEditField
@@ -2478,7 +2757,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.SamplingRateEditField.Limits = [0 Inf];
             app.SamplingRateEditField.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
             app.SamplingRateEditField.Tooltip = {'The sampling rate (given in Hz) to use during resampling. Every EEG will be resampled using this value'};
-            app.SamplingRateEditField.Position = [131 240 52 22];
+            app.SamplingRateEditField.Position = [126 276 52 22];
 
             % Create BrainEditFieldLabel
             app.BrainEditFieldLabel = uilabel(app.PreprocessingTab);
@@ -2573,59 +2852,67 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
 
             % Create SegmentRemovalLabel
             app.SegmentRemovalLabel = uilabel(app.PreprocessingTab);
+            app.SegmentRemovalLabel.FontName = 'DejaVu Sans Mono';
             app.SegmentRemovalLabel.FontWeight = 'bold';
             app.SegmentRemovalLabel.FontColor = [0 0.4471 0.7412];
-            app.SegmentRemovalLabel.Position = [30 411 176 22];
-            app.SegmentRemovalLabel.Text = '=== (1) Segment Removal ===';
+            app.SegmentRemovalLabel.Position = [30 411 186 22];
+            app.SegmentRemovalLabel.Text = '== (1) Segment Removal ==';
 
             % Create ResamplingLabel
             app.ResamplingLabel = uilabel(app.PreprocessingTab);
+            app.ResamplingLabel.FontName = 'DejaVu Sans Mono';
             app.ResamplingLabel.FontWeight = 'bold';
             app.ResamplingLabel.FontColor = [0 0.4471 0.7412];
-            app.ResamplingLabel.Position = [35 270 182 22];
-            app.ResamplingLabel.Text = '====== (2) Resampling ======';
+            app.ResamplingLabel.Position = [30 307 186 22];
+            app.ResamplingLabel.Text = '==== (2) Resampling =====';
 
             % Create FilteringLabel
             app.FilteringLabel = uilabel(app.PreprocessingTab);
+            app.FilteringLabel.FontName = 'DejaVu Sans Mono';
             app.FilteringLabel.FontWeight = 'bold';
             app.FilteringLabel.FontColor = [0 0.4471 0.7412];
-            app.FilteringLabel.Position = [40 155 176 22];
-            app.FilteringLabel.Text = '======= (3) Filtering =======';
+            app.FilteringLabel.Position = [30 222 186 22];
+            app.FilteringLabel.Text = '===== (3) Filtering =====';
 
             % Create ICRejectionLabel
             app.ICRejectionLabel = uilabel(app.PreprocessingTab);
+            app.ICRejectionLabel.FontName = 'DejaVu Sans Mono';
             app.ICRejectionLabel.FontWeight = 'bold';
             app.ICRejectionLabel.FontColor = [0 0.4471 0.7412];
-            app.ICRejectionLabel.Position = [282 271 184 22];
-            app.ICRejectionLabel.Text = '====== (5) IC Rejection ======';
+            app.ICRejectionLabel.Position = [282 271 186 22];
+            app.ICRejectionLabel.Text = '==== (5) IC Rejection ===';
 
             % Create ICADecompositionLabel
             app.ICADecompositionLabel = uilabel(app.PreprocessingTab);
+            app.ICADecompositionLabel.FontName = 'DejaVu Sans Mono';
             app.ICADecompositionLabel.FontWeight = 'bold';
             app.ICADecompositionLabel.FontColor = [0 0.4471 0.7412];
-            app.ICADecompositionLabel.Position = [282 411 183 22];
-            app.ICADecompositionLabel.Text = '=== (4) ICA Decomposition ===';
+            app.ICADecompositionLabel.Position = [282 411 201 22];
+            app.ICADecompositionLabel.Text = '== (4) ICA Decomposition ==';
 
             % Create ASRLabel
             app.ASRLabel = uilabel(app.PreprocessingTab);
+            app.ASRLabel.FontName = 'DejaVu Sans Mono';
             app.ASRLabel.FontWeight = 'bold';
             app.ASRLabel.FontColor = [0 0.4471 0.7412];
-            app.ASRLabel.Position = [551 411 182 22];
+            app.ASRLabel.Position = [550 411 201 22];
             app.ASRLabel.Text = '========= (6) ASR =========';
 
             % Create RereferencingLabel
             app.RereferencingLabel = uilabel(app.PreprocessingTab);
+            app.RereferencingLabel.FontName = 'DejaVu Sans Mono';
             app.RereferencingLabel.FontWeight = 'bold';
             app.RereferencingLabel.FontColor = [0 0.4471 0.7412];
-            app.RereferencingLabel.Position = [551 115 196 22];
-            app.RereferencingLabel.Text = '====== (8) Rereferencing ======';
+            app.RereferencingLabel.Position = [551 115 201 22];
+            app.RereferencingLabel.Text = '==== (8) Rereferencing ====';
 
             % Create ChannelInterpolationLabel
             app.ChannelInterpolationLabel = uilabel(app.PreprocessingTab);
+            app.ChannelInterpolationLabel.FontName = 'DejaVu Sans Mono';
             app.ChannelInterpolationLabel.FontWeight = 'bold';
             app.ChannelInterpolationLabel.FontColor = [0 0.4471 0.7412];
-            app.ChannelInterpolationLabel.Position = [551 201 197 22];
-            app.ChannelInterpolationLabel.Text = '=== (7) Channel Interpolation ===';
+            app.ChannelInterpolationLabel.Position = [551 201 201 22];
+            app.ChannelInterpolationLabel.Text = ' (7) Channel Interpolation ';
 
             % Create MaraThresholdEditFieldLabel
             app.MaraThresholdEditFieldLabel = uilabel(app.PreprocessingTab);
@@ -2640,49 +2927,42 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.MaraThresholdEditField.Tooltip = {'Rejection threshold for the MARA algorithm.'; 'it must be a value  in range [0, 1]. Values near 1 will make MARA more conservative (less rejection), values closed to 0 the opposite (more rejection)'};
             app.MaraThresholdEditField.Position = [386 214 52 22];
 
-            % Create AlgorithmSwitchLabel
-            app.AlgorithmSwitchLabel = uilabel(app.PreprocessingTab);
-            app.AlgorithmSwitchLabel.HorizontalAlignment = 'right';
-            app.AlgorithmSwitchLabel.Position = [287 236 56 22];
-            app.AlgorithmSwitchLabel.Text = 'Algorithm';
-
             % Create AlgorithmSwitch
             app.AlgorithmSwitch = uiswitch(app.PreprocessingTab, 'slider');
             app.AlgorithmSwitch.Items = {'MARA', 'ICLabel'};
             app.AlgorithmSwitch.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
             app.AlgorithmSwitch.Tooltip = {'The IC Rejection algorithm to use. MARA rejects components using a binary SVM classifier. ICLabel distinguishes between different artifacts based on a neural network multi-class classifier'};
-            app.AlgorithmSwitch.FontSize = 10;
-            app.AlgorithmSwitch.Position = [393 238 40 18];
+            app.AlgorithmSwitch.Position = [343 245 40 18];
             app.AlgorithmSwitch.Value = 'MARA';
 
             % Create sLabel
             app.sLabel = uilabel(app.PreprocessingTab);
             app.sLabel.FontSize = 13;
-            app.sLabel.Position = [188 381 25 22];
+            app.sLabel.Position = [188 383 25 22];
             app.sLabel.Text = 's';
 
             % Create sLabel_2
             app.sLabel_2 = uilabel(app.PreprocessingTab);
             app.sLabel_2.FontSize = 13;
-            app.sLabel_2.Position = [188 360 25 22];
+            app.sLabel_2.Position = [188 362 25 22];
             app.sLabel_2.Text = 's';
 
             % Create HzLabel
             app.HzLabel = uilabel(app.PreprocessingTab);
             app.HzLabel.FontSize = 13;
-            app.HzLabel.Position = [194 240 25 22];
+            app.HzLabel.Position = [185 276 25 22];
             app.HzLabel.Text = 'Hz';
 
             % Create HzLabel_2
             app.HzLabel_2 = uilabel(app.PreprocessingTab);
             app.HzLabel_2.FontSize = 13;
-            app.HzLabel_2.Position = [195 125 25 22];
+            app.HzLabel_2.Position = [184 194 25 22];
             app.HzLabel_2.Text = 'Hz';
 
             % Create HzLabel_3
             app.HzLabel_3 = uilabel(app.PreprocessingTab);
             app.HzLabel_3.FontSize = 13;
-            app.HzLabel_3.Position = [195 104 25 22];
+            app.HzLabel_3.Position = [184 172 25 22];
             app.HzLabel_3.Text = 'Hz';
 
             % Create uVLabel
@@ -2690,6 +2970,22 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.uVLabel.FontSize = 13;
             app.uVLabel.Position = [729 381 25 22];
             app.uVLabel.Text = 'uV';
+
+            % Create PowerLineLabel
+            app.PowerLineLabel = uilabel(app.PreprocessingTab);
+            app.PowerLineLabel.FontName = 'DejaVu Sans Mono';
+            app.PowerLineLabel.FontWeight = 'bold';
+            app.PowerLineLabel.FontColor = [0 0.4471 0.7412];
+            app.PowerLineLabel.Position = [30 119 186 22];
+            app.PowerLineLabel.Text = '==== (6) Power Line =====';
+
+            % Create LineSwitch
+            app.LineSwitch = uiswitch(app.PreprocessingTab, 'slider');
+            app.LineSwitch.Items = {'50 Hz', '60 Hz'};
+            app.LineSwitch.ValueChangedFcn = createCallbackFcn(app, @SetParamsFnc, true);
+            app.LineSwitch.Tooltip = {'The IC Rejection algorithm to use. MARA rejects components using a binary SVM classifier. ICLabel distinguishes between different artifacts based on a neural network multi-class classifier'};
+            app.LineSwitch.Position = [101 97 40 18];
+            app.LineSwitch.Value = '50 Hz';
 
             % Create SelectionTab
             app.SelectionTab = uitab(app.TabGroup);
@@ -2789,7 +3085,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             % Create PerformSelectionSwitchLabel
             app.PerformSelectionSwitchLabel = uilabel(app.SelectionTab);
             app.PerformSelectionSwitchLabel.HorizontalAlignment = 'center';
-            app.PerformSelectionSwitchLabel.Position = [314 425 100 22];
+            app.PerformSelectionSwitchLabel.FontWeight = 'bold';
+            app.PerformSelectionSwitchLabel.Position = [310 425 108 22];
             app.PerformSelectionSwitchLabel.Text = 'Perform Selection';
 
             % Create PerformSelectionSwitch
@@ -2798,30 +3095,6 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.PerformSelectionSwitch.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
             app.PerformSelectionSwitch.Tooltip = {'Whether to select a subset of files or not. Not that if you turn it to on, you must also give some selection criteria.  '};
             app.PerformSelectionSwitch.Position = [343 396 45 20];
-
-            % Create LabelNameEditFieldLabel
-            app.LabelNameEditFieldLabel = uilabel(app.SelectionTab);
-            app.LabelNameEditFieldLabel.HorizontalAlignment = 'right';
-            app.LabelNameEditFieldLabel.Position = [272 293 70 22];
-            app.LabelNameEditFieldLabel.Text = 'Label Name';
-
-            % Create LabelNameEditField
-            app.LabelNameEditField = uieditfield(app.SelectionTab, 'text');
-            app.LabelNameEditField.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
-            app.LabelNameEditField.Tooltip = {'The column name of the participant file to look for a selection'};
-            app.LabelNameEditField.Position = [357 293 100 22];
-
-            % Create LabelValueEditFieldLabel
-            app.LabelValueEditFieldLabel = uilabel(app.SelectionTab);
-            app.LabelValueEditFieldLabel.HorizontalAlignment = 'right';
-            app.LabelValueEditFieldLabel.Position = [274 272 68 22];
-            app.LabelValueEditFieldLabel.Text = 'Label Value';
-
-            % Create LabelValueEditField
-            app.LabelValueEditField = uieditfield(app.SelectionTab, 'text');
-            app.LabelValueEditField.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
-            app.LabelValueEditField.Tooltip = {'The participant file columnn value to use for the selection. Subjects with this label will be included during the preprocessing'};
-            app.LabelValueEditField.Position = [357 272 100 22];
 
             % Create SubjectstoTakeTextAreaLabel
             app.SubjectstoTakeTextAreaLabel = uilabel(app.SelectionTab);
@@ -2833,7 +3106,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.SubjectstoTakeTextArea = uitextarea(app.SelectionTab);
             app.SubjectstoTakeTextArea.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
             app.SubjectstoTakeTextArea.Tooltip = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
-            app.SubjectstoTakeTextArea.Position = [578 255 150 60];
+            app.SubjectstoTakeTextArea.Position = [578 253 150 62];
             app.SubjectstoTakeTextArea.Value = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
 
             % Create SessionsToTakeTextAreaLabel
@@ -2846,7 +3119,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.SessionsToTakeTextArea = uitextarea(app.SelectionTab);
             app.SessionsToTakeTextArea.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
             app.SessionsToTakeTextArea.Tooltip = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
-            app.SessionsToTakeTextArea.Position = [579 175 150 60];
+            app.SessionsToTakeTextArea.Position = [579 171 150 64];
             app.SessionsToTakeTextArea.Value = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
 
             % Create ObjectsToTakeTextAreaLabel
@@ -2859,7 +3132,7 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.ObjectsToTakeTextArea = uitextarea(app.SelectionTab);
             app.ObjectsToTakeTextArea.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
             app.ObjectsToTakeTextArea.Tooltip = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
-            app.ObjectsToTakeTextArea.Position = [580 87 150 60];
+            app.ObjectsToTakeTextArea.Position = [580 83 150 64];
             app.ObjectsToTakeTextArea.Value = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
 
             % Create SliceBasedLabel
@@ -2902,6 +3175,32 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.SelectionStatus.Position = [91 11 20 20];
             app.SelectionStatus.Color = [1 0 0];
 
+            % Create LabelTextAreaLabel
+            app.LabelTextAreaLabel = uilabel(app.SelectionTab);
+            app.LabelTextAreaLabel.HorizontalAlignment = 'right';
+            app.LabelTextAreaLabel.Position = [251 271 52 42];
+            app.LabelTextAreaLabel.Text = {'Label'; 'names'};
+
+            % Create LabelnamesTextArea
+            app.LabelnamesTextArea = uitextarea(app.SelectionTab);
+            app.LabelnamesTextArea.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
+            app.LabelnamesTextArea.Tooltip = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
+            app.LabelnamesTextArea.Position = [318 253 150 62];
+            app.LabelnamesTextArea.Value = {'Input a set of column'; 'names.'; 'Write only one name'; 'per line.'};
+
+            % Create LabelValuesTextAreaLabel
+            app.LabelValuesTextAreaLabel = uilabel(app.SelectionTab);
+            app.LabelValuesTextAreaLabel.HorizontalAlignment = 'right';
+            app.LabelValuesTextAreaLabel.Position = [251 190 52 42];
+            app.LabelValuesTextAreaLabel.Text = {'Label'; 'Values'};
+
+            % Create LabelValuesTextArea
+            app.LabelValuesTextArea = uitextarea(app.SelectionTab);
+            app.LabelValuesTextArea.ValueChangedFcn = createCallbackFcn(app, @SetSelectionFnc, true);
+            app.LabelValuesTextArea.Tooltip = {'Input a set of name parts to be used as selectors. Write only one part per line.'};
+            app.LabelValuesTextArea.Position = [318 171 150 63];
+            app.LabelValuesTextArea.Value = {'Input a set of column'; 'values.'; 'Write only one value per line.'};
+
             % Create RunPreprocessingTab
             app.RunPreprocessingTab = uitab(app.TabGroup);
             app.RunPreprocessingTab.Title = 'Run Preprocessing';
@@ -2913,18 +3212,20 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.BackButton_7.Position = [531 10 100 22];
             app.BackButton_7.Text = 'Back';
 
-            % Create SaveoptionsLabel
-            app.SaveoptionsLabel = uilabel(app.RunPreprocessingTab);
-            app.SaveoptionsLabel.FontWeight = 'bold';
-            app.SaveoptionsLabel.FontColor = [0 0.4471 0.7412];
-            app.SaveoptionsLabel.Position = [237 425 301 22];
-            app.SaveoptionsLabel.Text = '=============== Save options ===============';
+            % Create SavingoptionsLabel
+            app.SavingoptionsLabel = uilabel(app.RunPreprocessingTab);
+            app.SavingoptionsLabel.FontName = 'DejaVu Sans Mono';
+            app.SavingoptionsLabel.FontWeight = 'bold';
+            app.SavingoptionsLabel.FontColor = [0 0.4471 0.7412];
+            app.SavingoptionsLabel.Position = [211 425 342 22];
+            app.SavingoptionsLabel.Text = '=============== Saving options ===============';
 
             % Create StepstoPerformLabel
             app.StepstoPerformLabel = uilabel(app.RunPreprocessingTab);
+            app.StepstoPerformLabel.FontName = 'DejaVu Sans Mono';
             app.StepstoPerformLabel.FontWeight = 'bold';
             app.StepstoPerformLabel.FontColor = [0 0.4471 0.7412];
-            app.StepstoPerformLabel.Position = [60 292 323 22];
+            app.StepstoPerformLabel.Position = [50 293 357 22];
             app.StepstoPerformLabel.Text = '=============== Steps to Perform ===============';
 
             % Create RunButton
@@ -3015,7 +3316,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             % Create ChannelRemovalLabel
             app.ChannelRemovalLabel = uilabel(app.RunPreprocessingTab);
             app.ChannelRemovalLabel.HorizontalAlignment = 'center';
-            app.ChannelRemovalLabel.Position = [52 260 101 22];
+            app.ChannelRemovalLabel.FontWeight = 'bold';
+            app.ChannelRemovalLabel.Position = [50 260 106 22];
             app.ChannelRemovalLabel.Text = 'Channel Removal';
 
             % Create ChannelRemovalSwitch
@@ -3068,7 +3370,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             % Create SegmentRemovalSwitchLabel
             app.SegmentRemovalSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.SegmentRemovalSwitchLabel.HorizontalAlignment = 'center';
-            app.SegmentRemovalSwitchLabel.Position = [173 260 104 22];
+            app.SegmentRemovalSwitchLabel.FontWeight = 'bold';
+            app.SegmentRemovalSwitchLabel.Position = [171 260 109 22];
             app.SegmentRemovalSwitchLabel.Text = 'Segment Removal';
 
             % Create SegmentRemovalSwitch
@@ -3080,7 +3383,8 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             % Create ICRejectionSwitchLabel
             app.ICRejectionSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.ICRejectionSwitchLabel.HorizontalAlignment = 'center';
-            app.ICRejectionSwitchLabel.Position = [306 194 71 22];
+            app.ICRejectionSwitchLabel.FontWeight = 'bold';
+            app.ICRejectionSwitchLabel.Position = [305 203 74 22];
             app.ICRejectionSwitchLabel.Text = 'IC Rejection';
 
             % Create ICRejectionSwitch
@@ -3088,12 +3392,13 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.ICRejectionSwitch.Items = {'On', 'Off'};
             app.ICRejectionSwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
             app.ICRejectionSwitch.Tooltip = {'If this is on, ICA decomposition will automatically set to on'};
-            app.ICRejectionSwitch.Position = [317 168 45 20];
+            app.ICRejectionSwitch.Position = [317 177 45 20];
 
             % Create BaselineRemovalSwitchLabel
             app.BaselineRemovalSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.BaselineRemovalSwitchLabel.HorizontalAlignment = 'center';
-            app.BaselineRemovalSwitchLabel.Position = [291 260 102 22];
+            app.BaselineRemovalSwitchLabel.FontWeight = 'bold';
+            app.BaselineRemovalSwitchLabel.Position = [288 260 108 22];
             app.BaselineRemovalSwitchLabel.Text = 'Baseline Removal';
 
             % Create BaselineRemovalSwitch
@@ -3105,43 +3410,47 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             % Create ResamplingSwitchLabel
             app.ResamplingSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.ResamplingSwitchLabel.HorizontalAlignment = 'center';
-            app.ResamplingSwitchLabel.Position = [69 194 69 22];
+            app.ResamplingSwitchLabel.FontWeight = 'bold';
+            app.ResamplingSwitchLabel.Position = [66 203 73 22];
             app.ResamplingSwitchLabel.Text = 'Resampling';
 
             % Create ResamplingSwitch
             app.ResamplingSwitch = uiswitch(app.RunPreprocessingTab, 'slider');
             app.ResamplingSwitch.Items = {'On', 'Off'};
             app.ResamplingSwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
-            app.ResamplingSwitch.Position = [79 168 45 20];
+            app.ResamplingSwitch.Position = [78 177 45 20];
 
             % Create FilteringSwitchLabel
             app.FilteringSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.FilteringSwitchLabel.HorizontalAlignment = 'center';
-            app.FilteringSwitchLabel.Position = [202 194 48 22];
+            app.FilteringSwitchLabel.FontWeight = 'bold';
+            app.FilteringSwitchLabel.Position = [199 203 52 22];
             app.FilteringSwitchLabel.Text = 'Filtering';
 
             % Create FilteringSwitch
             app.FilteringSwitch = uiswitch(app.RunPreprocessingTab, 'slider');
             app.FilteringSwitch.Items = {'On', 'Off'};
             app.FilteringSwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
-            app.FilteringSwitch.Position = [201 168 45 20];
+            app.FilteringSwitch.Position = [200 177 45 20];
 
             % Create RereferencingSwitchLabel
             app.RereferencingSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.RereferencingSwitchLabel.HorizontalAlignment = 'center';
-            app.RereferencingSwitchLabel.Position = [185 128 81 22];
+            app.RereferencingSwitchLabel.FontWeight = 'bold';
+            app.RereferencingSwitchLabel.Position = [60 89 86 22];
             app.RereferencingSwitchLabel.Text = 'Rereferencing';
 
             % Create RereferencingSwitch
             app.RereferencingSwitch = uiswitch(app.RunPreprocessingTab, 'slider');
             app.RereferencingSwitch.Items = {'On', 'Off'};
             app.RereferencingSwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
-            app.RereferencingSwitch.Position = [201 102 45 20];
+            app.RereferencingSwitch.Position = [78 63 45 20];
 
             % Create ICADecompositionSwitchLabel
             app.ICADecompositionSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.ICADecompositionSwitchLabel.HorizontalAlignment = 'center';
-            app.ICADecompositionSwitchLabel.Position = [288 128 108 22];
+            app.ICADecompositionSwitchLabel.FontWeight = 'bold';
+            app.ICADecompositionSwitchLabel.Position = [169 89 115 22];
             app.ICADecompositionSwitchLabel.Text = 'ICA Decomposition';
 
             % Create ICADecompositionSwitch
@@ -3149,25 +3458,27 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.ICADecompositionSwitch.Items = {'On', 'Off'};
             app.ICADecompositionSwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
             app.ICADecompositionSwitch.Tooltip = {'This step will be performed two times if the '};
-            app.ICADecompositionSwitch.Position = [317 102 45 20];
+            app.ICADecompositionSwitch.Position = [201 63 45 20];
 
             % Create ASRSwitchLabel
             app.ASRSwitchLabel = uilabel(app.RunPreprocessingTab);
             app.ASRSwitchLabel.HorizontalAlignment = 'center';
-            app.ASRSwitchLabel.Position = [88 128 30 22];
+            app.ASRSwitchLabel.FontWeight = 'bold';
+            app.ASRSwitchLabel.Position = [209 148 30 22];
             app.ASRSwitchLabel.Text = 'ASR';
 
             % Create ASRSwitch
             app.ASRSwitch = uiswitch(app.RunPreprocessingTab, 'slider');
             app.ASRSwitch.Items = {'On', 'Off'};
             app.ASRSwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
-            app.ASRSwitch.Position = [79 102 45 20];
+            app.ASRSwitch.Position = [200 121 45 20];
 
             % Create ModalityLabel
             app.ModalityLabel = uilabel(app.RunPreprocessingTab);
+            app.ModalityLabel.FontName = 'DejaVu Sans Mono';
             app.ModalityLabel.FontWeight = 'bold';
             app.ModalityLabel.FontColor = [0 0.4471 0.7412];
-            app.ModalityLabel.Position = [473 292 216 22];
+            app.ModalityLabel.Position = [478 292 238 22];
             app.ModalityLabel.Text = '=========== Modality ===========';
 
             % Create FinalcheckscontroltableLabel
@@ -3204,6 +3515,36 @@ classdef BIDSAlign_GUI < matlab.apps.AppBase
             app.SingleFileDropDown.BackgroundColor = [1 1 1];
             app.SingleFileDropDown.Position = [572 199 100 22];
             app.SingleFileDropDown.Value = 'All files';
+
+            % Create wICASwitchLabel
+            app.wICASwitchLabel = uilabel(app.RunPreprocessingTab);
+            app.wICASwitchLabel.HorizontalAlignment = 'center';
+            app.wICASwitchLabel.FontWeight = 'bold';
+            app.wICASwitchLabel.Position = [67 148 71 22];
+            app.wICASwitchLabel.Text = 'wICA';
+
+            % Create wICASwitch
+            app.wICASwitch = uiswitch(app.RunPreprocessingTab, 'slider');
+            app.wICASwitch.Items = {'On', 'Off'};
+            app.wICASwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
+            app.wICASwitch.Tooltip = {'If this is on, ICA decomposition will automatically set to on'};
+            app.wICASwitch.Position = [78 121 45 20];
+            app.wICASwitch.Value = 'On';
+
+            % Create LineFilterSwitchLabel
+            app.LineFilterSwitchLabel = uilabel(app.RunPreprocessingTab);
+            app.LineFilterSwitchLabel.HorizontalAlignment = 'center';
+            app.LineFilterSwitchLabel.FontWeight = 'bold';
+            app.LineFilterSwitchLabel.Position = [306 148 71 22];
+            app.LineFilterSwitchLabel.Text = 'Line Filter';
+
+            % Create LineFilterSwitch
+            app.LineFilterSwitch = uiswitch(app.RunPreprocessingTab, 'slider');
+            app.LineFilterSwitch.Items = {'On', 'Off'};
+            app.LineFilterSwitch.ValueChangedFcn = createCallbackFcn(app, @Step2DoFnc, true);
+            app.LineFilterSwitch.Tooltip = {'If this is on, ICA decomposition will automatically set to on'};
+            app.LineFilterSwitch.Position = [317 121 45 20];
+            app.LineFilterSwitch.Value = 'On';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';

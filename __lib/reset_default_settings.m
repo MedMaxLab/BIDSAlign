@@ -13,9 +13,9 @@ function [] = reset_default_settings( empty_path )
     if nargin < 1
         empty_path = false;
     end
-    %[~] = set_preprocessing_info('store_settings', true);
-    %[~] = set_save_info('store_settings',true);
-    %[~] = set_selection_info('store_settings', true);
+    [~] = set_preprocessing_info('store_settings', true);
+    [~] = set_save_info('store_settings',true);
+    [~] = set_selection_info('store_settings', true);
     if empty_path
         path_info = set_path_info( 'silence_warn', true );
         path_info.output_path = ''; 
