@@ -1,7 +1,7 @@
-<img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/>
+<h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br>
+
 
 ## Selection info
 
@@ -19,8 +19,8 @@ In particular, the following selection parameters can be set (defaults are all e
 
 2. label-based selection
 
-- **Label Name (char)**: the column name of the participant file to look for the desired value.
-- **Label Value (char)**: the column value that a subject should have to be selected. Currently, only string values are supported.
+- **Label Name (cell array)**: the column names of the participant file to look for the desired value.
+- **Label Value (cell array)**: the column values that a subject should have to be selected. Currently, only string values are supported.
 
 2. name-based selection
 
@@ -40,11 +40,9 @@ In particular, the following selection parameters can be set (defaults are all e
 
 ## GUI Tab
 
-<img src="SelectionTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/>
+<h1 align="center">
+  <img src="SelectionTab.png" width="500">
+</h1><br>
 
 In this tab, you can set up most of the preprocessing_info's struct fields. In particular, just note that:
 

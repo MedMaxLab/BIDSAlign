@@ -1,10 +1,9 @@
 <html><head><style>body {
    color: black;
 }
-</style></head><body><p><img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/></p>
+</style></head><body><p><h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br></p>
 <h2 id="selection-info">Selection info</h2>
 <p>Selection info is a struct variable that stores all the parameters to be used by BIDSAlign during the file selection phase. Selection can be performed with three different modalities: label-based selection, name-based selection, slice-based selection. </p>
 <p>1) <strong>label-based selection</strong> is a type of selection which search for all the subjects with a specific condition reported in one of the columns of the <code>participant.tsv</code> file. It can be used, for example, to select only subject with a specific pathology (or the control group).
@@ -18,9 +17,9 @@
 </li>
 <li><p>label-based selection</p>
 </li>
-<li><p><strong>Label Name (char)</strong>: the column name of the participant file to look for the desired value.</p>
+<li><p><strong>Label Name (cell array)</strong>: the column names of the participant file to look for the desired value.</p>
 </li>
-<li><p><strong>Label Value (char)</strong>: the column value that a subject should have to be selected. Currently, only string values are supported.</p>
+<li><p><strong>Label Value (cell array)</strong>: the column values that a subject should have to be selected. Currently, only string values are supported.</p>
 </li>
 <li><p>name-based selection</p>
 </li>
@@ -40,11 +39,9 @@
 <li><strong>Object Final (scalar)</strong>: slice&#39;s ending index for object selection. Must be a positive scalar integer. If left empty and obj_f is given, obj_i is set to the length of the object&#39;s name list automatically.</li>
 </ol>
 <h2 id="gui-tab">GUI Tab</h2>
-<p><img src="SelectionTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="SelectionTab.png" width="500">
+</h1><br></p>
 <p>In this tab, you can set up most of the preprocessing_info&#39;s struct fields. In particular, just note that:</p>
 <ul>
 <li>In <strong>slice-based</strong> edit fields, the value 0 will be overwritten internally as an empty value. It can be considered as the same as 1 for Initial and &#39;end&#39; for the Final.</li>

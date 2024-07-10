@@ -18,7 +18,7 @@ function params_info = set_preprocessing_info(varargin)
     %   - low_freq (scalar): Low-pass filter frequency(default: 0.1 Hz).
     %   - high_freq (scalar): High-pass filter frequency (default: 49 Hz).
     %   - notchfreq (scalar): Notch filter frequency (default: 50 Hz).
-    %   - notchfreq_bw (scalar): bandwidth of the notch filter
+    %   - notchfreq_bw (scalar): bandwidth of the notch filter (default: 4).
     %   - sampling_rate (scalar): EEG data sampling rate (default: 250 Hz).
     %   - standard_ref (char): Standard reference type (default: 'COMMON').
     %   - interpol_method (char): Interpolation method (default: 'spherical').
@@ -38,6 +38,11 @@ function params_info = set_preprocessing_info(varargin)
     %                               (default: 0.5)
     %   - iclabel_thresholds (matrix): 7x2 array with threshold values with limits 
     %                                  to include for selection as artifacts
+    %   - wavelet_level(scalar): an integer defining the wavelet level for the wICA.
+    %                            Lower levels give better temporal resolution, but
+    %                            less frequency resolution. (Default: 5)
+    %   - wavelet_type(char): the wavelet window type. Check the MATLAB help to get
+    %                         a full list of all the windows. (Default: 'coif5') 
     %   - dt_i (scalar): Start time for segment removal (default: 0 s).
     %   - dt_f (scalar): End time for segment removal (default: 0 s).
     %   - rmchannels (logical): Flag for channel removal (default: true).

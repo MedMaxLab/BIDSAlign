@@ -1,21 +1,18 @@
 <html><head><style>body {
    color: black;
 }
-</style></head><body><p><img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/></p>
+</style></head><body><p><h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br></p>
 <h2 id="path-info">Path info</h2>
 <p>Path info is a struct variable that stores all the important paths necessary to run the preprocessing correctly. BIDSAlign requires at least the path to the dataset root folder to be set. The path to eeglab must also be given if not already added to the current search path (you can also simply run <code>addpath( /path/to/eeglab/ )</code>). </p>
 <p>In particular, the following paths can be set (all parameters are char arrays):</p>
 <ol>
 <li><strong>Datasets Path (required)</strong>: the path to the root datasets&#39; folder. BIDSAlign will use it as the starting point during the preprocessing file search. In particular, BIDSAlign will look for any subfolder with name equal to the <em>dataset_code</em> entry of the dataset info table. The following image will better explain what BIDSAlign assumes to be the datasets_path.</li>
 </ol>
-<p><img src="pathexample.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="pathexample.png" width="500">
+</h1><br></p>
 <ol>
 <li><strong>Output Path (required)</strong>: the root path used by BIDSAlign to save all the preprocessed files. By default, BIDSAlign will use the current working directory (the output of the <code>pwd</code> command). Inside the output path, BIDSAlign will create a set of folders that will be used to store files of specific format. For example, the <em>_mat_preprocessed</em> folder will store all the .mat files. The following behavior will be bypassed if custom output paths (the next elements of the list) will be set.</li>
 <li><strong>Output mat path (optional)</strong>: a custom path to be used by BIDSALign to store the .mat files. It will be used in place of the <code>output_path/_mat_preprocessed/</code> folder.</li>
@@ -26,11 +23,9 @@
 </ol>
 <p>Path info stores other information that are useful but can be automatically retrieved by BIDSAlign itself. Such information are the path to BIDSAlign functions and the current working directory.</p>
 <h2 id="gui-tab">GUI Tab</h2>
-<p><img src="PathTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="PathTab.png" width="500">
+</h1><br></p>
 <p>In this tab, you can set up most of the path_info&#39;s struct fields. In particular, looking at the figure above, the following actions can be performed with the numbered buttons:</p>
 <ol>
 <li>each <strong>path edit field + button</strong> can be used to change the corresponding field. In the edit field, you can directly write the full path to use (if not valid, it won&#39;t be used). With the button, you can set up the same path (folder) by using the interactive selector.</li>

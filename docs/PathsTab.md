@@ -1,7 +1,6 @@
-<img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/>
+<h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br>
 
 
 ## Path info
@@ -12,11 +11,9 @@ In particular, the following paths can be set (all parameters are char arrays):
 
 1. **Datasets Path (required)**: the path to the root datasets' folder. BIDSAlign will use it as the starting point during the preprocessing file search. In particular, BIDSAlign will look for any subfolder with name equal to the *dataset_code* entry of the dataset info table. The following image will better explain what BIDSAlign assumes to be the datasets_path.
 
-<img src="pathexample.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/>
+<h1 align="center">
+  <img src="pathexample.png" width="500">
+</h1><br>
 
 2. **Output Path (required)**: the root path used by BIDSAlign to save all the preprocessed files. By default, BIDSAlign will use the current working directory (the output of the `pwd` command). Inside the output path, BIDSAlign will create a set of folders that will be used to store files of specific format. For example, the *_mat_preprocessed* folder will store all the .mat files. The following behavior will be bypassed if custom output paths (the next elements of the list) will be set.
 3. **Output mat path (optional)**: a custom path to be used by BIDSALign to store the .mat files. It will be used in place of the `output_path/_mat_preprocessed/` folder.
@@ -30,11 +27,9 @@ Path info stores other information that are useful but can be automatically retr
 
 ## GUI Tab
 
-<img src="PathTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/>
+<h1 align="center">
+  <img src="PathTab.png" width="500">
+</h1><br>
 
 In this tab, you can set up most of the path_info's struct fields. In particular, looking at the figure above, the following actions can be performed with the numbered buttons:
 

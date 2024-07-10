@@ -1,7 +1,6 @@
-<img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/>
+<h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br>
 
 
 ## Manage custom configurations
@@ -24,11 +23,9 @@ To load the entire or a specific file of an existing configuration, just call th
 
 ## GUI Tab
 
-<img src="SettingTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto"
-/>
+<h1 align="center">
+  <img src="SettingTab.png" width="500">
+</h1><br>
 
 In this tab, you can load and remove existing configurations, or save the current one in a new or old setting. In particular, looking at the figure above, the following actions can be performed with the numbered buttons:
 

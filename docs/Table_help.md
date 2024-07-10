@@ -1,23 +1,22 @@
-<img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/>
+<h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br>
 
 
 ## Dataset Table
 
 The dataset table is a table file having the necessary information to locate EEG files and coordinate some preprocessing steps. It must have the following format.
 
-| dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | nose_direction | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate |
-|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
-| 1 | HBN_EO_EC | ds004186 | loaded | +Y | GSN129 | CZ |  Fp1, Fpz | .set | 500 | 
-| This number will be used as first index in the .mat file names | Use this custom label for single dataset mode | The dataset folder name | name of a custom channel location file different from the usual "_electrode.tsv" file | noise direction (+/- X/Y/Z) | 10_5/10/20 or GSN129/257 | Channel reference name | List of channels to directly remove from all the dataset's files | EEG file extension (don't forget the ".") | Sampling rate in \[Hz\] |
+| dataset_number_reference | dataset_name     | dataset_code | channel_location_filename | nose_direction | channel_system | channel_reference | channel_to_remove | eeg_file_extension | samp_rate | line_noise |
+|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+| 1 | HBN_EO_EC | ds004186 | loaded | +Y | GSN129 | CZ |  Fp1, Fpz | .set | 500 |  50
+| This number will be used as first index in the .mat file names | Use this custom label for single dataset mode | The dataset folder name | name of a custom channel location file different from the usual "_electrode.tsv" file | noise direction (+/- X/Y/Z) | 10_5/10/20 or GSN129/257 | Channel reference name | List of channels to directly remove from all the dataset's files | EEG file extension (don't forget the ".") | Sampling rate in \[Hz\] | Use this to specify the line frequency
 
 Suggested file format are .tsv, .csv, or any other file which can be correctly loaded with the following command. 
 
 ```
 dataset_info = readtable(dataset_info_filename, ...
-    'format','%f%s%s%s%s%s%s%s%s%f','filetype','text');
+    'format','%f%s%s%s%s%s%s%s%s%f%f','filetype','text');
 ```
 
 See how all columns have string values except for the first and last, which have numeric values. If you don't know if your file is correct written, You can copy-paste our example file and modify it. There is also the function `check_loaded_table` which can check if the table is formatted in the right way.
@@ -34,14 +33,13 @@ Going even further, here is a detailed description of the expected values each c
 8. **channel_to_remove (optional)**: a list of channels to remove. It can be used if a dataset is known to have the same bad channels across all records. BIDSAlign will automatically remove them at the beginning of the preprocessing.
 9. **eeg_file_extension**: the file extension used to store EEG files (e.g., .edf, .bdf, .set). It will be used by BIDSAlign to locate the specific file inside the 'eeg' folders. Currently, supported file extensions are: .vhdr, .set and other extension which can be loaded with the Biosig plug-in with the command `pop_biosig( 'filename' )` 
 10. **samp_rate**: The sampling rate reported in Hz (samples per second).
+11. **line_noise (otpional)**: The line frequency, it can be used to suppress line noise with a notch filter.
 
 ## GUI Tab
 
-<img src="TableTabEmpty.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/>
+<h1 align="center">
+  <img src="TableTabEmpty.png" width="500">
+</h1><br>
 
 In this tab, you can load, modify, and save the table file with the datasets' information. In particular, looking at the figure above, the following actions can be performed with the numbered buttons:
 
@@ -56,11 +54,6 @@ In this tab, you can load, modify, and save the table file with the datasets' in
 
 If everything is done correctly, something similar should appear in the tab, depending on the number of dataset set.
 
-<img src="TableTabFull.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/>
-
-
-
+<h1 align="center">
+  <img src="TableTabFull.png" width="500">
+</h1><br>

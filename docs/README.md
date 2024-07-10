@@ -13,10 +13,9 @@ Thus you should have EEGLAB installed in your PC and all the plug-in required.
 
 After these 5 steps *YourWorkingDirectory* should appear like this:
 
-<img src="YourWorkingDirectory.png"
-        alt="Picture"
-        width="250"
-        style="display: block; margin: 0 auto" />
+<h1 align="center">
+  <img src="YourWorkingDirectory.png" width="250">
+</h1><br>
 
 ## Get the Dataset
 For this guided example, we will use the "UC San Diego Resting State EEG Data from Patients with Parkinson's Disease" from OpenNeuro [UC_SD](https://openneuro.org/datasets/ds002778/versions/1.0.5). It is relatively small (573.3 MB), so you can download it quickly.
@@ -31,9 +30,9 @@ If you want to use AWS, make sure to have it installed; for instance, you can do
 A typical suggested *dataset_folder_name* is the code of the dataset (here: ds002778).
 The dataset has the following folder structure:
 
-<img src="UC_SD_structure.png"
-        alt="Picture"
-        style="display: block; margin: 0 auto" />
+<h1 align="center">
+  <img src="UC_SD_structure.png">
+</h1><br>
 
 Since the dataset has the right structure (subjects/sessions/eeg/), there is no need ot use the function create_dataset_architecture, which changes in place the dataset structure.
 
@@ -47,9 +46,10 @@ You can get this information in several ways:
 
 The information for this example dataset is already inside the DATASET_INFO.tsv file provided by BIDSAlign (dataset number 8).
 
-<img src="bidsaling1to8_datasetinfo.png"
-        alt="Picture"
-        style="display: block; margin: 0 auto" />
+
+<h1 align="center">
+  <img src="bidsaling1to8_datasetinfo.png">
+</h1><br>
 
 The most important thing is that the dataset_code of one dataset is the *dataset_folder_name* used before.
 
@@ -57,10 +57,9 @@ The most important thing is that the dataset_code of one dataset is the *dataset
 #### 1) Set the modality 
 In order to keep things simple, you set the modality as 'local', and set the dataset name that should match the dataset_name field inside DATASET_INFO.tsv, in this case 'UC_SD'.
 
-<img src="set_modality.png"
-        alt="Picture"
-	width = 500
-        style="display: block; margin: 0 auto" />
+<h1 align="center">
+  <img src="set_modality.png" width="500">
+</h1><br>
 
 #### 2) Choose which files you want to preprocess
 Before setting up this structure, you should think about your analysis and how the data in the dataset can be used.
@@ -70,27 +69,25 @@ If you want to select files from the whole dataset, set "select_subjects" as tru
 2) Select only the off-session, meaning that without medication (session_totake = {{'ses-off'}})
 3) In order to keep things quick, we want to preprocess only the first 5 subjects from the previous selected ones. (sub_i = 1, sub_f=5).
 
-<img src="set_selectinfo.png"
-        alt="Picture"
-	width = 400
-        style="display: block; margin: 0 auto" />
+<h1 align="center">
+  <img src="set_selectinfo.png" width="400">
+</h1><br>
 
 Notice that the three fields named "_totake", check if the given string is present inside the folder and file name, thus before setting these fields check the dataset's folder names.
 This dataset is structured in the following way:
 
-<img src="UC_SD_structure_on.png"
-        alt="Picture"
-	width = 300
-        style="display: block; margin: 0 auto" />
+
+<h1 align="center">
+  <img src="UC_SD_structure_on.png" width="300">
+</h1><br>
 	
 #### 3) What do you want from BIDSAlign?
 With the struct "save_info" you can decide the output of BIDSAlign.
 In this example, we want to save only the preprocessed .set files.
 
-<img src="set_saveinfo.png"
-        alt="Picture"
-	width = 400
-        style="display: block; margin: 0 auto" />
+<h1 align="center">
+  <img src="set_saveinfo.png" width="400">
+</h1><br>
 
 "set_label" is useful if you want to use the visualisation functions provided by BIDSAlign, which needs folder names saved as "dataset_code + group + _ + pipeline".
      
@@ -101,19 +98,17 @@ Here we want to perform only filtering, thus the pipeline is called "FILT".
 Finally, since at the beginning we set the modality as 'local', we set the needed paths.
 Remember to give the EEGLAB path, if is not made globally available to MATLAB.
 
-<img src="paths.png"
-        alt="Picture"
-	width="700"
-        style="display: block; margin: 0 auto" />
+<h1 align="center">
+  <img src="paths.png" width="700">
+</h1><br>
 	
 #### 5) Run the preprocessing
 Everything is set to make BIDSAlign work!
 Indeed, after the preprocessing, you will have the OutputOfBIDSAlign folder, structured in the following way:
 
-<img src="OutputOfBIDSAlign.png"
-        alt="Picture"
-	width="700"
-        style="display: block; margin: 0 auto" />
+<h1 align="center">
+  <img src="OutputOfBIDSAlign.png" width="700">
+</h1><br>
 	
 #### 6) Conclusions
 Now it is your turn! Please explore BIDSAlign and the many options available. If you are not confident using MATLAB scripting, you are encouraged to use the GUI; for that, please see the attached documentation.

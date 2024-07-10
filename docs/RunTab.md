@@ -1,7 +1,6 @@
-<img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/>
+<h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br>
 
 * [Save info](#Save-info)
 * [Steps to Perform](#steps-to-Perform)
@@ -24,11 +23,9 @@ In particular, the following saving options are available:
 
 Steps to perform are the boolean fields set in the `preprocessing_info.prep_steps` variable. It can be used to set which steps you would like to perform or not. As a reminder, here is a simple scheme about the BIDSAlign preprocessing pipeline.
 
-<img src="Preprocessing_schema.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/>
+<h1 align="center">
+  <img src="Preprocessing_schema.png" width="500">
+</h1><br>
 
 - **Channel Removal (logical)**: whether to perform channel removal or not. Channels removed are those specified in the channel_to_remove column of the dataset info table. Default is true.
 - **Segment Removal (logical)**: whether to perform segment removal or not. Default is true.
@@ -46,11 +43,9 @@ BIDSAlign can launch three types of preprocessing, making it a valuable tool for
 
 1) **multi-dataset preprocessing**: in this modality, all the datasets included in the `dataset info table` will be preprocessed with the same specified pipeline. Multi-dataset preprocessing allows datasets to be processed with the Parallel Computing toolbox, speeding up the overall process (each worker will deal with a specific dataset). Remember that all datasets must be included inside the path given with the path_info's `datasets_path` field, and each dataset must be included in the folder with the same name as reported in the table_info's `dataset_id` column. See this picture to be sure on how data are expected to be organized.
 
-<img src="path_example.png"
-    alt="Picture"
-    width="300"
-    style="display: block; margin: 0 auto" 
-/>
+<h1 align="center">
+  <img src="path_example.png" width="300">
+</h1><br>
 
 2) **single-dataset preprocessing**: in this modality, a single dataset can be selected from the `dataset info table` to be preprocessed with the specified pipeline. To enable this modality, you must specify the dataset to preprocess giving the proper label to the `single_dataset_name` argument of the `preprocess_all` function, which is the function you must call (or called by the GUI) to launch the preprocessing. `single_dataset_name` must include the corresponding label given in the `dataset_name` column of the info table. This is an example of a single-dataset preprocessing call.
 
@@ -71,11 +66,9 @@ BIDSAlign can launch three types of preprocessing, making it a valuable tool for
 
 ## GUI Tab
 
-<img src="RunTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/>
+<h1 align="center">
+  <img src="RunTab.png" width="300">
+</h1><br>
 
 This final tab is used to set up all the remaining things and run the preprocessing. In particular:
 

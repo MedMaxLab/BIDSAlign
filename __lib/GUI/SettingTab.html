@@ -1,10 +1,9 @@
 <html><head><style>body {
    color: black;
 }
-</style></head><body><p><img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/></p>
+</style></head><body><p><h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br></p>
 <h2 id="manage-custom-configurations">Manage custom configurations</h2>
 <p>BIDSAlign allows you to store, load or remove a custom preprocessing configuration. This will help you avoid inputting everything every time you use BIDSAlign. At the function level, every <code>set_X_info</code> function (X can be &#39;path&#39;, &#39;preprocessing&#39;, &#39;selection&#39;, or &#39;save&#39;) has two parameters that you can use to save the specific struct variable inside a configuration folder. An example of a function call to save a custom set of path is</p>
 <pre><code>path_info = set_path_info(path_info, <span class="hljs-params">...</span>
@@ -15,11 +14,9 @@
 <p>To remove a configuration, just call the <code>remove_settings</code> function.</p>
 <p>To load the entire or a specific file of an existing configuration, just call the <code>load_settings</code> function.</p>
 <h2 id="gui-tab">GUI Tab</h2>
-<p><img src="SettingTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto"
-/></p>
+<p><h1 align="center">
+  <img src="SettingTab.png" width="500">
+</h1><br></p>
 <p>In this tab, you can load and remove existing configurations, or save the current one in a new or old setting. In particular, looking at the figure above, the following actions can be performed with the numbered buttons:</p>
 <ol>
 <li>An existing configuration can be loaded by selecting the right setting name with the dropdown component, and then by clicking the <strong>load</strong> button. Note that if a setting does not have a custom configuration for all the 4 main struct variables (path, preprocessing, selection, save), only the loaded ones will be overwritten, leaving the rest untouched (no reset to default). Moreover, if an eeglab path is available in the loaded configuration and the current search path does not have one, BIDSAlign will try to check that the loaded one will make eeglab available.</li>

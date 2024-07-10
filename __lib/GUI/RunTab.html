@@ -1,10 +1,9 @@
 <html><head><style>body {
    color: black;
 }
-</style></head><body><p><img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/></p>
+</style></head><body><p><h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br></p>
 <ul>
 <li><a href="#Save-info">Save info</a></li>
 <li><a href="#steps-to-Perform">Steps to Perform</a></li>
@@ -23,11 +22,9 @@
 </ol>
 <h2 id="steps-to-perform">Steps to Perform</h2>
 <p>Steps to perform are the boolean fields set in the <code>preprocessing_info.prep_steps</code> variable. It can be used to set which steps you would like to perform or not. As a reminder, here is a simple scheme about the BIDSAlign preprocessing pipeline.</p>
-<p><img src="Preprocessing_schema.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="Preprocessing_schema.png" width="500">
+</h1><br></p>
 <ul>
 <li><strong>Channel Removal (logical)</strong>: whether to perform channel removal or not. Channels removed are those specified in the channel_to_remove column of the dataset info table. Default is true.</li>
 <li><strong>Segment Removal (logical)</strong>: whether to perform segment removal or not. Default is true.</li>
@@ -42,11 +39,9 @@
 <h2 id="preprocessing-modalities">Preprocessing modalities</h2>
 <p>BIDSAlign can launch three types of preprocessing, making it a valuable tool for different situations.</p>
 <p>1) <strong>multi-dataset preprocessing</strong>: in this modality, all the datasets included in the <code>dataset info table</code> will be preprocessed with the same specified pipeline. Multi-dataset preprocessing allows datasets to be processed with the Parallel Computing toolbox, speeding up the overall process (each worker will deal with a specific dataset). Remember that all datasets must be included inside the path given with the path_info&#39;s <code>datasets_path</code> field, and each dataset must be included in the folder with the same name as reported in the table_info&#39;s <code>dataset_id</code> column. See this picture to be sure on how data are expected to be organized.</p>
-<p><img src="path_example.png"
-    alt="Picture"
-    width="300"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="path_example.png" width="300">
+</h1><br></p>
 <p>2) <strong>single-dataset preprocessing</strong>: in this modality, a single dataset can be selected from the <code>dataset info table</code> to be preprocessed with the specified pipeline. To enable this modality, you must specify the dataset to preprocess giving the proper label to the <code>single_dataset_name</code> argument of the <code>preprocess_all</code> function, which is the function you must call (or called by the GUI) to launch the preprocessing. <code>single_dataset_name</code> must include the corresponding label given in the <code>dataset_name</code> column of the info table. This is an example of a single-dataset preprocessing call.</p>
 <pre><code>[<span class="hljs-name">~</span>] = preprocess_all( /path/to/table/info , <span class="hljs-symbol">'dataset_name</span>', <span class="hljs-symbol">'MyBIDSData</span>')<span class="hljs-comment">;</span>
 </code></pre><p>4) <strong>single-file preprocessing</strong>: in this modality, a single file is preprocessed with the specified pipeline. To enable this modality, you must first set the <code>single_file</code> argument of the <code>preprocess_all</code> function to true. Then, give the name or path of file to preprocess must be specified using the <code>single_file_name</code> argument of the same function. <code>single_file_name</code> accept both the sole file name or the complete path. It can also be left empty if the full path was set in the <code>path_info.raw_filepath</code> variable. After the note, an example of a suggested single-file preprocessing call is given.</p>
@@ -57,11 +52,9 @@
                       <span class="hljs-symbol">'single_file_name</span>', <span class="hljs-symbol">'MyEEGrecord.bdf</span>'
                     )<span class="hljs-comment">;</span>
 </code></pre><h2 id="gui-tab">GUI Tab</h2>
-<p><img src="RunTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="RunTab.png" width="300">
+</h1><br></p>
 <p>This final tab is used to set up all the remaining things and run the preprocessing. In particular:</p>
 <ul>
 <li><strong>Save options</strong> switches will change values inside the save_info struct variable.</li>

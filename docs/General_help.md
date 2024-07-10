@@ -1,8 +1,6 @@
-<img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/>
-
+<h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br>
 
 ## Welcome to BIDSALign!
 
@@ -26,8 +24,6 @@ This tab simply presents the BIDSAlign GUI. Nothing can be set here. However, yo
 - <span style="color:#3366cc"> Denim highilithed help button </span> can be used to open a new window where everything about the parameters to set and the GUI buttons to use is clearly explained.
 
 
-<img src="IntroTab.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto"
-/>
+<h1 align="center">
+  <img src="IntroTab.png" width="500">
+</h1><br>

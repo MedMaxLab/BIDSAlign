@@ -1,10 +1,9 @@
 <html><head><style>body {
    color: black;
 }
-</style></head><body><p><img src="logo4gui.png"
-    alt="Picture"
-    width="300"
-/></p>
+</style></head><body><p><h1 align="center">
+  <img src="logo4gui.png" width="500">
+</h1><br></p>
 <h2 id="dataset-table">Dataset Table</h2>
 <p>The dataset table is a table file having the necessary information to locate EEG files and coordinate some preprocessing steps. It must have the following format.</p>
 <table>
@@ -20,6 +19,7 @@
 <th>channel_to_remove</th>
 <th>eeg_file_extension</th>
 <th>samp_rate</th>
+<th>line_noise</th>
 </tr>
 </thead>
 <tbody>
@@ -34,6 +34,7 @@
 <td>Fp1, Fpz</td>
 <td>.set</td>
 <td>500</td>
+<td>50</td>
 </tr>
 <tr>
 <td>This number will be used as first index in the .mat file names</td>
@@ -46,12 +47,13 @@
 <td>List of channels to directly remove from all the dataset&#39;s files</td>
 <td>EEG file extension (don&#39;t forget the &quot;.&quot;)</td>
 <td>Sampling rate in [Hz]</td>
+<td>Use this to specify the line frequency</td>
 </tr>
 </tbody>
 </table>
 <p>Suggested file format are .tsv, .csv, or any other file which can be correctly loaded with the following command. </p>
 <pre><code>dataset_info = readtable(dataset_info_filename, ...
-    'format','<span class="hljs-built_in">%f</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%f</span>','filetype','text')<span class="hljs-comment">;</span>
+    'format','<span class="hljs-built_in">%f</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%s</span><span class="hljs-built_in">%f</span><span class="hljs-built_in">%f</span>','filetype','text')<span class="hljs-comment">;</span>
 </code></pre><p>See how all columns have string values except for the first and last, which have numeric values. If you don&#39;t know if your file is correct written, You can copy-paste our example file and modify it. There is also the function <code>check_loaded_table</code> which can check if the table is formatted in the right way.</p>
 <p>Going even further, here is a detailed description of the expected values each column should have:</p>
 <ol>
@@ -65,13 +67,12 @@
 <li><strong>channel_to_remove (optional)</strong>: a list of channels to remove. It can be used if a dataset is known to have the same bad channels across all records. BIDSAlign will automatically remove them at the beginning of the preprocessing.</li>
 <li><strong>eeg_file_extension</strong>: the file extension used to store EEG files (e.g., .edf, .bdf, .set). It will be used by BIDSAlign to locate the specific file inside the &#39;eeg&#39; folders. Currently, supported file extensions are: .vhdr, .set and other extension which can be loaded with the Biosig plug-in with the command <code>pop_biosig( &#39;filename&#39; )</code> </li>
 <li><strong>samp_rate</strong>: The sampling rate reported in Hz (samples per second).</li>
+<li><strong>line_noise (otpional)</strong>: The line frequency, it can be used to suppress line noise with a notch filter.</li>
 </ol>
 <h2 id="gui-tab">GUI Tab</h2>
-<p><img src="TableTabEmpty.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="TableTabEmpty.png" width="500">
+</h1><br></p>
 <p>In this tab, you can load, modify, and save the table file with the datasets&#39; information. In particular, looking at the figure above, the following actions can be performed with the numbered buttons:</p>
 <ol>
 <li>the <strong>select file</strong> button will open a file selector where you can select a table file to open with the command reported in the previous section.</li>
@@ -84,9 +85,7 @@
 </li>
 </ol>
 <p>If everything is done correctly, something similar should appear in the tab, depending on the number of dataset set.</p>
-<p><img src="TableTabFull.png"
-    alt="Picture"
-    width="500"
-    style="display: block; margin: 0 auto" 
-/></p>
+<p><h1 align="center">
+  <img src="TableTabFull.png" width="500">
+</h1><br></p>
 </body></html>
