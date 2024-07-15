@@ -27,12 +27,21 @@ You have to create a folder where you will store all the datasets present in the
 
 Please remember that the name of the folder where the dataset is stored must corresponds to the value in column *dataset_code*.
 
-The library already comes with all the information needed for processing 20 public datasets. Some of them are large and commonly used in deep learning such as the Healthy Brain Network [HBN EO/EC](https://openneuro.org/datasets/ds004186/versions/2.0.0), the Two Decades–Brainclinics Research Archive for Insights in Neurophysiology [TDBRAIN](https://brainclinics.com/resources/) and the Max Planck Institute LEMON dataset [MPI-LEMON](https://fcon_1000.projects.nitrc.org/indi/retro/MPI_LEMON.html).
+The library already comes with all the information needed for processing 20 public datasets.
+Some of them are large and commonly used in deep learning such as the Healthy Brain Network
+[HBN EO/EC](https://openneuro.org/datasets/ds004186/versions/2.0.0),
+the Two Decades–Brainclinics Research Archive for Insights in Neurophysiology
+[TDBRAIN](https://brainclinics.com/resources/)
+and the Max Planck Institute LEMON dataset
+[MPI-LEMON](https://fcon_1000.projects.nitrc.org/indi/retro/MPI_LEMON.html).
 
 ### BIDS Format
-This library can preprocess datasets structured with both BIDS and non-BIDS format, thus is expected in input a dataset structured as shown in [BIDS-EEG](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html).
-However you can use the function *create_dataset_architecture.m* to change in-place the folder structure of the dataset.
-As specified by the BIDS format, the *participants.tsv* file is recommended and should be stored inside the dataset folder.
+This library can preprocess datasets structured with both BIDS and non-BIDS format,
+thus is expected in input a dataset structured as shown in
+[BIDS-EEG](https://bids-specification.readthedocs.io/en/stable/modality-specific-files/electroencephalography.html).
+However you can use the function *create_dataset_architecture.m* to change in-place
+the folder structure of the dataset. As specified by the BIDS format,
+the *participants.tsv* file is recommended and should be stored inside the dataset folder.
 
 Here an example of how the folder structure and the workflow can be organized.
 
@@ -52,7 +61,10 @@ Many times the channel location is absent or even wrong when downloading public 
 ## Usage Modalities
 You can use the library in three ways:
 1. Preprocess a specified file.
-You have to specify the dataset name, from which the file is taken, the filename and the corresponding filepath. The modality is activated with the variable *single_file*.
+You have to specify the dataset name, from which the file is taken,
+the filename and the corresponding filepath. The modality is activated with
+the variable *single_file*.
+
 ```
 single_file = true;
 dataset_name = ['UC_SD'];
@@ -60,7 +72,9 @@ raw_filename = ['sub-hc10_ses-hc_task-rest_eeg.bdf'];
 raw_filepath = ['/Users/.../Datasets/ds002778/sub-hc10/ses-hc/eeg/'];
 ```
 2. Preprocess an entire dataset.
-You have to specify the dataset. In this case you can process the entire dataset, a portion, only some subjects or some sessions, or even preprocess specific groups and/or specific task.
+You have to specify the dataset. In this case you can process the entire dataset,
+a portion, only some subjects or some sessions, or even preprocess specific groups
+and/or specific task.
 ```
 single_file = false;
 dataset_name = ['UC_SD'];
@@ -81,7 +95,8 @@ The following preprocessing steps are currently available in BIDSAlign:
 5. Filtering.
 6. Independent Component Analysis (ICA) and Automatic IC rejection with MARA or ICLabel.
 7. Notch-Filtering.
-8. Artifact Subspace Reconstruction (ASR) can be used independently in two ways: for removing bad channels and/or for removing/reconstructing bad time windows.
+8. Artifact Subspace Reconstruction (ASR) can be used independently in two ways:
+   for removing bad channels and/or for removing/reconstructing bad time windows.
 9. Interpolation of previously removed bad channels.
 10. Rereference.
 
@@ -89,13 +104,20 @@ Please note that EEG data are assumed to be saved in $\mu V$.
 
 ## Saving and Visualisation
 BIDSAlign allows you to do a proper visualisation of the data and perform statistical analysis. 
-In order to use the visualisation functions, please save the .set or the .mat folders by specifing save_info.set_label as *group* _ *pipeline*; for example group could be 'A' indicating Alzheimer's and pipeline could be 'ICA' indicating that you have performed Independent Component Analysis, thus *A_ICA*.
+In order to use the visualisation functions, please save the .set or the .mat folders
+by specifing save_info.set_label as *group* _ *pipeline*; for example group could be
+'A' indicating Alzheimer's and pipeline could be 'ICA' indicating that you have
+performed Independent Component Analysis, thus *A_ICA*.
 
 
 The library comes with three functions:
-1. groups_visualization: you can compare more groups for a single pipeline, or viceversa; you can also specify the single filename to be visualised.
-2. ERP_visualization: you can plot the average and grand-average ERP for a group of patients, for multiple events. If there is only one event, scalp topographies of channels activation in time are also shown.
-3. template_comparison: you can see the differences between the topographies obtained from two channel location and the effects of the conversion file. 
+1. groups_visualization: you can compare more groups for a single pipeline,
+   or viceversa; you can also specify the single filename to be visualised.
+2. ERP_visualization: you can plot the average and grand-average ERP for a group of
+   patients, for multiple events. If there is only one event, scalp topographies of
+   channels activation in time are also shown.
+3. template_comparison: you can see the differences between the topographies obtained
+   from two channel location and the effects of the conversion file. 
 
 ## Compatibility
 The library was written in MATLAB 2023b, EEGLAB 2023.0 and requires the following plug-in:
@@ -109,6 +131,13 @@ The library was written in MATLAB 2023b, EEGLAB 2023.0 and requires the followin
 - "dipfit" v5.3
 - "firfilt" v2.7.1
 - "eegstats" v1.2
+
+BIDSAlign can automatically install all these plugins if not already included in your
+EEGLAB installation.
+(The dependecy list is checked when **bidsaling** or **bidsalign nogui** is called.)
+You can also run a fresh installation of EEGLAB and all the required plugins by running
+the ``install_eeglab_from_scratch( 'target_path' )`` function. It is suggested
+to use as target_path the 'MATLAB' directory or one of its subdirectories. 
 
 Moreover interally it uses two libraries:
 - For the non-parametric permutation t-test [hfASDmodules: Reorganization of functionally connected subnetworks in autism](https://zenodo.org/records/44657).

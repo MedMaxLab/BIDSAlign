@@ -52,17 +52,21 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
             return
         catch
             if verbose
-                disp(['eeglab not present in your current search path.' ...
-                    ' Trying to add it automatically'])
+                disp(['eeglab not present in your current search path. ' ...
+                    newline 'Trying to add it automatically'])
             end
         end
     else 
         if isequal(exist('eeglab','file'),2)
+            if verbose
+                disp(['It seems that an eeglab.m file can be accessed'...
+                    'from your current search path. Returning'])
+            end
             return
         else
             if verbose
                 disp(['eeglab not present in your current search path.' ...
-                    'Trying to add it automatically'])
+                    newline 'Trying to add it automatically'])
             end
         end
     end
@@ -101,8 +105,8 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
         if not(isempty(ith_path))
             if verbose
                 disp('Found eeglab path in MATLAB toolbox folder')
-                disp(folder_names{i})
-                disp('adding it to the current path list')
+                disp(['Folder name: ' folder_names{i}])
+                disp('Adding folder to the current path list')
             end
             addpath(folder_names{i})
             addedpath = true;
@@ -124,7 +128,10 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
             else
                 if isequal(exist('eeglab','file'),2)
                     if verbose
-                        disp('Found path to EEGLab')
+                        disp( ...
+                            ['added path to an eeglab folder with an eeglab.m file' ...
+                             'form your list of available toolboxes']...
+                        )
                     end
                     return
                 else
@@ -136,45 +143,60 @@ function [] = search_eeglab_path(verbose, forcestart, nogui_launch)
     end
 
 
-    %try searching in your current path and subpaths
-    d = dir('**');
+    % try searching in your current path and subpaths
+    % or, if possible, in all subdirectories inside the MATLAB folder.
+    % In other words, if you are in a subdirectory of MATLAB, dir
+    % search will be extended
+    current_path = pwd;
+    mat_idx = strfind(current_path, 'MATLAB');
+    if mat_idx
+        d = dir([current_path(1:mat_idx+5) filesep '**' filesep 'eeglab*']);
+    else
+        d = dir('**');
+    end
     dfolders = d([d(:).isdir]);
     dfolders = dfolders(~ismember({dfolders(:).name},{'.','..'}));
     folder_names = {dfolders.name};
+    folder_paths = {dfolders.folder};
     for i=1:length(folder_names)
         ith_path = strfind(folder_names{i},'eeglab');
         if not(isempty(ith_path))
-            if verbose
-                disp('Found a folder with eeglab in its name in the MATLAB path list')
-                disp(folder_names{i})
-                disp('Adding it to the current path list')
-            end
-            addpath(folder_names{i})
-            addedpath = true;
-            if forcestart
-                try 
-                    if nogui_launch
-                        [~] = evalc('eeglab nogui;');
-                    else
-                        [~] = evalc('eeglab; close;');
-                    end
-                    if verbose
-                        disp('Found path to EEGLab')
-                    end
-                    return
-                catch
-                    totPath = totPath + 1;
-                    pathAddedList{totPath} = folder_names{i};
+            if exist([folder_paths{i} filesep folder_names{i} filesep 'eeglab.m'], 'file')
+                if verbose
+                    disp('Found a folder eeglab in its name and an eeglab.m file in it.')
+                    disp(folder_names{i})
+                    disp('Adding it to the path list for the current MATLAB session')
                 end
-            else
-                if isequal(exist('eeglab','file'),2)
-                    if verbose
-                        disp('Found path to EEGLab')
+                addpath(folder_names{i})
+                addedpath = true;
+                if forcestart
+                    try
+                        if nogui_launch
+                            [~] = evalc('eeglab nogui;');
+                        else
+                            [~] = evalc('eeglab; close;');
+                        end
+                        if verbose
+                            disp('Found path to EEGLab. Search completed')
+                        end
+                        return
+                    catch
+                        totPath = totPath + 1;
+                        pathAddedList{totPath} = folder_names{i};
                     end
-                    return
                 else
-                    totPath = totPath + 1;
-                    pathAddedList{totPath} = folder_names{i};
+                    if isequal(exist('eeglab','file'), 2)
+                        if verbose
+                            disp( ...
+                                ['An eeglab.m file placed inside an eeglab folder ' ...
+                                'is now in your current search path.'] ...
+                            )
+                        end
+                        return
+                    else
+                        totPath = totPath + 1;
+                        pathAddedList{totPath} = folder_names{i};
+                    end
                 end
             end
         end
